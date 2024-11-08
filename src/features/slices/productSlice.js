@@ -111,6 +111,7 @@ const productsSlice = createSlice({
 			})
 			.addCase(fetchProducts.rejected, (state) => {
 				state.status = "rejected";
+				console.error("Fetch products error:", action.error.message);
 			})
 			.addCase(createProduct.fulfilled, (state, action) => {
 				state.list.push(action.payload);
