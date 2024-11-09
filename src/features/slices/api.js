@@ -7,16 +7,15 @@ export const setHeaders = () => {
 
 	token = token && token.replace(/^"|"$/g, "");
 
-    // Check if token is null or undefined
     if (!token) {
         console.warn("No token found in localStorage. Check if user is logged in or if token is being stored correctly.");
     } else {
-        console.log("Retrieved token:", token);  // Logs the retrieved token
+        console.log("Retrieved token:", token); 
     }
 
     const headers = {
-        Authorization: `Bearer ${token}`,  // Set Authorization header
-        "Content-Type": "application/json",  // Optionally add Content-Type
+        Authorization: `Bearer ${token}`,  // can i use authorization instead of Authorization
+        "Content-Type": "application/json",
     };
 
     console.log("Request headers set:", headers);
