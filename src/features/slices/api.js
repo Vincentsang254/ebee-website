@@ -3,7 +3,9 @@
 export const url = "https://ebee-server.onrender.com/api";
 
 export const setHeaders = () => {
-    const token = localStorage.getItem("token");
+    let token = localStorage.getItem("token");
+
+	token = token && token.replace(/^"|"$/g, "");
 
     // Check if token is null or undefined
     if (!token) {
