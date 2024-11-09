@@ -16,14 +16,15 @@ export const fetchProducts = createAsyncThunk(
 	"products/fetchProducts",
 	async () => {
 		try {
-		console.log("fetching products....")
-			const response = await axios.get(`${url}/products/get`, setHeaders());
-			console.log("Fetch products response", response)
-			return response.data.data.products;
+			console.log("fetching products....");
+			// Ensure headers are passed as part of an object
+			const response = await axios.get(`${url}/products/get`, { headers: setHeaders() });
+			console.log("Fetch products response", response);
+			return response.data.data.products; // Returning products array from data structure
 
-			// return response.data;
 		} catch (error) {
-			const message = error.response?.data;
+			// Handle any error and log the error response
+			const message = error.response?.data || "Error fetching products";
 			toast.error(message, { position: "bottom-left" });
 		}
 	}
