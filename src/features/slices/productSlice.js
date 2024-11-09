@@ -19,7 +19,9 @@ export const fetchProducts = createAsyncThunk(
 		console.log("fetching products....")
 			const response = await axios.get(`${url}/products/get`, setHeaders());
 			console.log("Fetch products response", response)
-			return response.data;
+			return response.data.data.products;
+
+			// return response.data;
 		} catch (error) {
 			const message = error.response?.data;
 			toast.error(message, { position: "bottom-left" });
@@ -103,6 +105,7 @@ const productsSlice = createSlice({
 				state.status = "rejected";
 			})
 			.addCase(fetchProducts.fulfilled, (state, action) => {
+				console.log("Fetched products payload:", action.payload); 
 				state.list = action.payload;
 				state.status = "success";
 			})
@@ -114,6 +117,7 @@ const productsSlice = createSlice({
 				console.error("Fetch products error:", action.error.message);
 			})
 			.addCase(createProduct.fulfilled, (state, action) => {
+
 				state.list.push(action.payload);
 				state.status = "success";
 				toast.success("Product created successfully", { position: "bottom-left" });
