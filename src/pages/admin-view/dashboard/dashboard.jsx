@@ -1,6 +1,6 @@
-import React from 'react';
-// Import chart components and any required styling from shadcn
-import { LineChart, BarChart } from "shadcn"; // Adjust imports based on actual components in ShadCN
+import React from "react";
+// Import chart components from your project structure
+import { LineChart } from "@/components/ui/chart"; // Ensure LineChart is correctly set up in this path
 
 const AdminDashboard = () => {
   // Placeholder data for charts and stats
