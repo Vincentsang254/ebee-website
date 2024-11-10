@@ -10,9 +10,9 @@ import authReducer from "./slices/authSlice";
 
 const store = configureStore({
 	reducer: {
-		// users: usersReducer,
+		users: usersReducer,
 		products: productReducer,
-		// orders: orderReducer,
+		orders: orderReducer,
 		auth: authReducer,
 		// notifications: notificationReducer,
 	},
