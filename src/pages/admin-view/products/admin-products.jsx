@@ -3,12 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   Card, CardContent, CardHeader, CardTitle
 } from "@/components/ui/card";
-import { toast } from "react-toastify";
 import { fetchProducts } from '@/features/slices/productSlice';
-import { Link } from 'react-router-dom';
-
-// Import ShadCN's Sheet components
-import { Sheet, SheetContent, SheetTrigger } from '@shadcn/ui';
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet"; // Import ShadCN components
 
 const AdminProducts = () => {
     const dispatch = useDispatch();
@@ -33,17 +35,20 @@ const AdminProducts = () => {
             <h1 className="text-3xl font-semibold mb-8 text-center">Our Products</h1>
             
             {/* Button to open the Sheet */}
-            <button
-                className="btn btn-primary mb-4"
+            <Button
+                variant="primary"
+                className="mb-4"
                 onClick={() => setSheetOpen(true)} // Open the sheet on click
             >
                 Add Product
-            </button>
+            </Button>
 
             {/* ShadCN Sheet Component */}
             <Sheet open={isSheetOpen} onClose={() => setSheetOpen(false)}>
                 <SheetContent side="left" className="w-96 p-6">
-                    <h2 className="text-xl font-semibold mb-4">Add a New Product</h2>
+                    <SheetHeader>
+                        <SheetTitle>Add a New Product</SheetTitle>
+                    </SheetHeader>
                     {/* Form or content for adding a product */}
                     <form>
                         <div className="mb-4">
@@ -73,12 +78,12 @@ const AdminProducts = () => {
                         </div>
 
                         <div className="mt-6 flex justify-end">
-                            <button
+                            <Button
                                 type="submit"
-                                className="btn btn-primary"
+                                variant="primary"
                             >
                                 Save Product
-                            </button>
+                            </Button>
                         </div>
                     </form>
                 </SheetContent>
