@@ -39,6 +39,7 @@
     "shadcn-react": "^0.0.22",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
+    "tailwindcss-motion": "^0.4.1-beta",
     "yup": "^1.4.0"
   },
   "devDependencies": {
