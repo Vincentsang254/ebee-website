@@ -34,14 +34,13 @@ export const createProduct = createAsyncThunk(
 	"products/createProduct",
 	async (formData, { rejectWithValue }) => {
 	  try {
-		const response = await axios.post(`${url}/products/create`, formData,  { headers: setHeaders() });
+		const response = await axios.post(`${url}/products/create`, formData);
 		console.log("Create product response:", response); // Correctly log response after getting it
 		return response.data;
 	  } catch (error) {
-		console.log("Error creating product", error)
-		const message = error.response?.data || "Error creating product";
-		toast.error(message, { position: "bottom-left" });
-		return rejectWithValue(message);
+		console.log( "Error creating product",error.response?.data.errors[0])
+		// toast.error(message, { position: "bottom-left" });
+		return rejectWithValue(error.response.data.error[0]);
 	  }
 	}
   );

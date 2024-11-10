@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { fetchProducts } from '@/features/slices/productSlice';
+import { createProduct, fetchProducts } from '@/features/slices/productSlice';
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"; // Import ShadCN components
-import { createProduct } from '@/features/slices/productSlice'; // Import the createProduct action
 
 const AdminProducts = () => {
   const dispatch = useDispatch();
@@ -26,16 +25,24 @@ const AdminProducts = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Frontend validation: check if any field is empty
+    if (!productName || !productDesc || !productPrice || !productCategory || !productImage) {
+      alert('All fields (name, desc, price, category) are required');
+      return;
+    }
+  
     const formData = new FormData();
     formData.append('name', productName);
     formData.append('price', productPrice);
-    formData.append('desc', productDesc);
+    formData.append('description', productDesc);
     formData.append('category', productCategory);
-    formData.append('imageUrl', productImage); // Add image to form data
-
+    formData.append('image', productImage); // Add image to form data
+  
     dispatch(createProduct(formData)); // Dispatch the action to create the product
     setSheetOpen(false); // Close the sheet after submitting
   };
+  
 
   useEffect(() => {
     dispatch(fetchProducts());
