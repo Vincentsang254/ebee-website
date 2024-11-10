@@ -34,7 +34,7 @@ export const createProduct = createAsyncThunk(
 	"products/createProduct",
 	async (formData, { rejectWithValue }) => {
 	  try {
-		const response = await axios.post(`${url}/products/create`, formData);
+		const response = await axios.post(`${url}/products/create`, formData, { headers: setHeaders() });
 		console.log("Create product response:", response); // Correctly log response after getting it
 		return response.data;
 	  } catch (error) {
