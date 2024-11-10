@@ -35,9 +35,9 @@ const AdminProducts = () => {
     const formData = new FormData();
     formData.append('name', productName);
     formData.append('price', productPrice);
-    formData.append('description', productDesc);
+    formData.append('desc', productDesc);
     formData.append('category', productCategory);
-    formData.append('image', productImage); // Add image to form data
+    formData.append('imageUrl', productImage); // Add image to form data
   
     dispatch(createProduct(formData)); // Dispatch the action to create the product
     setSheetOpen(false); // Close the sheet after submitting
