@@ -1,6 +1,6 @@
 import React from "react";
-// Import chart components from your project structure
-import { LineChart } from "@/components/ui/chart"; // Ensure LineChart is correctly set up in this path
+// Import necessary components from recharts
+import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
 
 const AdminDashboard = () => {
   // Placeholder data for charts and stats
@@ -21,6 +21,7 @@ const AdminDashboard = () => {
     <div className="p-4 space-y-8">
       <h1 className="text-2xl font-bold">Admin Dashboard</h1>
 
+      {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white p-4 rounded-lg shadow-md text-center">
           <h2 className="text-xl font-semibold">Total Users</h2>
@@ -36,23 +37,18 @@ const AdminDashboard = () => {
         </div>
       </div>
 
+      {/* Revenue Growth Chart */}
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">Revenue Growth</h2>
-        <LineChart
-          data={{
-            labels: analyticsData.revenueGrowth.map((item) => item.month),
-            datasets: [
-              {
-                label: "Revenue",
-                data: analyticsData.revenueGrowth.map((item) => item.revenue),
-                backgroundColor: "rgba(75, 192, 192, 0.2)",
-                borderColor: "rgba(75, 192, 192, 1)",
-                borderWidth: 2,
-              },
-            ],
-          }}
-          options={{ responsive: true, maintainAspectRatio: false }}
-        />
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={analyticsData.revenueGrowth} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="month" />
+            <YAxis />
+            <Tooltip />
+            <Line type="monotone" dataKey="revenue" stroke="#4bc0c0" activeDot={{ r: 8 }} />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );
