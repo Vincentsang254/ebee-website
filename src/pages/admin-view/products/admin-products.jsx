@@ -12,8 +12,7 @@ import { Link } from 'react-router-dom';
 const AdminProducts = () => {
     const dispatch = useDispatch();
     const { list: products, status } = useSelector((state) => state.products);
-console.log("Fetch products status", status)
-console.log("Fetch products list", products)
+
     useEffect(() => {
         dispatch(fetchProducts());
     }, [dispatch]);
@@ -43,7 +42,7 @@ console.log("Fetch products list", products)
                                 className="w-full h-40 object-cover rounded-md mb-4"
                             />
                             <p className="text-gray-600">Price: ${product.price}</p>
-                            <p className="text-gray-600">Description: {product.description}</p>
+                            <p className="text-gray-600">Description: {product.desc}</p>
                         </CardContent>
                     </Card>
                 ))}
