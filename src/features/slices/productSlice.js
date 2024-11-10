@@ -39,8 +39,8 @@ export const createProduct = createAsyncThunk(
 		return response.data;
 	  } catch (error) {
 		console.log( "Error creating product",error.response?.data.errors[0])
-		// toast.error(message, { position: "bottom-left" });
-		return rejectWithValue(error.response.data.error[0]);
+		toast.error(error.response?.data.errors[0], { position: "bottom-left" });
+		return rejectWithValue(error.response.data.errors[0]);
 	  }
 	}
   );
