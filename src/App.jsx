@@ -23,7 +23,7 @@ import VerifyCode from "./pages/auth/verify-code";
 import ForgotPassword from "./pages/auth/forgot-password";
 import AdminOrders from "./pages/admin-view/orders/admin-orders";
 import ShoppingLayout from "./components/shopping-view/common/layout";
-import AdminAddProducts from "./components/admin-view/products/Add-product";
+import AdminAddProducts from "./components/admin-view/products/add-product";
 
 const App = ({isAuthenticated, user}) => {
   const dispatch = useDispatch();
