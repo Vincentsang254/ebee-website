@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import {
@@ -34,6 +34,15 @@ const ShoppingHome = () => {
   const dispatch = useDispatch();
   const { list: products, status } = useSelector((state) => state.products);
 
+  // State for the search query
+  const [query, setQuery] = useState('');
+
+  // Filter products based on the query
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(query.toLowerCase()) ||
+    product.desc.toLowerCase().includes(query.toLowerCase())
+  );
+
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
@@ -41,6 +50,17 @@ const ShoppingHome = () => {
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold text-center mb-8">Product List</h1>
+
+      {/* Search Input */}
+      <div className="flex justify-center mb-6">
+        <input
+          type="text"
+          placeholder="Search for products..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="w-1/2 p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
 
       {/* Display ShadCN skeletons when loading */}
       {status === 'pending' && (
@@ -52,11 +72,11 @@ const ShoppingHome = () => {
       )}
 
       {status === 'rejected' && <p>Failed to load products.</p>}
-      {status === 'success' && products.length === 0 && <p>No products found.</p>}
+      {status === 'success' && filteredProducts.length === 0 && <p>No products found.</p>}
 
       {status === 'success' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <Card key={product.id} className="bg-white shadow-lg rounded-lg">
               <CardHeader className="p-0">
                 <img
