@@ -5,7 +5,7 @@ import AdminDashboard from "./pages/admin-view/dashboard/dashboard";
 import AdminProducts from "./pages/admin-view/products/admin-products";
 import NotFound from "./pages/not-found";
 import ShoppingHome from "./pages/shopping-view/home";
-import ShoppingAccount from "./pages/shopping-view/account";
+import Profile from "./pages/shopping-view/account";
 import CheckAuth from "./components/common/check-auth";
 import UnauthPage from "./pages/unauth-page";
 import { useDispatch, useSelector } from "react-redux";
@@ -87,7 +87,7 @@ const App = ({isAuthenticated, user}) => {
           }
         >
           <Route path="home" element={<ShoppingHome />} />
-          <Route path="account" element={<ShoppingAccount />} />
+          <Route path="account" element={<Profile />} />
           <Route path="search" element={<SearchProducts />} />
         </Route>
         <Route path="/unauth-page" element={<UnauthPage />} />
