@@ -25,6 +25,9 @@ import AdminOrders from "./pages/admin-view/orders/admin-orders";
 import ShoppingLayout from "./components/shopping-view/common/layout";
 import AdminUsers from "./pages/admin-view/users/admin-users";
 
+
+import { Toaster } from "@/components/ui/toaster"
+
 const App = ({isAuthenticated, user}) => {
   const dispatch = useDispatch();
   const  userLoaded  = useSelector((state) => state.auth.userLoaded);
@@ -41,6 +44,7 @@ const App = ({isAuthenticated, user}) => {
   return (
     <div className="flex flex-col overflow-hidden bg-white min-h-screen">
       <ToastContainer />
+      <Toaster />
       <Routes>
         <Route
           path="/"
