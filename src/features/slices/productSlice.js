@@ -40,7 +40,7 @@ export const createProduct = createAsyncThunk(
 	  } catch (error) {
 		console.log( "Error creating product",error.response?.data.errors[0])
 		toast.error(error.response?.data.errors[0], { position: "bottom-left" });
-		return rejectWithValue(error.response.data.errors[0]);
+		return rejectWithValue(error.response?.data.errors[0]);
 	  }
 	}
   );
@@ -52,7 +52,8 @@ export const removeProduct = createAsyncThunk(
 			await axios.delete(`${url}/products/delete/${productId}`,  { headers: setHeaders() });
 			return productId; // Return the deleted product's ID
 		} catch (error) {
-			const message = error.response?.data || "Error deleting product";
+			console.log( "Error deletin product",error.response?.data.errors[0])
+			const message = error.response?.data.errors[0] || "Error deleting product";
 			toast.error(message, { position: "bottom-left" });
 			return rejectWithValue(message);
 		}
@@ -66,7 +67,8 @@ export const updateProduct = createAsyncThunk(
 			const response = await axios.put(`${url}/products/update/${id}`, values,  { headers: setHeaders() });
 			return response.data; // Assuming the server returns the updated product
 		} catch (error) {
-			const message = error.response?.data || "Error updating product";
+			console.log( "Error updating product",error.response?.data.errors[0])
+			const message = error.response?.data.errors[0] || "Error updating product";
 			toast.error(message, { position: "bottom-left" });
 			return rejectWithValue(message);
 		}
