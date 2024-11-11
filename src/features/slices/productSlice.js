@@ -75,6 +75,25 @@ export const updateProduct = createAsyncThunk(
 	}
 );
 
+export const searchProducts = createAsyncThunk(
+	"products/searchProducts", // The action type
+	async ({ values }, { rejectWithValue }) => {
+		try {
+			// Make a POST request to the search endpoint
+			const response = await axios.post(`${url}/products/search`, values, {
+				headers: setHeaders() // Assuming setHeaders handles authentication token and other necessary headers
+			});
+			return response.data; // The server response containing the search results
+		} catch (error) {
+			// If error, show the error message via toast
+			console.log("Error searching products:", error.response?.data.errors[0]);
+			const message = error.response?.data.errors[0] || "Error searching products";
+			toast.error(message, { position: "bottom-left" });
+			return rejectWithValue(message); // Reject with error message to update Redux state
+		}
+	}
+);
+
 export const fetchProductsCount = createAsyncThunk(
 	"products/fetchProductsCount",
 	async () => {
