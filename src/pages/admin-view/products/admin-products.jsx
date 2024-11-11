@@ -199,8 +199,8 @@ const AdminProducts = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Display Products in 2 Columns */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      {/* Display Products in 2 Columns on Mobile Screens */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {products?.map((product) => (
           <Card key={product.id} className="shadow-lg rounded-lg relative">
             <CardHeader>
