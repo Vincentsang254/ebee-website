@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import { setHeaders, url } from "./api";
-import { toast } from "react-toastify";
+import { Toast } from "@/components/ui/toast"; // Import ShadCN Toast
 
 // Initial state for the auth slice
 const initialState = {
@@ -18,6 +18,8 @@ const initialState = {
   loginError: "",
   userLoaded: false,
 };
+
+// Async thunk for user registration
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (values, { rejectWithValue }) => {
@@ -28,66 +30,74 @@ export const registerUser = createAsyncThunk(
         name: values.name,
         password: values.password,
       });
-      
-      console.log("Response is:", response.data);  // For debugging
-      toast.success(response.data.message);
 
-      // Return only the necessary information (e.g., user details)
+      console.log("Response is:", response.data);  // For debugging
+
+      // Use ShadCN Toast for success message
+      Toast.success(response.data.message);
+
       return { userData: response.data.data, message: response.data.message };
     } catch (error) {
       console.error(error.response.data.errors[0]);
-      toast.error(error.response.data.errors[0] || "Registration failed!");
+      
+      // Use ShadCN Toast for error message
+      Toast.error(error.response.data.errors[0] || "Registration failed!");
       return rejectWithValue(error.response.data.errors[0]);
     }
   }
 );
 
-  // Async thunk for user login
-  export const loginUser = createAsyncThunk(
-	"auth/loginUser",
-	async (values, { rejectWithValue }) => {
-	  try {
-		const response = await axios.post(`${url}/auth/login`, {
-		  email: values.email,
-		  password: values.password,
-		});
-  
-		const token = response.data.token;
-		localStorage.setItem("token", JSON.stringify(token));
-  
-		toast.success(response.data.message);
-		return token;
-	  } catch (error) {
-		console.error(error.response);
-		toast.error(error.response.data.errors[0] || "Login failed!");
-		return rejectWithValue(error.response.data.errors[0]);
-	  }
-	}
-  );
+// Async thunk for user login
+export const loginUser = createAsyncThunk(
+  "auth/loginUser",
+  async (values, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${url}/auth/login`, {
+        email: values.email,
+        password: values.password,
+      });
 
-    // Async thunk for user login
-    export const verifyAccount = createAsyncThunk(
-      "auth/verifyAccount",
-      async (values, { rejectWithValue }) => {
-        try {
-        const response = await axios.post(`${url}/auth/verify/:verificationCode`, {
-          email: values.email,
-          password: values.password,
-        });
+      const token = response.data.token;
+      localStorage.setItem("token", JSON.stringify(token));
+
+      // Use ShadCN Toast for success message
+      Toast.success(response.data.message);
+      return token;
+    } catch (error) {
+      console.error(error.response);
       
-        const token = response.data.token;
-        localStorage.setItem("token", JSON.stringify(token));
+      // Use ShadCN Toast for error message
+      Toast.error(error.response.data.errors[0] || "Login failed!");
+      return rejectWithValue(error.response.data.errors[0]);
+    }
+  }
+);
+
+// Async thunk for account verification (if applicable)
+export const verifyAccount = createAsyncThunk(
+  "auth/verifyAccount",
+  async (values, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${url}/auth/verify/:verificationCode`, {
+        email: values.email,
+        password: values.password,
+      });
+
+      const token = response.data.token;
+      localStorage.setItem("token", JSON.stringify(token));
+
+      // Use ShadCN Toast for success message
+      Toast.success(response.data.message);
+      return token;
+    } catch (error) {
+      console.error(error.response);
       
-        toast.success(response.data.message);
-        return token;
-        } catch (error) {
-        console.error(error.response);
-        toast.error(error.response.data.errors[0] || "Login failed!");
-        return rejectWithValue(error.response.data.errors[0]);
-        }
-      }
-      );
-  
+      // Use ShadCN Toast for error message
+      Toast.error(error.response.data.errors[0] || "Verification failed!");
+      return rejectWithValue(error.response.data.errors[0]);
+    }
+  }
+);
 
 // Auth slice
 const authSlice = createSlice({
@@ -131,7 +141,7 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.pending, (state) => {
-      return {...state, registerStatus: "pending"};
+        return { ...state, registerStatus: "pending" };
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         const userData = action.payload.userData;
@@ -142,7 +152,7 @@ const authSlice = createSlice({
             email: userData.email,
             name: userData.name,
             id: userData.id,
-            userType: userData.userType || "user",  // Default to "user" if not provided
+            userType: userData.userType || "user", // Default to "user" if not provided
             profilePic: userData.profilePic,
             verificationCode: userData.verificationCode,
             verified: userData.verified,
@@ -152,7 +162,6 @@ const authSlice = createSlice({
         return state;
       })
       .addCase(registerUser.rejected, (state, action) => {
-
         return {
           ...state,
           registerStatus: "rejected",
@@ -160,10 +169,9 @@ const authSlice = createSlice({
         };
       })
       .addCase(loginUser.pending, (state) => {
-       return  {...state, loginStatus: "pending"}
+        return { ...state, loginStatus: "pending" };
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-
         if (action.payload) {
           const user = jwtDecode(action.payload);
           return {
@@ -180,15 +188,12 @@ const authSlice = createSlice({
         return state;
       })
       .addCase(loginUser.rejected, (state, action) => {
-        console.log("action", action)
-
         return {
           ...state,
           loginStatus: "rejected",
           loginError: action.payload,
         };
-      })
-
+      });
   },
 });
 
