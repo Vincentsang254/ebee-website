@@ -35,7 +35,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Revenue Growth Chart */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
+      <div className="bg-white p-6 rounded-lg shadow-md motion-preset-slide-left">
         <h2 className="text-xl font-semibold mb-4">Revenue Growth</h2>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={analyticsData.revenueGrowth} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
