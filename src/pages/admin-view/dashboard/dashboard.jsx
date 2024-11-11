@@ -22,7 +22,7 @@ const AdminDashboard = () => {
       <h1 className="text-2xl font-bold">Admin Dashboard</h1>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 motion-preset-slide-right">
         {['users', 'orders', 'products'].map((stat) => (
           <div
             key={stat}
