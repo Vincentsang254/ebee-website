@@ -5,13 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { MdEdit, MdDelete, MdClose } from "react-icons/md"; // Import edit, delete, and close icons
 
-import { createProduct, fetchProducts, removeProduct } from '@/features/slices/productSlice';
+import { createProduct, fetchProducts, removeProduct, updateProduct } from '@/features/slices/productSlice';
 
 const AdminProducts = () => {
   const dispatch = useDispatch();
   const { list: products, status } = useSelector((state) => state.products);
 
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null); // Track if editing an existing product
   const [productName, setProductName] = useState('');
   const [productPrice, setProductPrice] = useState('');
   const [productDesc, setProductDesc] = useState('');
@@ -23,6 +24,16 @@ const AdminProducts = () => {
     const file = e.target.files[0];
     setProductImage(file);
     setImagePreview(URL.createObjectURL(file));
+  };
+
+  const resetForm = () => {
+    setProductName('');
+    setProductPrice('');
+    setProductDesc('');
+    setProductCategory('');
+    setProductImage(null);
+    setImagePreview(null);
+    setEditingProduct(null);
   };
 
   const handleSubmit = (e) => {
@@ -40,12 +51,18 @@ const AdminProducts = () => {
     formData.append('category', productCategory);
     formData.append('imageUrl', productImage);
 
-    dispatch(createProduct(formData));
+    if (editingProduct) {
+      dispatch(updateProduct({ id: editingProduct.id, updatedData: formData }));
+    } else {
+      dispatch(createProduct(formData));
+    }
+
     setDialogOpen(false);
+    resetForm();
   };
 
   const handleEditProduct = (product) => {
-    // Populate the form with product data for editing
+    setEditingProduct(product);
     setProductName(product.name);
     setProductPrice(product.price);
     setProductDesc(product.desc);
@@ -79,7 +96,10 @@ const AdminProducts = () => {
       <Button
         variant="primary"
         className="mb-4"
-        onClick={() => setDialogOpen(true)}
+        onClick={() => {
+          setDialogOpen(true);
+          resetForm();
+        }}
       >
         Add Product
       </Button>
@@ -88,7 +108,7 @@ const AdminProducts = () => {
       <Dialog open={isDialogOpen} onClose={() => setDialogOpen(false)}>
         <DialogContent className="w-96 p-6 overflow-y-auto">
           <DialogHeader className="flex justify-between items-center">
-            <DialogTitle>{productName ? 'Edit Product' : 'Add a New Product'}</DialogTitle>
+            <DialogTitle>{editingProduct ? 'Edit Product' : 'Add a New Product'}</DialogTitle>
             <MdClose
               className="text-gray-600 cursor-pointer"
               onClick={() => setDialogOpen(false)}
@@ -159,7 +179,7 @@ const AdminProducts = () => {
             </div>
             <DialogFooter className="mt-6 flex justify-end">
               <Button type="submit" variant="primary">
-                {productName ? 'Update Product' : 'Save Product'}
+                {editingProduct ? 'Update Product' : 'Save Product'}
               </Button>
             </DialogFooter>
           </form>

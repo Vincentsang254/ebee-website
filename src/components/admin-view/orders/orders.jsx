@@ -15,6 +15,7 @@ const sampleOrders = [
   { id: 2, customer: "Jane Smith", product: "Smartphone", status: "Completed", total: "$800", date: "2024-11-09" },
   { id: 3, customer: "Michael Brown", product: "Headphones", status: "Shipped", total: "$150", date: "2024-11-08" },
   { id: 4, customer: "Sarah White", product: "Monitor", status: "Cancelled", total: "$350", date: "2024-11-07" },
+  // Add more sample data as needed
 ];
 
 const AdminOrdersView = () => {
