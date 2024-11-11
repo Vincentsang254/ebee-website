@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { MdEdit, MdDelete, MdClose } from "react-icons/md"; // Import edit, delete, and close icons
+import { Skeleton } from "@/components/ui/skeleton"; // Import Shadcn Skeleton
 
 import { createProduct, fetchProducts, removeProduct, updateProduct } from '@/features/slices/productSlice';
 
@@ -82,7 +83,19 @@ const AdminProducts = () => {
   }, [dispatch]);
 
   if (status === "pending") {
-    return <div className="flex items-center justify-center min-h-screen">Loading products...</div>;
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-semibold mb-8 text-center">Our Products</h1>
+        <Button variant="secondary" className="mb-4">Add Product</Button>
+        
+        {/* Shadcn Skeleton Loader */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[...Array(4)].map((_, index) => (
+            <Skeleton key={index} className="w-full h-72 rounded-lg" />
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (status === "rejected") {
@@ -94,7 +107,7 @@ const AdminProducts = () => {
       <h1 className="text-3xl font-semibold mb-8 text-center">Our Products</h1>
 
       <Button
-        variant="primary"
+        variant="secondary"
         className="mb-4"
         onClick={() => {
           setDialogOpen(true);
@@ -186,7 +199,8 @@ const AdminProducts = () => {
         </DialogContent>
       </Dialog>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Display Products in 2 Columns */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {products?.map((product) => (
           <Card key={product.id} className="shadow-lg rounded-lg relative">
             <CardHeader>
