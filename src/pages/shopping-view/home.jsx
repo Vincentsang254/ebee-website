@@ -60,8 +60,8 @@ const ShoppingHome = () => {
             <Card key={product.id} className="bg-white shadow-lg rounded-lg">
               <CardHeader className="p-0">
                 <img
-                  src={product.image || '/placeholder.jpg'}
-                  alt={product.imageUrl}
+                  src={product.imageUrl || '/placeholder.jpg'}
+                  alt={product.name}
                   className="w-full h-48 object-cover rounded-t-lg"
                 />
               </CardHeader>
