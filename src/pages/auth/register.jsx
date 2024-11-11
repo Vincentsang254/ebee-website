@@ -146,7 +146,7 @@ const AuthRegister = () => {
 									<span className='spinner'>Loading...</span>
 								</Button>
 								) : (
-<Button type='submit' className='button w-full mt-4 motion-preset-blink'>
+<Button type='submit' className='button w-full mt-4 '>
 									Register
 								</Button>
 								)}

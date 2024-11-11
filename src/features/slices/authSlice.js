@@ -2,7 +2,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { setHeaders, url } from "./api";
-import { Toast } from "@/components/ui/toast"; // Import ShadCN Toast
+
+import { useToast } from "@/components/ui/use-toast";
 
 // Initial state for the auth slice
 const initialState = {
@@ -19,6 +20,9 @@ const initialState = {
   userLoaded: false,
 };
 
+
+const { toast } = useToast();
+
 // Async thunk for user registration
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
@@ -34,14 +38,20 @@ export const registerUser = createAsyncThunk(
       console.log("Response is:", response.data);  // For debugging
 
       // Use ShadCN Toast for success message
-      Toast.success(response.data.message);
+      toast({
+        title: response.data.message,
+      });
+   
 
       return { userData: response.data.data, message: response.data.message };
     } catch (error) {
       console.error(error.response.data.errors[0]);
       
       // Use ShadCN Toast for error message
-      Toast.error(error.response.data.errors[0] || "Registration failed!");
+  
+      toast({
+        title: error.response.data.errors[0] || "Registration failed!",
+      });
       return rejectWithValue(error.response.data.errors[0]);
     }
   }
@@ -61,13 +71,17 @@ export const loginUser = createAsyncThunk(
       localStorage.setItem("token", JSON.stringify(token));
 
       // Use ShadCN Toast for success message
-      Toast.success(response.data.message);
+      toast({
+        title: response.data.message,
+      });
       return token;
     } catch (error) {
       console.error(error.response);
       
       // Use ShadCN Toast for error message
-      Toast.error(error.response.data.errors[0] || "Login failed!");
+      toast({
+        title: error.response.data.errors[0] || "Login failed!",
+      });
       return rejectWithValue(error.response.data.errors[0]);
     }
   }
@@ -87,13 +101,17 @@ export const verifyAccount = createAsyncThunk(
       localStorage.setItem("token", JSON.stringify(token));
 
       // Use ShadCN Toast for success message
-      Toast.success(response.data.message);
+      toast({
+        title: response.data.message,
+      });
       return token;
     } catch (error) {
       console.error(error.response);
       
       // Use ShadCN Toast for error message
-      Toast.error(error.response.data.errors[0] || "Verification failed!");
+      toast({
+        title: error.response.data.errors[0] || "Verification failed!",
+      });
       return rejectWithValue(error.response.data.errors[0]);
     }
   }
