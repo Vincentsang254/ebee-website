@@ -2,16 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { MdEdit, MdDelete } from "react-icons/md"; // Import edit and delete icons
 
-import { createProduct, fetchProducts, deleteProduct } from '@/features/slices/productSlice'; // Add deleteProduct action if available
+import { createProduct, fetchProducts, removeProduct } from '@/features/slices/productSlice';
 
 const AdminProducts = () => {
   const dispatch = useDispatch();
   const { list: products, status } = useSelector((state) => state.products);
 
-  const [isSheetOpen, setSheetOpen] = useState(false);
+  const [isDialogOpen, setDialogOpen] = useState(false);
   const [productName, setProductName] = useState('');
   const [productPrice, setProductPrice] = useState('');
   const [productDesc, setProductDesc] = useState('');
@@ -41,7 +41,7 @@ const AdminProducts = () => {
     formData.append('imageUrl', productImage);
 
     dispatch(createProduct(formData));
-    setSheetOpen(false);
+    setDialogOpen(false);
   };
 
   const handleEditProduct = (product) => {
@@ -51,12 +51,12 @@ const AdminProducts = () => {
     setProductDesc(product.desc);
     setProductCategory(product.category);
     setImagePreview(product.imageUrl);
-    setSheetOpen(true);
+    setDialogOpen(true);
   };
 
   const handleDeleteProduct = (id) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
-      dispatch(deleteProduct(id));
+      dispatch(removeProduct(id));
     }
   };
 
@@ -79,16 +79,17 @@ const AdminProducts = () => {
       <Button
         variant="primary"
         className="mb-4"
-        onClick={() => setSheetOpen(true)}
+        onClick={() => setDialogOpen(true)}
       >
         Add Product
       </Button>
 
-      <Sheet open={isSheetOpen} onClose={() => setSheetOpen(false)}>
-        <SheetContent side="left" className="w-96 p-6 overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>{productName ? 'Edit Product' : 'Add a New Product'}</SheetTitle>
-          </SheetHeader>
+      {/* Dialog for Add/Edit Product */}
+      <Dialog open={isDialogOpen} onClose={() => setDialogOpen(false)}>
+        <DialogContent className="w-96 p-6 overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{productName ? 'Edit Product' : 'Add a New Product'}</DialogTitle>
+          </DialogHeader>
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 gap-4">
               <div>
@@ -151,16 +152,15 @@ const AdminProducts = () => {
                   </div>
                 )}
               </div>
-
-              <div className="mt-6 flex justify-end">
-                <Button type="submit" variant="primary">
-                  {productName ? 'Update Product' : 'Save Product'}
-                </Button>
-              </div>
             </div>
+            <DialogFooter className="mt-6 flex justify-end">
+              <Button type="submit" variant="primary">
+                {productName ? 'Update Product' : 'Save Product'}
+              </Button>
+            </DialogFooter>
           </form>
-        </SheetContent>
-      </Sheet>
+        </DialogContent>
+      </Dialog>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {products?.map((product) => (
