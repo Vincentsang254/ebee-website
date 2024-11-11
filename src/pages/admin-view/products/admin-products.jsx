@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { MdEdit, MdDelete } from "react-icons/md"; // Import edit and delete icons
+import { MdEdit, MdDelete, MdClose } from "react-icons/md"; // Import edit, delete, and close icons
 
 import { createProduct, fetchProducts, removeProduct } from '@/features/slices/productSlice';
 
@@ -87,8 +87,12 @@ const AdminProducts = () => {
       {/* Dialog for Add/Edit Product */}
       <Dialog open={isDialogOpen} onClose={() => setDialogOpen(false)}>
         <DialogContent className="w-96 p-6 overflow-y-auto">
-          <DialogHeader>
+          <DialogHeader className="flex justify-between items-center">
             <DialogTitle>{productName ? 'Edit Product' : 'Add a New Product'}</DialogTitle>
+            <MdClose
+              className="text-gray-600 cursor-pointer"
+              onClick={() => setDialogOpen(false)}
+            />
           </DialogHeader>
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 gap-4">
