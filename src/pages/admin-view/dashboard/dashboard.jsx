@@ -1,7 +1,9 @@
 import React from "react";
-import { motion } from "tailwindcss-motion";
+// Import necessary components from recharts
+import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
 
 const AdminDashboard = () => {
+  // Placeholder data for charts and stats
   const analyticsData = {
     users: 4500,
     orders: 1200,
@@ -19,19 +21,16 @@ const AdminDashboard = () => {
     <div className="p-4 space-y-8">
       <h1 className="text-2xl font-bold">Admin Dashboard</h1>
 
-      {/* Animated Statistics Cards */}
+      {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {['users', 'orders', 'products'].map((stat) => (
-          <motion.div
+          <div
             key={stat}
             className="bg-white p-4 rounded-lg shadow-md text-center"
-            initial={{ opacity: 0, transform: "translateX(100px)" }}
-            animate={{ opacity: 1, transform: "translateX(0)" }}
-            transition={{ duration: 0.5, delay: 0.2 }}
           >
             <h2 className="text-xl font-semibold">Total {stat.charAt(0).toUpperCase() + stat.slice(1)}</h2>
             <p className="text-3xl font-bold">{analyticsData[stat]}</p>
-          </motion.div>
+          </div>
         ))}
       </div>
 
