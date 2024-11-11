@@ -61,14 +61,14 @@ const ShoppingHome = () => {
               <CardHeader className="p-0">
                 <img
                   src={product.image || '/placeholder.jpg'}
-                  alt={product.name}
+                  alt={product.imageUrl}
                   className="w-full h-48 object-cover rounded-t-lg"
                 />
               </CardHeader>
               <CardContent className="p-4">
                 <CardTitle className="text-lg font-semibold">{product.name}</CardTitle>
                 <CardDescription className="text-gray-500 mb-2">{product.desc}</CardDescription>
-                <p className="text-xl font-bold text-gray-900">${product.price?.toFixed(2)}</p>
+                <p className="text-xl font-bold text-gray-900">${product.price}</p>
               </CardContent>
               <CardFooter className="p-4">
                 <Button className="w-full bg-blue-500 text-white hover:bg-blue-600">
