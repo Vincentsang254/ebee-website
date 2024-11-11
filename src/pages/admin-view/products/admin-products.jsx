@@ -199,36 +199,36 @@ const AdminProducts = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Display Products in 2 Columns on Mobile Screens */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products?.map((product) => (
-          <Card key={product.id} className="shadow-lg rounded-lg relative">
-            <CardHeader>
-              <CardTitle className="text-lg font-bold">{product.name}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <img
-                src={product.imageUrl}
-                alt={product.name}
-                className="w-full h-40 object-cover rounded-md mb-4"
-              />
-              <p className="text-gray-600">Price: ${product.price}</p>
-              <p className="text-gray-600">Description: {product.desc}</p>
-            </CardContent>
-            {/* Edit and Delete Icons */}
-            <div className="absolute top-2 right-2 flex space-x-2">
-              <MdEdit
-                className="text-blue-600 cursor-pointer"
-                onClick={() => handleEditProduct(product)}
-              />
-              <MdDelete
-                className="text-red-600 cursor-pointer"
-                onClick={() => handleDeleteProduct(product.id)}
-              />
-            </div>
-          </Card>
-        ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+  {products?.map((product) => (
+    <Card key={product.id} className="shadow-lg rounded-lg relative">
+      <CardHeader>
+        <CardTitle className="text-lg font-bold">{product.name}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <img
+          src={product.imageUrl}
+          alt={product.name}
+          className="w-full h-40 object-cover rounded-md mb-4"
+        />
+        <p className="text-gray-600">Price: ${product.price}</p>
+        <p className="text-gray-600">Description: {product.desc}</p>
+      </CardContent>
+      {/* Edit and Delete Icons */}
+      <div className="absolute top-2 right-2 flex space-x-2">
+        <MdEdit
+          className="text-blue-600 cursor-pointer"
+          onClick={() => handleEditProduct(product)}
+        />
+        <MdDelete
+          className="text-red-600 cursor-pointer"
+          onClick={() => handleDeleteProduct(product.id)}
+        />
       </div>
+    </Card>
+  ))}
+</div>
+
     </div>
   );
 };
