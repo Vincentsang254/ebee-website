@@ -14,6 +14,7 @@ const hardcodedMenuItems = [
   { id: "home", label: "Home", path: "/shop/home" },
   { id: "products", label: "Products", path: "/shop/products" },
   { id: "about", label: "About", path: "/shop/about" },
+  { id: "profile", label: "Profile", path: "/shop/account" },
 ];
 
 function MenuItems() {
