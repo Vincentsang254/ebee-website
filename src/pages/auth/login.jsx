@@ -101,7 +101,7 @@ const AuthLogin = () => {
 									<span className='spinner'>Loading...</span>
 								</Button>
 							) : (
-								<Button type='submit' className='button w-full mt-4'>
+								<Button type='submit' className='button w-full mt-4 motion-preset-blink'>
 									Login
 								</Button>
 							)}
