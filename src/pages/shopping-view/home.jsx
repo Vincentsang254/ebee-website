@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts } from './path/to/your/productsSlice';
+
 import {
   Card,
   CardContent,
@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton"; // Import ShadCN Skeleton component
+import { fetchProducts } from '@/features/slices/productSlice';
 
 // Skeleton loader for product cards using ShadCN
 const ProductSkeleton = () => (
