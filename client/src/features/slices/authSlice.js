@@ -142,7 +142,7 @@ const authSlice = createSlice({
             email: userData.email,
             name: userData.name,
             id: userData.id,
-            userType: userData.userType || "user",  // Default to "user" if not provided
+            userType: userData.userType,
             profilePic: userData.profilePic,
             verificationCode: userData.verificationCode,
             verified: userData.verified,
@@ -192,6 +192,5 @@ const authSlice = createSlice({
   },
 });
 
-// Exporting actions and reducer
 export const { loadUser, logoutUser } = authSlice.actions;
 export default authSlice.reducer;
