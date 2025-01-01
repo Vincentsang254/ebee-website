@@ -3,7 +3,11 @@ import jwt from "jsonwebtoken";
 import bcryptjs from "bcryptjs";
 import Users from "../models/Users.js"; // Ensure you use .js extension for ES modules
 import generateOtp from "../utils/otpGenerator.js";
-import { sendVerificationEmail, sendPasswordResetEmail, sendResetSuccessEmail, sendWelcomeEmail } from "../mailtrap/emails.js";
+import {
+  sendPasswordResetEmail,
+  sendResetSuccessEmail,
+  sendWelcomeEmail,
+  sendVerificationEmail } from "../brevo/email.brevo.js";
 
 // Signup function
 export const signup = async (req, res) => {
@@ -46,7 +50,7 @@ export const signup = async (req, res) => {
     });
 
     // Send a verification email
-    // await sendVerificationEmail(email, verificationCode);
+    await sendVerificationEmail(email, verificationCode);
 
     res.status(201).json({
       status: 201,
@@ -105,133 +109,104 @@ export const login = async (req, res) => {
   }
 };
 
-// Send verification code function
-export const sendVerificationCode = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    const user = await Users.findOne({ where: { email } });
-
-    if (!user) {
-      return res.status(404).json({ status: 400, errors: ["User not found"] });
-    }
-
-    const verificationCode = generateOtp();
-    user.verificationCode = verificationCode;
-    await user.save();
-
-    await sendVerificationEmail(email, verificationCode);
-
-    res.status(200).json({ status: 200, message: "Verification code sent successfully" });
-  } catch (error) {
-    res.status(500).json({ status: 500, errors: error.message });
-  }
-};
-
-// Verification account function
-export const verificationAccount = async (req, res) => {
-  try {
-    const { email, verificationCode } = req.body;
-
-    const user = await Users.findOne({ where: { email } });
-
-    if (!user) {
-      return res.status(404).json({ status: 400, errors: ["User not found"] });
-    }
-
-    if (user.verificationCode !== verificationCode) {
-      return res.status(400).json({ status: 400, errors: ["Invalid Code"] });
-    }
-
-    user.verificationCode = "";
-    user.verified = true;
-
-    await user.save();
-    await sendWelcomeEmail(email);
-
-    res.status(200).json({ status: 200, message: "User is verified" });
-  } catch (error) {
-    res.status(500).json({ status: 500, errors: error.message });
-  }
-};
-
-// Forgot password function
 export const forgotPassword = async (req, res) => {
-  try {
-    const { email } = req.body;
+	try {
+		const { email } = req.body;
 
-    const user = await Users.findOne({ where: { email } });
+		// Find the user by email
+		const user = await Users.findOne({ where: { email } });
 
-    if (!user) {
-      return res.status(404).json({ status: 400, errors: ["User not found"] });
-    }
+		if (!user) {
+			return res.status(404).json({ status: false, message: "User not found" });
+		}
 
-    const verificationCode = generateOtp();
-    user.verificationCode = verificationCode;
-    await user.save();
+		// Generate a reset token using crypto
+		const resetToken = CryptoJS.lib.WordArray.random(20).toString(CryptoJS.enc.Hex);
+		const resetTokenExpires = Date.now() + 3600000; // Token expires in 1 hour
+	
+		// Save the reset token and expiration time to the user's record
+		user.resetToken = resetToken;
+		user.resetTokenExpires = resetTokenExpires;
+		await user.save();
 
-    await sendPasswordResetEmail(email, verificationCode);
+	
 
-    res.status(200).json({ message: "Verification code sent successfully" });
-  } catch (error) {
-    res.status(500).json({ status: 500, errors: error.message });
-  }
+		// Send an email to the user with the reset link
+		const resetLink = `https://monster-client.onrender.com/auth/reset-password/${resetToken}`
+		// const resetLink = `https://yourapp.com/reset-password?token=${resetToken}`;
+
+		sendPasswordResetEmail(email, resetLink)
+
+		res.status(200).json({ status: true, message: "Password reset link sent successfully" });
+	} catch (error) {
+		res.status(500).json({ status: false, message: error.message });
+	}
+		
 };
 
-// Change password function
+export const verifyAccount = async (req, res) => {
+    try {
+        const { verificationCode } = req.body;
+
+        const user = await Users.findOne({ where: { verificationCode } });
+        if (!user) {
+            return res.status(400).json({ message: "Invalid or expired verification code" });
+        }
+
+        if (user.verificationCodeExpiresAt < Date.now()) {
+            return res.status(400).json({ message: "Verification code has expired" });
+        }
+
+        user.verified = true;
+        user.verificationCode = null;
+        user.verificationCodeExpiresAt = null;
+        await user.save();
+
+		await sendWelcomeEmail(user.email, user.name)
+
+        res.status(200).json({ message: "Account successfully verified" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export const changePassword = async (req, res) => {
-  try {
-    const { email, newPassword, verificationCode } = req.body;
+	try {
+		const token = req.params.token
+		const password = req.body.password
 
-    const user = await Users.findOne({ where: { email } });
+		// Check if newPassword is provided
+		if (!password) {
+			return res.status(400).json({ status: false, message: "New password is required" });
+		}
 
-    if (!user) {
-      return res.status(400).json({ status: 400, errors: ["User not found"] });
-    }
+		// Find the user by reset token
+		const user = await Users.findOne({ where: { resetToken: token } });
 
-    if (user.verificationCode !== verificationCode) {
-      return res.status(400).json({ status: 400, errors: ["Invalid verification code"] });
-    }
+		if (!user) {
+			return res.status(400).json({ status: false, message: "Invalid reset token" });
+		}
 
-    const hashedPassword = await bcryptjs.hash(newPassword, 10);
-    user.password = hashedPassword;
-    user.verificationCode = ""; // Clear verification code
-    await user.save();
+		// Check if the reset token has expired
+		if (!user.resetTokenExpires || user.resetTokenExpires < Date.now()) {
+			return res.status(400).json({ status: false, message: "Reset token has expired" });
+		}
 
-    await sendResetSuccessEmail(email);
+		// Hash the new password
+		const hashedPassword = await bcryptjs.hash(password, 10);
 
-    res.status(200).json({ status: 200, message: "Password changed successfully" });
-  } catch (error) {
-    res.status(500).json({ status: 500, errors: error.message });
-  }
-};
+		// Update the user's password
+		user.password = hashedPassword;
+		user.resetToken = null; // Remove reset token after successful password change
+		user.resetTokenExpires = null; // Remove token expiration
+		await user.save();
 
-// Verify code function
-export const verifyCode = async (req, res) => {
-  try {
-    const { email, code } = req.body;
-    const user = await Users.findOne({ where: { email } });
+		await sendResetSuccessEmail(user.email)
 
-    if (!user) {
-      return res.status(400).json({ status: 400, errors: ["User not found"] });
-    }
-
-    if (user.verificationCode !== code) {
-      return res.status(400).json({ status: 400, errors: ["Invalid verification code"] });
-    }
-
-    if (user.verificationCodeExpires < Date.now()) {
-      return res.status(400).json({ status: 400, errors: ["Verification code has expired"] });
-    }
-
-    user.verificationCode = ""; // Clear the verification code
-    user.verified = true; // Mark as verified
-    await user.save();
-
-    res.status(200).json({ status: 200, message: "User verified successfully" });
-  } catch (error) {
-    res.status(500).json({ status: 500, errors: error.message });
-  }
+		res.status(200).json({ status: true, message: "Password reset successfully" });
+	} catch (error) {
+		res.status(500).json({ status: false, message: error.message });
+	}
 };
 
 

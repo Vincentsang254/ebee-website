@@ -91,23 +91,22 @@ export const sendResetSuccessEmail = async (email) => {
     }
 };
 
-// Updated sendNotificationEmail function with customizable subject and message
-export const sendNotificationEmail = async (email, subject, message) => {
-    const recipient = email;
-
+export const sendNotificationEmail = async (email, subject, userData) => {
+    const personalizedTemplate = personalizeEmailTemplate(NOTIFICATION_EMAIL_TEMPLATE, userData);
+  
     try {
-        const response = await transporter.sendMail({
-            from: sender,
-            to: recipient,
-            subject: subject,
-            html: message,
-            category: "Notification",
-        });
-
-        console.log("Notification email sent successfully", response);
+      const response = await transporter.sendMail({
+        from: process.env.EMAIL_USER, // Sender email
+        to: email, // Recipient email
+        subject: subject,
+        html: personalizedTemplate, // Use the personalized template
+        category: 'Notification',
+      });
+  
+      console.log("Notification email sent successfully", response);
     } catch (error) {
-        console.error(`Error sending notification email`, error);
-        throw new Error(`Error sending notification email: ${error}`);
+      console.error("Error sending notification email", error);
+      throw new Error(`Error sending notification email: ${error.message}`);
     }
-};
+  };
 

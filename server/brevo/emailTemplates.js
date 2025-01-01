@@ -294,3 +294,60 @@ export const WELCOME_EMAIL_TEMPLATE = `
 </body>
 </html>
 `
+export const NOTIFICATION_EMAIL_TEMPLATE = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome Email</title>
+  <style>
+    * {
+      
+      box-sizing: border-box;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #ffffff;
+      box-shadow: 0 0 10px 2px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      padding: 20px;
+
+    }
+    .header {
+      
+      text-align: center;
+      margin-bottom: 20px;
+
+    }
+    .content {
+      font-size: 16px;
+      line-height: 1.5;
+      color: #333;
+    }
+    .footer {
+      font-size: 12px;
+      text-align: center;
+      color: #777;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Order placed successfully!</h1>
+    </div>
+    <div class="content">
+      <p>Dear {{name}},</p>
+      <p>Thank you for your order! We're excited to have you on board.</p>
+    </div>
+    <div class="footer">
+      <p>Best regards,</p>
+      <p>Team Ebee</p>
+    </div>
+  </div>
+</body>
+</html>
+`
