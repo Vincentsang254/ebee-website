@@ -6,7 +6,8 @@ import Payments from "../models/Payment.js";
 import cron from "node-cron";
 import { Op } from "sequelize";
 
-const generateDarajaToken = async (req, res, next) => {
+
+export const generateDarajaToken = async (req, res, next) => {
 	try {
 		const consumer = "mJBID5vnbx55DAODHtaHn8z0c37NoT8lQAZTTc1eYKd79WLW";
 		const secret =
@@ -38,7 +39,7 @@ const generateDarajaToken = async (req, res, next) => {
 	}
 };
 // Function to initiate STK Push
-const initiateSTKPush = async (req, res) => {
+export const initiateSTKPush = async (req, res) => {
 	try {
 		// const phone = req.body.phone;
 		// const amount = req.body.amount;
@@ -66,7 +67,7 @@ const initiateSTKPush = async (req, res) => {
 				PartyA: phone,
 				PartyB: shortcode,
 				PhoneNumber: phone,
-				CallBackURL: "https://monster-client.onrender.com/api/payment/sang2222",
+				CallBackURL: "https://ebee-web.onrender.com/api/payment/process-callback",
 				AccountReference: phone,
 				TransactionDesc: "Payment for goods/services",
 			},
@@ -87,102 +88,97 @@ const initiateSTKPush = async (req, res) => {
 	}
 };
 
-// Function to process callback
-const processCallback = async (req, res) => {
-	try {
-		const callbackData = req.body;
 
-		if (!callbackData.Body.stkCallback.CallbackMetadata) {
-			return res
-				.status(200)
-				.json({status: true, message: "Callback received successfully." });
-		}
+export const processCallback = async (req, res) => {
+  try {
+    const callbackData = req.body;
 
-		const items = callbackData.Body.stkCallback.CallbackMetadata.Item;
-		const paymentNumber = items[4]?.Value;
-		const amount = items[0]?.Value;
-		const trnx_id = items[1]?.Value;
-		const trnx_date = moment(items[3]?.Value).format("YYYY-MM-DD HH:mm:ss");
+    // Check if the callback data contains the necessary metadata
+    if (!callbackData.Body.stkCallback.CallbackMetadata) {
+      return res.status(200).json({ status: true, message: "Callback received successfully." });
+    }
 
-		// // Fetch user based on payment number
-		// let currentUser = await Users.findOne({
-		// 	where: { phoneNumber: paymentNumber },
-		// });
+    const items = callbackData.Body.stkCallback.CallbackMetadata.Item;
+    const paymentNumber = items[4]?.Value;  // The phone number of the payer
+    const amount = items[0]?.Value;         // Amount paid
+    const trnx_id = items[1]?.Value;        // Transaction ID
+    const trnx_date = moment(items[3]?.Value).format("YYYY-MM-DD HH:mm:ss"); // Transaction date
 
-		let currentUser = req.user
+    // Fetch user based on payment number
+    const currentUser = await Users.findOne({
+      where: { phoneNumber: paymentNumber }
+    });
 
-		console.table({
-			"Logged in user": currentUser
-		});
+    if (!currentUser) {
+      return res.status(404).json({
+        status: false,
+        message: "User not found for the payment number",
+      });
+    }
 
-		if (!currentUser) {
-			return res.status(404).json({
-				status: false,
-				message: "User not found for the payment number",
-			});
-		}
+    // Update user details based on the amount paid
+    let newUserType = currentUser.userType;
+    let accessExpiration = currentUser.accessExpiration;
 
-		// Update user details based on the amount paid
-		if (amount == 1) {
-			currentUser.userType = "vipOne";
-			currentUser.accessExpiration = new Date(
-				Date.now() + 3 * 24 * 60 * 60 * 1000
-			);
-		} else if (amount == 2) {
-			currentUser.userType = "vipTwo";
-			currentUser.accessExpiration = new Date(
-				Date.now() + 7 * 24 * 60 * 60 * 1000
-			);
-		} else if (amount == 3) {
-			currentUser.userType = "vipThree";
-			currentUser.accessExpiration = new Date(
-				Date.now() + 30 * 24 * 60 * 60 * 1000
-			);
-		}
+    if (amount == 1) {
+      newUserType = "vipOne";
+      accessExpiration = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000); // 3 days
+    } else if (amount == 2) {
+      newUserType = "vipTwo";
+      accessExpiration = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+    } else if (amount == 3) {
+      newUserType = "vipThree";
+      accessExpiration = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+    }
 
-		// Save additional transaction details
-		const userUpdateData = {
-			phone: paymentNumber,
-			userType: currentUser.userType,
-			accessExpiration: currentUser.accessExpiration,
-			amount: amount,
-			transactionId: trnx_id,
-			transactionDate: trnx_date,
-		};
-	    await currentUser.update(userUpdateData);
+    // Save the updated user data
+    await currentUser.update({
+      userType: newUserType,
+      accessExpiration,
+    });
 
+    // Save payment details in the Payments table
+    const paymentData = {
+      phone: paymentNumber,
+      amount: amount.toString(),
+      trnx_id: trnx_id,
+      userId: currentUser.id,
+      orderId: null, // Assuming the order ID is unknown for now, or could be linked if applicable
+    };
+    await Payments.create(paymentData);
 
-		res.status(200).json({
-			status: true,
-			message: "User data updated successfully",
-		});
+    // Send response to confirm the processing
+    res.status(200).json({
+      status: true,
+      message: "User data and payment details updated successfully",
+    });
 
-		// Schedule a job to run every minute and check for expired users
-cron.schedule("* * * * *", async () => {
-	try {
-	  const expiredUsers = await Users.findAll({
-		where: {
-		  accessExpiration: { [Op.lte]: new Date() },
-		},
-	  });
-  
-	  for (const user of expiredUsers) {
-		await Users.update(
-		  { userType: "client" },
-		  { where: { id: user.id } }
-		);
-		console.log(`User ${user.id} has been reset to 'client'.`);
-	  }
-	} catch (error) {
-	  res.status(500).json({ status: false, message: error.message });
-	}
-  });
+    // Schedule a job to run every minute and check for expired users
+    cron.schedule("* * * * *", async () => {
+      try {
+        const expiredUsers = await Users.findAll({
+          where: {
+            accessExpiration: { [Op.lte]: new Date() },
+          },
+        });
 
-	} catch (error) {
-		res.status(500).json({ status: false, message: error.message });
-	}
+        for (const user of expiredUsers) {
+          await Users.update(
+            { userType: "client" },
+            { where: { id: user.id } }
+          );
+          console.log(`User ${user.id} has been reset to 'client'.`);
+        }
+      } catch (error) {
+        console.error("Error checking expired users:", error.message);
+      }
+    });
+
+  } catch (error) {
+    console.error("Error processing callback:", error.message);
+    res.status(500).json({ status: false, message: error.message });
+  }
 };
 
-export { generateDarajaToken, processCallback, initiateSTKPush };
 
 
