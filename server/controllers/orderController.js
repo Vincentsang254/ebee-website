@@ -1,10 +1,10 @@
 /** @format */
 
 import Orders from "../models/Order.js";
-import Notifications from "../models/Notifications.js";
 
 import createNotification from "../utils/createNotifications.js";
 import { sendNotificationEmail } from "../brevo/email.brevo.js";
+import Notifications from "../models/Notification.js";
 
 export const createOrders = async (req, res) => {
 	const { totalPrice, orderItems, paymentMethod, userAddressId } = req.body;
