@@ -1,6 +1,6 @@
 /** @format */
 
-import Images from "../models/Images.js"; // Import the Images model
+import Images from "../models/Image.js"; // Import the Images model
 import multer from "multer";
 import path from "path";
 import fs from "fs";
