@@ -1,12 +1,15 @@
 import fs from 'fs';
 import path from 'path';
-import { Sequelize, DataTypes } from 'sequelize';
 import process from 'process';
 import { fileURLToPath } from 'url';
 import config from '../config/db.js';  // Ensure correct relative path
 
+import pkg from 'sequelize';
+
+const { Sequelize, DataTypes } = pkg;
+
 // Get the current file's URL and convert it to a path
-const __filename = new URL('', import.meta.url).pathname;
+const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);  // Fix for __dirname in ES modules
 
 // Log the directory to check if it's correct
@@ -30,33 +33,37 @@ export const sequelize = new Sequelize(sequelizeConfig.database, sequelizeConfig
 
 const db = {};
 
-// Reading all model files and dynamically importing them
-fs.readdirSync(__dirname)  // Correctly using __dirname here
-  .filter((file) => {
-    return (
-      file.indexOf('.') !== 0 &&       // Exclude hidden files
-      file !== path.basename(__filename) && // Exclude the current file
-      file.slice(-3) === '.js' &&     // Only JavaScript files
-      file.indexOf('.test.js') === -1 // Exclude test files
-    );
-  })
-  .forEach((file) => {
-    import(path.join(__dirname, file))  // Dynamically import models
-      .then((module) => {
-        const model = module.default(sequelize, DataTypes);  // Initialize the model
-        db[model.name] = model;  // Add the model to the db object
-      })
-      .catch((err) => {
-        console.error('Error loading model:', err);
-      });
-});
+// Function to load models asynchronously
+const loadModels = async () => {
+  try {
+    const files = fs.readdirSync(__dirname);  // Correctly using __dirname here
 
-// Set up associations after all models have been loaded
-Object.keys(db).forEach((modelName) => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);  // Set up associations if they exist
+    for (const file of files) {
+      if (
+        file.indexOf('.') !== 0 &&           // Exclude hidden files
+        file !== path.basename(__filename) && // Exclude the current file
+        file.slice(-3) === '.js' &&          // Only JavaScript files
+        file.indexOf('.test.js') === -1      // Exclude test files
+      ) {
+        const model = await import(path.join(__dirname, file));  // Dynamically import models
+        const initializedModel = model.default(sequelize, DataTypes);  // Initialize the model
+        db[initializedModel.name] = initializedModel;  // Add the model to the db object
+      }
+    }
+
+    // Set up associations after all models have been loaded
+    Object.keys(db).forEach((modelName) => {
+      if (db[modelName].associate) {
+        db[modelName].associate(db);  // Set up associations if they exist
+      }
+    });
+  } catch (err) {
+    console.error('Error loading models:', err);
   }
-});
+};
+
+// Call the function to load models
+loadModels();
 
 // Add Sequelize and Sequelize instance to db for access in other parts of the application
 db.sequelize = sequelize;
