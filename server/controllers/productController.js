@@ -1,6 +1,6 @@
 import Sequelize from "sequelize";
-import cloudinary from "../utils/cloudinary";
-import { uploadImage, deleteImage } from "../utils/imageUtils";
+import cloudinary from "../utils/cloudinary.js";
+// import { uploadImage, deleteImage } from "../utils/imageUtils";
 import Products from "../models/Products.js";
 import Ratings from "../models/Ratings.js";
 import Users from "../models/Users.js";
@@ -13,7 +13,7 @@ export const createProducts = async (req, res) => {
         // Validate the input
         if (!name || !desc || !price || !category) {
             return res.status(400).json({
-                status: 400,
+                status: false,
                 message: "All fields (name, desc, price, category) are required",
             });
         }
@@ -21,7 +21,7 @@ export const createProducts = async (req, res) => {
         // Check if the image is uploaded
         if (!req.file) {
             return res.status(400).json({
-                status: 400,
+                status: false,
                 message: "An image is required",
             });
         }
@@ -46,7 +46,7 @@ export const createProducts = async (req, res) => {
         });
     } catch (error) {
         console.error("Error creating product:", error);
-        res.status(500).json({ status: 500, message: error.message });
+        res.status(500).json({ status: false, message: error.message });
     }
 };
 
@@ -71,11 +71,11 @@ export const deleteProducts = async (req, res) => {
 
                 if (cloudinaryResponse.result !== "ok") {
                     console.error("Cloudinary image deletion failed:", cloudinaryResponse);
-                    return res.status(500).json({ status: 500, message: "Error deleting image from Cloudinary" });
+                    return res.status(500).json({ status: false, message: "Error deleting image from Cloudinary" });
                 }
             } catch (cloudinaryError) {
                 console.error("Error deleting image from Cloudinary:", cloudinaryError.message);
-                return res.status(500).json({ status: 500, message: "Error deleting image from Cloudinary" });
+                return res.status(500).json({ status: false, message: "Error deleting image from Cloudinary" });
             }
         }
 
@@ -85,7 +85,7 @@ export const deleteProducts = async (req, res) => {
         res.status(204).send(); // No Content for successful deletion
     } catch (error) {
         console.error("Error deleting product:", error.message);
-        res.status(500).json({ status: 500, message: error.message });
+        res.status(500).json({ status: false, message: error.message });
     }
 };
 
@@ -131,10 +131,10 @@ export const updateProducts = async (req, res) => {
             { where: { id: productId } }
         );
 
-        res.status(200).json({ status: 200, message: "Product updated successfully" });
+        res.status(200).json({ status: true, message: "Product updated successfully" });
     } catch (error) {
         console.error("Error updating product:", error.message);
-        res.status(500).json({ status: 500, message: error.message });
+        res.status(500).json({ status: false, message: error.message });
     }
 };
 
@@ -177,10 +177,10 @@ export const getProducts = async (req, res) => {
             })),
         };
 
-        res.status(200).json({ success: true, data: formattedResponse });
+        res.status(200).json({ status: true, data: formattedResponse });
     } catch (error) {
         console.error("Error fetching products:", error);
-        res.status(500).json({ status: 500, message: error.message });
+        res.status(500).json({ status: false, message: error.message });
     }
 };
 
@@ -204,13 +204,13 @@ export const getProductById = async (req, res) => {
         });
 
         if (!product) {
-            return res.status(404).json({ status: 404, message: "No product found" });
+            return res.status(404).json({ status: false, message: "No product found" });
         }
 
-        res.status(200).json({ status: 200, data: product });
+        res.status(200).json({ status: true, data: product });
     } catch (error) {
         console.error("Error fetching product by ID:", error);
-        res.status(500).json({ status: 500, message: error.message });
+        res.status(500).json({ status: false, message: error.message });
     }
 };
 
@@ -241,12 +241,12 @@ export const searchProductsByName = async (req, res) => {
         });
 
         if (products.length === 0) {
-            return res.status(404).json({ status: 404, message: "No products found matching the search criteria" });
+            return res.status(404).json({ status: false, message: "No products found matching the search criteria" });
         }
 
-        res.status(200).json({ status: 200, data: products });
+        res.status(200).json({ status: true, data: products });
     } catch (error) {
         console.error("Error searching products:", error);
-        res.status(500).json({ status: 500, message: error.message });
+        res.status(500).json({ status: false, message: error.message });
     }
 };

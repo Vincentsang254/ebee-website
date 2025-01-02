@@ -10,9 +10,9 @@ export const getNotifications = async (req, res) => {
 			order: [["createdAt", "DESC"]], // Sort by latest first
 		});
 
-		res.status(200).json({ status: 200, data: notifications });
+		res.status(200).json({ status: true, data: notifications });
 	} catch (error) {
-		res.status(500).json({ status: 500, errors: error.message });
+		res.status(500).json({ status: false, message: error.message });
 	}
 };
 
@@ -22,24 +22,24 @@ export const markAsRead = async (req, res) => {
 		const notification = await Notifications.findByPk(notificationId);
 
 		if (!notification) {
-			return res.status(404).json({ message: "Notification not found" });
+			return res.status(404).json({status: false, message: "Notification not found" });
 		}
 
 		notification.is_read = true;
 		await notification.save();
 
-		res.status(200).json({ message: "Notification marked as read" });
+		res.status(200).json({status: true, message: "Notification marked as read" });
 	} catch (error) {
-		res.status(500).json({ message: error.message });
+		res.status(500).json({status: false, message: error.message });
 	}
 };
 
 export const getNots = async (req, res) => {
 	try {
 		const notifications = await Notifications.findAll();
-		res.status(200).json(notifications);
+		res.status(200).json({status: false, data: notifications});
 	} catch (error) {
-		res.status(500).json({ message: error.message });
+		res.status(500).json({status: false, message: error.message });
 	}
 };
 

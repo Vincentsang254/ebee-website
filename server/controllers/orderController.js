@@ -4,6 +4,7 @@ import Orders from "../models/Order.js";
 import Notifications from "../models/Notifications.js";
 
 import createNotification from "../utils/createNotifications.js";
+import { sendNotificationEmail } from "../brevo/email.brevo.js";
 
 export const createOrders = async (req, res) => {
 	const { totalPrice, orderItems, paymentMethod, userAddressId } = req.body;
@@ -11,7 +12,7 @@ export const createOrders = async (req, res) => {
 
 	// Validate required fields
 	if (!totalPrice || !orderItems || !Array.isArray(orderItems) || orderItems.length === 0 || !paymentMethod || !userId || !userAddressId) {
-		return res.status(400).json({ status: 400, errors: ["Missing or invalid required fields"] });
+		return res.status(400).json({ status: false, message: "Missing or invalid required fields" });
 	}
 
 	try {
@@ -33,13 +34,14 @@ export const createOrders = async (req, res) => {
 		});
 
 		// Send email notification
+		const userName = req.user.name; // Assuming req.user contains an object with a name property
 		const userEmail = req.user.email; // Assuming req.user contains an object with an email property
-		await sendNotificationEmail(userEmail, "Order Confirmation", notificationContent);
+		await sendNotificationEmail(userEmail, userName , "Order Confirmation", notificationContent);
 
-		res.status(200).json({ status: 200, data: order });
+		res.status(200).json({ status: true, data: order });
 	} catch (error) {
 		console.error(`Order creation failed: ${error}`);
-		res.status(500).json({ status: 500, errors: ["Order creation failed, please try again later."] });
+		res.status(500).json({ status: false, message: "Order creation failed, please try again later." });
 	}
 };
 
@@ -52,7 +54,7 @@ export const deleteOrders = async (req, res) => {
 		if (!deletedOrder) {
 			return res.status(404).json({
 				status: false,
-				error: `Order with ID ${orderId} not found`,
+				message: `Order with ID ${orderId} not found`,
 			});
 		}
 
@@ -66,9 +68,9 @@ export const deleteOrders = async (req, res) => {
 			notificationContent
 		);
 
-		res.status(201).json("Order deleted");
+		res.status(201).json({status: true, message: "Order deleted successfully"});
 	} catch (error) {
-		res.status(500).json({ status: false, error: error.message });
+		res.status(500).json({ status: false, message: error.message });
 	}
 };
 
@@ -77,7 +79,7 @@ export const updateOrders = async (req, res) => {
 	const userId = 1; // Make sure req.user contains the authenticated user's info
 
 	if (!userId) {
-		return res.status(401).json({ status: false, error: "Unauthorized" });
+		return res.status(401).json({ status: false, message: "Unauthorized, please login" });
 	}
 
 	try {
@@ -102,11 +104,11 @@ export const updateOrders = async (req, res) => {
 		} else {
 			res
 				.status(404)
-				.json({ status: false, error: `Order with ID ${orderId} not found` });
+				.json({ status: false, message: `Order with ID ${orderId} not found` });
 		}
 	} catch (error) {
 		console.error("Error updating order:", error);
-		res.status(500).json({ status: false, error: error.message });
+		res.status(500).json({ status: false, message: error.message });
 	}
 };
 
@@ -115,7 +117,7 @@ export const getOrders = async (req, res) => {
 		const orders = await Orders.findAll();
 		res.status(200).json({ status: true, data: orders });
 	} catch (error) {
-		res.status(500).json({ status: false, error: error.message });
+		res.status(500).json({ status: false, message: error.message });
 	}
 };
 
@@ -131,7 +133,7 @@ export const getOrder = async (req, res) => {
 				.json({ status: false, error: `Order with ID ${orderId} not found` });
 		}
 	} catch (error) {
-		res.status(500).json({ status: false, error: error.message });
+		res.status(500).json({ status: false, message: error.message });
 	}
 };
 

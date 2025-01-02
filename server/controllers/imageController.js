@@ -45,14 +45,14 @@ export const imageUpload = async (req, res) => {
 			console.error("Multer Error:", err.message);
 			return res
 				.status(400)
-				.json({ multerError: "Multer Error", error: err.message });
+				.json({ multerError: "Multer Error", message: err.message });
 		} else if (err) {
 			console.error("Error:", err);
-			return res.status(400).json({ error: err });
+			return res.status(400).json({ status: false,message: err });
 		}
 
 		if (!req.file) {
-			return res.status(400).json({ error: "No file uploaded" });
+			return res.status(400).json({status: false, message: "No file uploaded" });
 		}
 
 		const imageUrl = req.file.path;
@@ -62,10 +62,10 @@ export const imageUpload = async (req, res) => {
 			await Images.create({ imageUrl });
 			res
 				.status(201)
-				.json({ message: "Image uploaded and saved successfully" });
+				.json({status: true, message: "Image uploaded and saved successfully" });
 		} catch (error) {
 			console.error("Database Error:", error.message);
-			res.status(500).json({ status: false, ErrorMessage: error.message });
+			res.status(500).json({ status: false, message: error.message });
 		}
 	});
 };

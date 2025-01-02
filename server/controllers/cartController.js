@@ -14,7 +14,7 @@ export const addProductToCart = async (req, res) => {
 		const product = await Products.findByPk(productId);
 
 		if (!product) {
-			return res.status(404).json({ message: "Product not found" });
+			return res.status(404).json({status: false, message: "Product not found" });
 		}
 
 		if (cart) {
@@ -33,7 +33,7 @@ export const addProductToCart = async (req, res) => {
 
 		res.status(200).json(cart);
 	} catch (error) {
-		res.status(500).json({ status: 500, errors: error.message });
+		res.status(500).json({ status: false, message: error.message });
 	}
 };
 
@@ -44,7 +44,7 @@ export const getCartCount = async (req, res) => {
 		const count = await Carts.count({ where: { userId } });
 		res.status(200).json({ status: true, count });
 	} catch (error) {
-		res.status(500).json({ status: false, error: error.message });
+		res.status(500).json({ status: false, message: error.message });
 	}
 };
 
@@ -55,14 +55,14 @@ export const removeItemFromCart = async (req, res) => {
 		const cart = await Carts.findByPk(cartId);
 
 		if (!cart) {
-			return res.status(404).json({ message: "Cart item not found" });
+			return res.status(404).json({status: false, message: "Cart item not found" });
 		}
 
 		await cart.destroy();
 
-		res.json({ message: `Cart id ${cartId} removed successfully` });
+		res.json({status: true, message: `Cart id ${cartId} removed successfully` });
 	} catch (error) {
-		res.status(500).json({ status: 500, error: error.message });
+		res.status(500).json({ status: false, message: error.message });
 	}
 };
 
@@ -73,7 +73,7 @@ export const decreaseProductQuantity = async (req, res) => {
 		const cart = await Carts.findByPk(cartId);
 
 		if (!cart) {
-			return res.status(404).json({ message: "Cart item not found" });
+			return res.status(404).json({status: false, message: "Cart item not found" });
 		}
 
 		if (cart.quantity > 1) {
@@ -81,13 +81,13 @@ export const decreaseProductQuantity = async (req, res) => {
 			const product = await Products.findByPk(cart.productId);
 			cart.totalPrice = cart.quantity * parseFloat(product.price);
 			await cart.save();
-			res.json({ message: "Product quantity decreased in cart", cart });
+			res.json({status: true, message: "Product quantity decreased in cart", cart });
 		} else {
 			await cart.destroy();
-			res.json({ message: "Product removed from cart" });
+			res.json({status: true, message: "Product removed from cart" });
 		}
 	} catch (error) {
-		res.status(500).json({ status: 500, error: error.message });
+		res.status(500).json({ status: false, message: error.message });
 	}
 };
 
@@ -98,7 +98,7 @@ export const increaseProductQuantity = async (req, res) => {
 		const cart = await Carts.findByPk(cartId);
 
 		if (!cart) {
-			return res.status(404).json({ message: "Cart item not found" });
+			return res.status(404).json({status: false, message: "Cart item not found" });
 		}
 
 		cart.quantity += 1;
@@ -106,9 +106,9 @@ export const increaseProductQuantity = async (req, res) => {
 		cart.totalPrice = cart.quantity * parseFloat(product.price);
 		await cart.save();
 
-		res.json({ message: "Product quantity increased in cart", cart });
+		res.json({status: true, message: "Product quantity increased in cart", cart });
 	} catch (error) {
-		res.status(500).json({ status: 500, error: error.message });
+		res.status(500).json({ status: false, message: error.message });
 	}
 };
 
@@ -125,7 +125,7 @@ export const increaseProductQuantity = async (req, res) => {
 		});
 
 		if (!cartItems.length) {
-			return res.status(404).json({ message: "Cart not found" });
+			return res.status(404).json({ status: false, message: "Cart not found" });
 		}
 
 		const totalPrice = cartItems.reduce((total, item) => {
@@ -145,7 +145,7 @@ export const increaseProductQuantity = async (req, res) => {
 			})),
 		});
 	} catch (error) {
-		res.status(500).json({ status: 500, errors: error.message });
+		res.status(500).json({ status: false, message: error.message });
 	}
 };
 
