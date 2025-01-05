@@ -30,14 +30,18 @@ export const registerUser = createAsyncThunk(
       });
       
       console.log("Response is:", response.data);  // For debugging
-      toast.success(response.data.message);
+      toast.success(response.data.message,  {
+        position: "top-center"
+      });
 
       // Return only the necessary information (e.g., user details)
       return { userData: response.data.data, message: response.data.message };
     } catch (error) {
-      console.error(error.response.data.errors[0]);
-      toast.error(error.response.data.errors[0] || "Registration failed!");
-      return rejectWithValue(error.response.data.errors[0]);
+      console.error(error.response.data.message);
+      toast.error(error.response.data.message,  {
+        position: "top-center"
+      } );
+      return rejectWithValue(error.response.data.message);
     }
   }
 );
@@ -55,38 +59,19 @@ export const registerUser = createAsyncThunk(
 		const token = response.data.token;
 		localStorage.setItem("token", JSON.stringify(token));
   
-		toast.success(response.data.message);
+		toast.success(response.data.message, {
+      position: "top-center"
+    });
 		return token;
 	  } catch (error) {
-		console.error(error.response);
-		toast.error(error.response.data.errors[0] || "Login failed!");
-		return rejectWithValue(error.response.data.errors[0]);
+	
+		toast.error(error.response.data.message,  {
+      position: "top-center"
+    });
+		return rejectWithValue(error.response.data.message);
 	  }
 	}
   );
-
-    // Async thunk for user login
-    export const verifyAccount = createAsyncThunk(
-      "auth/verifyAccount",
-      async (values, { rejectWithValue }) => {
-        try {
-        const response = await axios.post(`${url}/auth/verify/:verificationCode`, {
-          email: values.email,
-          password: values.password,
-        });
-      
-        const token = response.data.token;
-        localStorage.setItem("token", JSON.stringify(token));
-      
-        toast.success(response.data.message);
-        return token;
-        } catch (error) {
-        console.error(error.response);
-        toast.error(error.response.data.errors[0] || "Login failed!");
-        return rejectWithValue(error.response.data.errors[0]);
-        }
-      }
-      );
   
 
 // Auth slice

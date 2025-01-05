@@ -1,6 +1,6 @@
 /** @format */
 // https://ebee-server.onrender.com
-export const url = "https://ebee-server.onrender.com/api";
+export const url = "/api";
 
 export const setHeaders = () => {
     let token = localStorage.getItem("token");
@@ -14,7 +14,7 @@ export const setHeaders = () => {
     }
 
     const headers = {
-        Authorization: `Bearer ${token}`,  // can i use authorization instead of Authorization
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
     };
 
