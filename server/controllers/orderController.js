@@ -75,8 +75,8 @@ export const deleteOrders = async (req, res) => {
 };
 
 export const updateOrders = async (req, res) => {
-	const orderId = 1;
-	const userId = 1; // Make sure req.user contains the authenticated user's info
+	const orderId = req.params.orderId;
+	const userId = req.user.id; // Make sure req.user contains the authenticated user's info
 
 	if (!userId) {
 		return res.status(401).json({ status: false, message: "Unauthorized, please login" });

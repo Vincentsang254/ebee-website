@@ -18,7 +18,7 @@ export const getNotifications = async (req, res) => {
 
 export const markAsRead = async (req, res) => {
 	try {
-		const notificationId = req.params.id;
+		const notificationId = req.params.notificationId;
 		const notification = await Notifications.findByPk(notificationId);
 
 		if (!notification) {

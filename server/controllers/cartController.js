@@ -8,7 +8,7 @@ export const addProductToCart = async (req, res) => {
 
 	try {
 		let cart = await Carts.findOne({
-			where: { userId: userId, productId: productId },
+			where: { id: userId, productId: productId },
 		});
 
 		const product = await Products.findByPk(productId);
@@ -31,7 +31,7 @@ export const addProductToCart = async (req, res) => {
 			});
 		}
 
-		res.status(200).json(cart);
+		res.status(200).json({status: true, data: cart});
 	} catch (error) {
 		res.status(500).json({ status: false, message: error.message });
 	}
@@ -41,8 +41,8 @@ export const getCartCount = async (req, res) => {
 	const userId = req.user.id;
 
 	try {
-		const count = await Carts.count({ where: { userId } });
-		res.status(200).json({ status: true, count });
+		const count = await Carts.count({ where: { id: userId } });
+		res.status(200).json({ status: true, data: count });
 	} catch (error) {
 		res.status(500).json({ status: false, message: error.message });
 	}

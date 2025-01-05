@@ -1,15 +1,12 @@
 import fs from 'fs';
 import path from 'path';
+import { Sequelize, DataTypes } from 'sequelize';
 import process from 'process';
 import { fileURLToPath } from 'url';
 import config from '../config/db.js';  // Ensure correct relative path
 
-// Correct way to import Sequelize and DataTypes from sequelize (CommonJS package)
-import SequelizePkg from 'sequelize'; 
-const { Sequelize, DataTypes } = SequelizePkg;
-
 // Get the current file's URL and convert it to a path
-const __filename = fileURLToPath(import.meta.url);  // Fix for ES modules
+const __filename = new URL('', import.meta.url).pathname;
 const __dirname = path.dirname(__filename);  // Fix for __dirname in ES modules
 
 // Log the directory to check if it's correct
