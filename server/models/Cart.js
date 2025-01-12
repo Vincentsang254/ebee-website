@@ -1,5 +1,5 @@
-/** @format */
-module.exports = (sequelize, DataTypes) => {
+import { DataTypes } from 'sequelize';
+import { sequelize } from './index.js';
 	const Carts = sequelize.define("Carts", {
 		userId: {
 			type: DataTypes.INTEGER,
@@ -46,4 +46,5 @@ module.exports = (sequelize, DataTypes) => {
 	};
 
 	return Carts;
-};
+export default Carts;
+
