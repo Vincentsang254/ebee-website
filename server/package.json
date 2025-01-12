@@ -2,7 +2,7 @@
   "name": "server",
   "version": "1.0.0",
   "description": "ebee mobile application",
-  "main": "index.js",
+  "main": "server/index.js",
   "type": "module",
   "scripts": {
     "dev": "nodemon index.js",

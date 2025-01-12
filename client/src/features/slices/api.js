@@ -2,12 +2,19 @@
 // https://ebee-server.onrender.com
 export const url = "/api";
 
+
 export const setHeaders = () => {
-    const headers = {
-      headers: {
-        "x-auth-token": localStorage.getItem("token"),
-      },
-    };
-  
-    return headers;
+  const token = localStorage.getItem("token");
+
+
+  const headers = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   };
+
+
+  return headers;
+};
+
+

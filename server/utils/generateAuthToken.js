@@ -14,7 +14,7 @@ const generateAuthToken = (user) => {
         phoneNumber: user.phoneNumber,
         verified: user.verified
     },
-    "sangkiplaimportantkey", 
+    "sangkiplaimportantkey78", 
     {
       expiresIn: "60d",  
     }
