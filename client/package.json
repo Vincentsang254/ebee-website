@@ -24,6 +24,7 @@
     "axios": "^1.7.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "ebee-website": "file:..",
     "formik": "^2.4.6",
     "input-otp": "^1.4.1",
     "jwt-decode": "^4.0.0",
