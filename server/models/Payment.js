@@ -16,6 +16,10 @@ const { DataTypes } = pkg;
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
+		trnx_date: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
 		userId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,

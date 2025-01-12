@@ -110,40 +110,25 @@ export const processCallback = async (req, res) => {
     if (!currentUser) {
       return res.status(404).json({
         status: false,
-        message: "User not found for the payment number",
+        message: "User not found.",
       });
     }
 
-    // Update user details based on the amount paid
-    let newUserType = currentUser.userType;
-    let accessExpiration = currentUser.accessExpiration;
+    currentUser.phone = paymentNumber;
+    currentUser.amount = amount.toString();
+    currentUser.trnx_id = trnx_id;
+    currentUser.trnx_date = trnx_date;
 
-    if (amount == 1) {
-      newUserType = "vipOne";
-      accessExpiration = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000); // 3 days
-    } else if (amount == 2) {
-      newUserType = "vipTwo";
-      accessExpiration = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
-    } else if (amount == 3) {
-      newUserType = "vipThree";
-      accessExpiration = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
-    }
-
-    // Save the updated user data
-    await currentUser.update({
-      userType: newUserType,
-      accessExpiration,
-    });
-
-    // Save payment details in the Payments table
-    const paymentData = {
-      phone: paymentNumber,
-      amount: amount.toString(),
-      trnx_id: trnx_id,
-      userId: currentUser.id,
-      orderId: null, // Assuming the order ID is unknown for now, or could be linked if applicable
-    };
-    await Payments.create(paymentData);
+   
+  // Save payment details to the database
+  const payment = await Payments.create({
+    phone: paymentNumber,
+    amount: amount.toString(),
+    trnx_id,
+    trnx_date,
+    userId: req.body.userId, // Pass the userId from your request body
+    orderId: req.body.orderId, // Pass the orderId from your request body
+  });
 
     // Send response to confirm the processing
     res.status(200).json({
@@ -151,26 +136,6 @@ export const processCallback = async (req, res) => {
       message: "User data and payment details updated successfully",
     });
 
-    // Schedule a job to run every minute and check for expired users
-    cron.schedule("* * * * *", async () => {
-      try {
-        const expiredUsers = await Users.findAll({
-          where: {
-            accessExpiration: { [Op.lte]: new Date() },
-          },
-        });
-
-        for (const user of expiredUsers) {
-          await Users.update(
-            { userType: "client" },
-            { where: { id: user.id } }
-          );
-          console.log(`User ${user.id} has been reset to 'client'.`);
-        }
-      } catch (error) {
-        console.error("Error checking expired users:", error.message);
-      }
-    });
 
   } catch (error) {
     console.error("Error processing callback:", error.message);

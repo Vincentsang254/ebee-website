@@ -8,6 +8,19 @@ cloudinary.v2.config({
   api_secret: "764okYVYwP9WOp5iXMKS7Oxbr7c",
 });
 
+// 🔄 Upload Function
+export const upload = async (file) => {
+  try {
+    const result = await cloudinary.uploader.upload(file, {
+      public_id: uuidv4(),
+      folder: "products",
+    });
+    return result;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 // Image upload utility function
 export const imageUploadUtil = (file) => {
   return new Promise((resolve, reject) => {
