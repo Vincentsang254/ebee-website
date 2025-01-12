@@ -12,7 +12,7 @@ export const verifyToken = async (req, res, next) => {
   const token = authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : authHeader;
 
   try {
-    const decoded = jwt.verify(token, "sangkiplaimportantkey");
+    const decoded = jwt.verify(token, "sangkiplaimportantkey78");
 
     if (!decoded) {
       return res.status(401).json({ status: false, message: "Token is not valid" });
