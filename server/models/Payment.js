@@ -1,5 +1,8 @@
-import { DataTypes } from 'sequelize';
+
+import pkg from 'sequelize';
 import { sequelize } from './index.js';
+
+const { DataTypes } = pkg;
 	const Payments = sequelize.define("Payments", {
 		phone: {
 			type: DataTypes.STRING,
