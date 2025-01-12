@@ -6,8 +6,8 @@ const {
 	getNotifications,
 	markAsRead,
 	getNots,
-} = require("../controllers/notificationController");
-const { verifyToken } = require("../middlewares/AuthMiddleware");
+} = require("../controllers/notificationController.js");
+const { verifyToken } = require("../middlewares/AuthMiddleware.js");
 
 const router = express.Router();
 
