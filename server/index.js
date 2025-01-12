@@ -7,14 +7,10 @@ import path from "path";
 // Database models
 import db from "./models/index.js";
 
-
 dotenv.config();
-
 
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-
-
 import productRoutes from "./routes/productRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
@@ -25,18 +21,16 @@ import userAddressRoutes from "./routes/userAddressRoutes.js";
 import ratingRoutes from "./routes/ratingRoutes.js";
 
 const app = express();
-const port = 3001;
 
+// Set up the port dynamically for production
+const port = process.env.PORT || 3001;
 
-app.use(cors(
-  {
-    origin: "http://localhost:5173",
-    credentials: true,
-  }
-));
+app.use(cors({
+  origin: process.env.CLIENT_URL || "http://localhost:5173", // Use env var for production URL
+  credentials: true,
+}));
 
 app.use(express.json()); // For parsing JSON bodies
-
 app.use(cookieParser());
 
 // routes
@@ -52,19 +46,21 @@ app.use("/api/address", userAddressRoutes);
 app.use("/api/ratings", ratingRoutes);
 
 app.get("/test", (req, res) => {
-	res.status(200).send("Backend is working.js");
-  });
+  res.status(200).send("Backend is working.js");
+});
 
-  if (process.env.NODE_ENV === "production") {
-	app.use(express.static(path.join(__dirname, "../client/dist")));
+// Production settings to serve React frontend
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../client/dist")));
   
   app.get("*", (req, res) => {
-	res.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
+    res.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
   });
-  }
+}
 
+// Sync DB and start server
 db.sequelize.sync().then(() => {
-	app.listen(port, "0.0.0.0", () => {
-		console.log(`Server running on http://localhost:${port}`);
-	});
+  app.listen(port, "0.0.0.0", () => {
+    console.log(`Server running on port ${port}`);
+  });
 });
