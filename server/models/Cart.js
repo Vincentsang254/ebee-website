@@ -45,6 +45,5 @@ import { sequelize } from './index.js';
 		});
 	};
 
-	return Carts;
 export default Carts;
 
