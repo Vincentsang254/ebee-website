@@ -7,15 +7,16 @@ import {
   getOrders,
   getOrder,
 } from "../controllers/orderController.js";  // Use `.js` for the module extension
+import { verifyToken } from "../middlewares/AuthMiddleware.js";
 
 const router = express.Router();
 
 // Define routes
-router.post("/create", createOrders);
-router.delete("/delete/:orderId", deleteOrders);
-router.put("/update/:orderId", updateOrders);
-router.get("/get-orders", getOrders);
-router.get("/get-order/:orderId", getOrder);
+router.post("/create",verifyToken, createOrders);
+router.delete("/delete/:orderId",verifyToken, deleteOrders);
+router.put("/update/:orderId",verifyToken, updateOrders);
+router.get("/get-orders",verifyToken, getOrders);
+router.get("/get-order/:orderId",verifyToken, getOrder);
 
 // Export router as default
 export default router;

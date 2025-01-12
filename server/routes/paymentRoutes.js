@@ -9,7 +9,7 @@ import {
 const router = express.Router();
 
 // Define routes
-router.post("/initiate-stk-push", generateDarajaToken, initiateSTKPush);
+router.post("/initiate-stk-push",verifyToken, generateDarajaToken, initiateSTKPush);
 router.post("/process-callback", processCallback);
 
 
