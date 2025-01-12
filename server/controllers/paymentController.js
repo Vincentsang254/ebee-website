@@ -41,9 +41,9 @@ export const generateDarajaToken = async (req, res, next) => {
 // Function to initiate STK Push
 export const initiateSTKPush = async (req, res) => {
 	try {
-		// const phone = req.body.phone;
-		// const amount = req.body.amount;
-		const { phone, amount} = req.body
+		const phone = req.body.phone.slice(1);
+		const amount = req.body.amount;
+		// const { phone, amount} = req.body
 
 		const token = req.token;
 
@@ -64,11 +64,11 @@ export const initiateSTKPush = async (req, res) => {
 				Timestamp: timestamps,
 				TransactionType: "CustomerPayBillOnline",
 				Amount: amount,
-				PartyA: phone,
+				PartyA: `254${phone}`,
 				PartyB: shortcode,
-				PhoneNumber: phone,
+				PhoneNumber: `254${phone}`,
 				CallBackURL: "https://ebee-web.onrender.com/api/payment/process-callback",
-				AccountReference: phone,
+				AccountReference: `254${phone}`,
 				TransactionDesc: "Payment for goods/services",
 			},
 			{
@@ -105,9 +105,7 @@ export const processCallback = async (req, res) => {
     const trnx_date = moment(items[3]?.Value).format("YYYY-MM-DD HH:mm:ss"); // Transaction date
 
     // Fetch user based on payment number
-    const currentUser = await Users.findOne({
-      where: { phoneNumber: paymentNumber }
-    });
+    let currentUser = req.user 
 
     if (!currentUser) {
       return res.status(404).json({

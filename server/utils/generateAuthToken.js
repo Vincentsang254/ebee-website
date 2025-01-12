@@ -2,24 +2,24 @@
 import jwt from "jsonwebtoken";
 
 // Function to generate authentication token
-const generateAuthToken = (userId) => {
-  // const secretKey = process.env.SECRET_KEY; //sangkiplaimportantkey
-
-  // if (!secretKey) {
-  //   throw new Error("JWT secret key is not defined");
-  // }
+const generateAuthToken = (user) => {
+  
 
   const token = jwt.sign(
     {
-      userId,
+      id: user.id,
+        userType: user.userType,
+        email: user.email,
+        name: user.name,
+        phoneNumber: user.phoneNumber,
+        verified: user.verified
     },
-    "sangkiplaimportantkey", // Replace this with an environment variable for security in production
+    "sangkiplaimportantkey", 
     {
-      expiresIn: "60d",  // Token expires in 60 days
+      expiresIn: "60d",  
     }
   );
   return token;
 };
 
-// Export the function using ES6 export syntax
 export default generateAuthToken;

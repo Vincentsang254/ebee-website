@@ -43,7 +43,7 @@ fs.readdirSync(__dirname)  // Correctly using __dirname here
   .forEach((file) => {
     import(path.join(__dirname, file))  // Dynamically import models
       .then((module) => {
-        const model = module.default(sequelize, DataTypes);  // Initialize the model
+        const model = new module.default(sequelize, DataTypes);  // Initialize the model
         db[model.name] = model;  // Add the model to the db object
       })
       .catch((err) => {
