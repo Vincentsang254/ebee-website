@@ -15,12 +15,22 @@ export const createProducts = async (req, res) => {
       return res.status(400).json({ status: false, message: 'All fields are required' });
     }
 
+    if (isNaN(price)) {
+      return res.status(400).json({ status: false, message: 'Price must be a valid number' });
+    }
+
     if (!req.file) {
       return res.status(400).json({ status: false, message: 'An image is required' });
     }
 
     // Upload Image
-    const uploadedResponse = await imageUploadUtil(req.file);
+    let uploadedResponse;
+    try {
+      uploadedResponse = await imageUploadUtil(req.file);
+    } catch (uploadError) {
+      return res.status(500).json({ status: false, message: 'Image upload failed' });
+    }
+    
     const imageUrl = uploadedResponse.secure_url;
 
     // Create Product
@@ -48,6 +58,11 @@ export const deleteProducts = async (req, res) => {
     const product = await Products.findByPk(productId);
     if (!product) return res.status(404).json({ status: false, message: 'Product not found' });
 
+    // Check if user has permission to delete (admin or the product owner)
+    if (product.userId !== req.user.id && req.user.role !== 'Admin') {
+      return res.status(403).json({ status: false, message: 'You do not have permission to delete this product' });
+    }
+
     const publicId = product.imageUrl.split('/').pop().split('.')[0];
     await deleteImageUtil(publicId);
 
@@ -69,13 +84,24 @@ export const updateProducts = async (req, res) => {
     const product = await Products.findByPk(productId);
     if (!product) return res.status(404).json({ status: false, message: 'Product not found' });
 
+    // Check if user has permission to update (admin or the product owner)
+    if (product.userId !== req.user.id && req.user.role !== 'Admin') {
+      return res.status(403).json({ status: false, message: 'You do not have permission to update this product' });
+    }
+
     let updatedImageUrl = product.imageUrl;
 
     if (req.file) {
       const publicId = product.imageUrl.split('/').pop().split('.')[0];
       await deleteImageUtil(publicId);
 
-      const uploadResponse = await imageUploadUtil(req.file);
+      let uploadResponse;
+      try {
+        uploadResponse = await imageUploadUtil(req.file);
+      } catch (uploadError) {
+        return res.status(500).json({ status: false, message: 'Image upload failed' });
+      }
+
       updatedImageUrl = uploadResponse.secure_url;
     }
 
@@ -84,7 +110,7 @@ export const updateProducts = async (req, res) => {
       { where: { id: productId } }
     );
 
-    res.status(200).json({ status: true, message: 'Product updated successfully' });
+    res.status(200).json({ status: true, message: 'Product updated successfully', product });
   } catch (error) {
     console.error('Error updating product:', error);
     res.status(500).json({ status: false, message: error.message });

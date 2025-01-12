@@ -2,7 +2,6 @@
 
 import Orders from "../models/Order.js";
 
-import createNotification from "../utils/createNotifications.js";
 import { sendNotificationEmail } from "../brevo/email.brevo.js";
 import Notifications from "../models/Notification.js";
 

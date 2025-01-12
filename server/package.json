@@ -13,7 +13,7 @@
   "dependencies": {
     "axios": "^1.6.8",
     "bcryptjs": "^2.4.3",
-    "cloudinary": "^2.2.0",
+    "cloudinary": "^2.5.1",
     "concurrently": "^7.0.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -30,9 +30,10 @@
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.13",
     "nodemon": "^2.0.7",
-    "sequelize": "^6.32.1",
     "pg": "^8.11.1",
+    "sequelize": "^6.32.1",
     "sequelize-cli": "^6.2.0",
-    "stripe": "^15.3.0"
+    "stripe": "^15.3.0",
+    "uuid": "^11.0.5"
   }
 }
