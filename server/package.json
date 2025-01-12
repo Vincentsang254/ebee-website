@@ -6,8 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node index.js",
-    "build": "npm install"
+		"start": "node index.js"
   },
   "author": "sangtosha",
   "license": "ISC",
