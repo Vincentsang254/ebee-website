@@ -1,4 +1,3 @@
-
 import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
@@ -10,26 +9,28 @@ cloudinary.config({
   api_secret: "764okYVYwP9WOp5iXMKS7Oxbr7c",
 });
 
+// 🖼️ Multer Memory Storage (Storing file in memory)
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
-// 🖼️ Multer Storage with Cloudinary
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary.v2,
-  params: {
-    folder: "products",
-    public_id: (req, file) => uuidv4(),
-  },
-});
-
-export const upload = multer({ storage });
-
-// 🔄 Upload Function
+// 🔄 Image Upload Function (using multer memory storage)
 export const imageUploadUtil = async (file) => {
   try {
-    const result = await cloudinary.v2.uploader.upload(file.path, {
-      public_id: uuidv4(),
-      folder: "products",
-    });
-    return result;
+    const result = await cloudinary.v2.uploader.upload_stream(
+      {
+        public_id: uuidv4(), // Generate unique ID for the file
+        folder: "products",   // Define folder on Cloudinary
+      },
+      (error, result) => {
+        if (error) {
+          throw new Error(`Image upload failed: ${error.message}`);
+        }
+        return result; // Return result if upload is successful
+      }
+    );
+    
+    // Upload the file buffer to Cloudinary
+    result.end(file.buffer);  // The file buffer from multer memory storage
   } catch (error) {
     throw new Error(`Image upload failed: ${error.message}`);
   }
@@ -44,3 +45,5 @@ export const deleteImageUtil = async (publicId) => {
     throw new Error(`Error deleting image: ${error.message}`);
   }
 };
+
+export { upload };
