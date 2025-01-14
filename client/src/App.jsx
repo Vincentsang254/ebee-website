@@ -62,7 +62,6 @@ const App = ({isAuthenticated, user}) => {
         >
           <Route path="login" element={<AuthLogin />} />
           <Route path="register" element={<AuthRegister />} />
-          <Route path="verify" element={<AccountVerification />} />
           <Route path="verify-otp" element={<VerifyAccount />} />
           <Route path="reset-password" element={<PasswordReset />} />
           <Route path="verify-code" element={<VerifyCode />} />
