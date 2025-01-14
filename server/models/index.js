@@ -1,29 +1,27 @@
 import fs from 'fs';
 import path from 'path';
-import pkg from 'sequelize';
+import { Sequelize, DataTypes } from 'sequelize';
 import process from 'process';
 import { fileURLToPath } from 'url';
-import config from '../config/db.js';
+import config from '../config/db.js';  // Ensure correct relative path
 
-const { Sequelize, DataTypes } = pkg;
-
-// Fix for __dirname in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Get the current file's URL and convert it to a path
+const __filename = new URL('', import.meta.url).pathname;
+const __dirname = path.dirname(__filename);  // Fix for __dirname in ES modules
 
 // Log the directory to check if it's correct
 console.log(`Current directory: ${__dirname}`);
 
-// Get the current environment or default to 'development'
-const env = process.env.NODE_ENV || 'development';
-const sequelizeConfig = config[env];
+// Log the configuration to ensure it's loaded
+const env = process.env.NODE_ENV || 'development';  // Defaults to 'development'
+const sequelizeConfig = config[env];  // Get the correct configuration based on NODE_ENV
 
 // Handle missing configuration
 if (!sequelizeConfig) {
   throw new Error(`Configuration for environment ${env} not found`);
 }
 
-// Create the Sequelize instance
+// Create the Sequelize instance using the config for the current environment
 export const sequelize = new Sequelize(sequelizeConfig.database, sequelizeConfig.username, sequelizeConfig.password, {
   host: sequelizeConfig.host,
   dialect: sequelizeConfig.dialect,
@@ -32,29 +30,35 @@ export const sequelize = new Sequelize(sequelizeConfig.database, sequelizeConfig
 
 const db = {};
 
-// Synchronously load and initialize all models
-fs.readdirSync(__dirname)
+// Reading all model files and dynamically importing them
+fs.readdirSync(__dirname)  // Correctly using __dirname here
   .filter((file) => {
     return (
-      file.indexOf('.') !== 0 &&
-      file !== path.basename(__filename) &&
-      file.slice(-3) === '.js' &&
-      file.indexOf('.test.js') === -1
+      file.indexOf('.') !== 0 &&       // Exclude hidden files
+      file !== path.basename(__filename) && // Exclude the current file
+      file.slice(-3) === '.js' &&     // Only JavaScript files
+      file.indexOf('.test.js') === -1 // Exclude test files
     );
   })
   .forEach((file) => {
-    const model = require(path.join(__dirname, file)).default;
-    db[model.name] = model(sequelize, DataTypes);
-  });
+    import(path.join(__dirname, file))  // Dynamically import models
+      .then((module) => {
+        const model = new module.default(sequelize, DataTypes);  // Initialize the model
+        db[model.name] = model;  // Add the model to the db object
+      })
+      .catch((err) => {
+        console.error('Error loading model:', err);
+      });
+});
 
 // Set up associations after all models have been loaded
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
-    db[modelName].associate(db);
+    db[modelName].associate(db);  // Set up associations if they exist
   }
 });
 
-// Export the Sequelize instance and the db object
+// Add Sequelize and Sequelize instance to db for access in other parts of the application
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
