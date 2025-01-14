@@ -19,13 +19,13 @@ export const fetchProducts = createAsyncThunk(
 			console.log("fetching products....");
 			// Ensure headers are passed as part of an object
 			const response = await axios.get(`${url}/products/get`, setHeaders());
-			console.log("Fetch products response", response.data);
-			return response.data.data.products; // Returning products array from data structure
+			console.log("Fetch products response from slice..", response);
+			return response.data.data.products;
 
 		} catch (error) {
 			// Handle any error and log the error response
-			const message = error.response?.data || "Error fetching products";
-			toast.error(message, { position: "bottom-left" });
+			const message = error.response?.data;
+			toast.error(message, { position: "top-center" });
 		}
 	}
 );
