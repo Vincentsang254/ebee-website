@@ -29,23 +29,34 @@ export const sequelize = new Sequelize(
 
 const db = {};
 
-// Dynamically load models using import instead of require
-const files = fs.readdirSync(__dirname).filter(file => file.endsWith('.js') && file !== path.basename(__filename));
+// Create an async function to load models and set up associations
+const initializeModels = async () => {
+  const files = fs.readdirSync(__dirname).filter(file => file.endsWith('.js') && file !== path.basename(__filename));
 
-for (const file of files) {
-  const model = await import(path.join(__dirname, file));
-  const modelName = model.default.name; // assuming model is exported as default
-  db[modelName] = model.default;
-}
-
-// Set up associations after all models are initialized
-Object.keys(db).forEach((modelName) => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db); // Apply associations
+  for (const file of files) {
+    const model = await import(path.join(__dirname, file));
+    const modelName = model.default.name; // assuming model is exported as default
+    db[modelName] = model.default;
   }
-});
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+  // Set up associations after all models are initialized
+  Object.keys(db).forEach((modelName) => {
+    if (db[modelName].associate) {
+      db[modelName].associate(db); // Apply associations
+    }
+  });
+
+  db.sequelize = sequelize;
+  db.Sequelize = Sequelize;
+};
+
+await initializeModels()
+  .then(() => {
+    console.log("Models initialized successfully");
+  })
+  .catch((error) => {
+    console.error("Error during model initialization:", error);
+    process.exit(1); // Exit with failure code if something goes wrong
+  });
 
 export default db;
