@@ -63,10 +63,7 @@ if (process.env.NODE_ENV === "production") {
 // Initialize models and sync the database
 const startServer = async () => {
   try {
-    // Ensure all models are initialized before syncing
-    await db.initializeModels();
-
-    // Sync the database
+    // Sync the database (No need for initializeModels)
     await db.sequelize.sync();
 
     // Start the server
