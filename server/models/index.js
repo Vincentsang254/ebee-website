@@ -1,13 +1,13 @@
-import fs from "fs";
-import path from "path";
-import { Sequelize, DataTypes } from "sequelize";
-import { fileURLToPath } from "url";
-import config from "../config/db.js";
+import fs from 'fs';
+import path from 'path';
+import { Sequelize, DataTypes } from 'sequelize';
+import { fileURLToPath } from 'url';
+import config from '../config/db.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const env = process.env.NODE_ENV || "development";
+const env = process.env.NODE_ENV || 'development';
 const sequelizeConfig = config[env];
 
 if (!sequelizeConfig) {
@@ -36,10 +36,14 @@ db.initializeModels = async () => {
       file.indexOf(".test.js") === -1
   );
 
+  // Initialize models and add them to the db object
   for (const file of modelFiles) {
     const model = (await import(path.join(__dirname, file))).default;
-    model.init(sequelize, DataTypes);
-    db[model.name] = model;
+
+    if (model && typeof model.init === 'function') {
+      model.init(sequelize, DataTypes); // Ensure passing sequelize and DataTypes
+      db[model.name] = model; // Store the model in the db object
+    }
   }
 
   // Set up associations after models are initialized
