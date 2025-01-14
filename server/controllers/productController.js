@@ -135,6 +135,7 @@ export const getProducts = async (req, res) => {
       ],
     });
 
+
     res.status(200).json({ status: true, data: products });
   } catch (error) {
     console.error('Error fetching products:', error);

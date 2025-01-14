@@ -34,23 +34,17 @@ const Products = sequelize.define('Products', {
   },
 });
 
-// 🟢 Define associations
 Products.associate = (models) => {
-  // Belongs to a User
   Products.belongsTo(models.Users, {
     foreignKey: 'userId',
     as: 'user',
     onDelete: 'CASCADE',
   });
-
-  // Has many Ratings
   Products.hasMany(models.Ratings, {
     foreignKey: 'productId',
     as: 'ratings',
     onDelete: 'CASCADE',
   });
-
-  // Has many Carts
   Products.hasMany(models.Carts, {
     foreignKey: 'productId',
     as: 'carts',

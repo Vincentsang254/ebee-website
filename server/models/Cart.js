@@ -38,7 +38,6 @@ Carts.associate = (models) => {
     as: 'user',
     onDelete: 'cascade',
   });
-
   Carts.belongsTo(models.Products, {
     foreignKey: 'productId',
     as: 'product',
