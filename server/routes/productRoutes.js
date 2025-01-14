@@ -19,7 +19,7 @@ const router = express.Router();
 router.post("/create", verifyToken, verifyRoles("Admin"), upload.single("image"), createProducts);
 router.delete("/delete/:productId", verifyToken, verifyRoles("Admin"), deleteProducts);
 router.put("/update/:productId", verifyToken, verifyRoles("Admin"), upload.single("image"), updateProducts);
-router.get("/get", verifyToken, getProducts);
+router.get("/get", getProducts);
 router.get("/get-product/:productId", verifyToken, getProductById);
 router.post("/search", verifyToken, searchProductsByName);
 
