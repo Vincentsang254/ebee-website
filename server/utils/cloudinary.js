@@ -1,32 +1,24 @@
 
-import cloudinary from "cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
+import { v4 as uuidv4 } from "uuid";
 
-// Configure cloudinary
-cloudinary.v2.config({
+// 🔧 Configure Cloudinary
+cloudinary.config({
   cloud_name: "vincentsang",
   api_key: "455286944547629",
   api_secret: "764okYVYwP9WOp5iXMKS7Oxbr7c",
 });
 
-// 🔄 Upload Function
-export const upload = async (file) => {
-  try {
-    const result = await cloudinary.uploader.upload(file, {
-      public_id: uuidv4(),
-      folder: "products",
-    });
-    return result;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
+// 🖼 Multer Storage
+const storage = multer.memoryStorage();
+export const upload = multer({ storage });
 
-// Image upload utility function
+// 🔄 Image Upload Utility Function
 export const imageUploadUtil = (file) => {
   return new Promise((resolve, reject) => {
-    cloudinary.v2.uploader.upload_stream(
-      { resource_type: 'auto' },
+    cloudinary.uploader.upload_stream(
+      { resource_type: "auto", public_id: uuidv4(), folder: "products" },
       (error, result) => {
         if (error) reject(error);
         else resolve(result);
@@ -35,10 +27,10 @@ export const imageUploadUtil = (file) => {
   });
 };
 
-// Image delete utility function
+// 🗑️ Image Delete Utility Function
 export const deleteImageUtil = async (publicId) => {
   try {
-    const result = await cloudinary.v2.uploader.destroy(publicId);
+    const result = await cloudinary.uploader.destroy(publicId);
     return result;
   } catch (error) {
     throw new Error(`Error deleting image: ${error.message}`);
