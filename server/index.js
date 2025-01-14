@@ -26,7 +26,7 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:5173", // Use env var for production URL
+  origin: process.env.CLIENT_URL || "https://ebee-app.onrender.com", // Use env var for production URL
   credentials: true,
 }));
 
@@ -48,6 +48,8 @@ app.use("/api/ratings", ratingRoutes);
 app.get("/test", (req, res) => {
   res.status(200).send("Backend is working.js");
 });
+
+const __dirname = path.resolve();
 
 // Production settings to serve React frontend
 if (process.env.NODE_ENV === "production") {
