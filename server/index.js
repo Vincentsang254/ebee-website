@@ -1,11 +1,9 @@
-/** @format */
 import cookieParser from "cookie-parser";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
-// Database models
-import db from "./models/index.js";
+import db from "./models/index.js";  // Ensure models are correctly imported
 
 dotenv.config();
 
@@ -61,8 +59,10 @@ if (process.env.NODE_ENV === "production") {
 // Initialize models and sync the database
 const startServer = async () => {
   try {
-    // Sync the database (No need for initializeModels)
-    await db.sequelize.sync();
+    // Sync the database without needing initializeModels()
+    const res = await db.sequelize.sync();
+
+    console.log("Database synced successfully:", res);
 
     // Start the server
     app.listen(port, "0.0.0.0", () => {
@@ -75,7 +75,3 @@ const startServer = async () => {
 };
 
 startServer();
-    // // Start the server
-    // app.listen(port, "0.0.0.0", () => {
-    //   console.log(`Server running on port ${port}`);
-    // });
