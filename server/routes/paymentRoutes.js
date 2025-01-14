@@ -5,6 +5,7 @@ import {
   processCallback,
   generateDarajaToken,
 } from "../controllers/paymentController.js";  // Include the .js extension
+import { verifyToken } from "../middlewares/AuthMiddleware.js";
 
 const router = express.Router();
 
