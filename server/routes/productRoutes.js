@@ -12,6 +12,7 @@ import {
 import { verifyRoles, verifyToken } from "../middlewares/AuthMiddleware.js";
 import { upload } from "../utils/cloudinary.js";
 
+
 const router = express.Router();
 
 // Define routes

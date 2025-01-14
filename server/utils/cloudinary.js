@@ -10,21 +10,29 @@ cloudinary.config({
   api_secret: "764okYVYwP9WOp5iXMKS7Oxbr7c",
 });
 
-// 🖼 Multer Storage
-const storage = multer.memoryStorage();
+
+// 🖼️ Multer Storage with Cloudinary
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary.v2,
+  params: {
+    folder: "products",
+    public_id: (req, file) => uuidv4(),
+  },
+});
+
 export const upload = multer({ storage });
 
-// 🔄 Image Upload Utility Function
-export const imageUploadUtil = (file) => {
-  return new Promise((resolve, reject) => {
-    cloudinary.uploader.upload_stream(
-      { resource_type: "auto", public_id: uuidv4(), folder: "products" },
-      (error, result) => {
-        if (error) reject(error);
-        else resolve(result);
-      }
-    ).end(file.buffer);
-  });
+// 🔄 Upload Function
+export const imageUploadUtil = async (file) => {
+  try {
+    const result = await cloudinary.v2.uploader.upload(file.path, {
+      public_id: uuidv4(),
+      folder: "products",
+    });
+    return result;
+  } catch (error) {
+    throw new Error(`Image upload failed: ${error.message}`);
+  }
 };
 
 // 🗑️ Image Delete Utility Function
