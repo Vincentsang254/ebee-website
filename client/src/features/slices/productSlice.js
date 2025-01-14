@@ -18,8 +18,8 @@ export const fetchProducts = createAsyncThunk(
 		try {
 			console.log("fetching products....");
 			// Ensure headers are passed as part of an object
-			const response = await axios.get(`${url}/products/get`, { headers: setHeaders() });
-			console.log("Fetch products response", response);
+			const response = await axios.get(`${url}/products/get`, setHeaders());
+			console.log("Fetch products response", response.data);
 			return response.data.data.products; // Returning products array from data structure
 
 		} catch (error) {
@@ -34,13 +34,13 @@ export const createProduct = createAsyncThunk(
 	"products/createProduct",
 	async (formData, { rejectWithValue }) => {
 	  try {
-		const response = await axios.post(`${url}/products/create`, formData, { headers: setHeaders() });
+		const response = await axios.post(`${url}/products/create`, formData, setHeaders());
 		console.log("Create product response:", response); // Correctly log response after getting it
 		return response.data;
 	  } catch (error) {
-		console.log( "Error creating product",error.response?.data.errors[0])
-		toast.error(error.response?.data.errors[0], { position: "bottom-left" });
-		return rejectWithValue(error.response?.data.errors[0]);
+		console.log( "Error creating product",error.response?.data.message)
+		toast.error(error.response?.data.message, { position: "bottom-left" });
+		return rejectWithValue(error.response?.data.message);
 	  }
 	}
   );
@@ -49,11 +49,11 @@ export const removeProduct = createAsyncThunk(
 	"products/removeProduct",
 	async (productId, { rejectWithValue }) => {
 		try {
-			await axios.delete(`${url}/products/delete/${productId}`,  { headers: setHeaders() });
+			await axios.delete(`${url}/products/delete/${productId}`,  setHeaders());
 			return productId; // Return the deleted product's ID
 		} catch (error) {
-			console.log( "Error deletin product",error.response?.data.errors[0])
-			const message = error.response?.data.errors[0] || "Error deleting product";
+			console.log( "Error deletin product",error.response?.data.message)
+			const message = error.response?.data.message || "Error deleting product";
 			toast.error(message, { position: "bottom-left" });
 			return rejectWithValue(message);
 		}
@@ -64,11 +64,11 @@ export const updateProduct = createAsyncThunk(
 	"products/updateProduct",
 	async ({ id, values }, { rejectWithValue }) => {
 		try {
-			const response = await axios.put(`${url}/products/update/${id}`, values,  { headers: setHeaders() });
+			const response = await axios.put(`${url}/products/update/${id}`, values,  setHeaders());
 			return response.data; // Assuming the server returns the updated product
 		} catch (error) {
-			console.log( "Error updating product",error.response?.data.errors[0])
-			const message = error.response?.data.errors[0] || "Error updating product";
+			console.log( "Error updating product",error.response?.data.message)
+			const message = error.response?.data.message || "Error updating product";
 			toast.error(message, { position: "bottom-left" });
 			return rejectWithValue(message);
 		}
@@ -86,8 +86,8 @@ export const searchProducts = createAsyncThunk(
 			return response.data; // The server response containing the search results
 		} catch (error) {
 			// If error, show the error message via toast
-			console.log("Error searching products:", error.response?.data.errors[0]);
-			const message = error.response?.data.errors[0] || "Error searching products";
+			console.log("Error searching products:", error.response?.data.message);
+			const message = error.response?.data.message || "Error searching products";
 			toast.error(message, { position: "bottom-left" });
 			return rejectWithValue(message); // Reject with error message to update Redux state
 		}
@@ -98,7 +98,7 @@ export const fetchProductsCount = createAsyncThunk(
 	"products/fetchProductsCount",
 	async () => {
 		try {
-			const response = await axios.get(`${url}/products/get-productscount`,  { headers: setHeaders() });
+			const response = await axios.get(`${url}/products/get-productscount`,  setHeaders());
 			return response.data.count;
 		} catch (error) {
 			const message = error.response?.data || "Error fetching products count";
