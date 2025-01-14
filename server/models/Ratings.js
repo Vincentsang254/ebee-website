@@ -1,9 +1,7 @@
-import pkg from 'sequelize';
+import { DataTypes } from 'sequelize';
 import { sequelize } from './index.js';
 
-const { DataTypes } = pkg;
-
-const Ratings = sequelize.define("Ratings", {
+const Ratings = sequelize.define('Ratings', {
   rating: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -20,30 +18,30 @@ const Ratings = sequelize.define("Ratings", {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: "Users",
-      key: "id",
+      model: 'Users',
+      key: 'id',
     },
   },
   productId: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: "Products",
-      key: "id",
+      model: 'Products',
+      key: 'id',
     },
   },
 });
 
 Ratings.associate = (models) => {
   Ratings.belongsTo(models.Users, {
-    foreignKey: "userId",
-    as: "user",
-    onDelete: "cascade",
+    foreignKey: 'userId',
+    as: 'user',
+    onDelete: 'cascade',
   });
   Ratings.belongsTo(models.Products, {
-    foreignKey: "productId",
-    as: "product",
-    onDelete: "cascade",
+    foreignKey: 'productId',
+    as: 'product',
+    onDelete: 'cascade',
   });
 };
 

@@ -1,7 +1,5 @@
-import pkg from 'sequelize';
+import { DataTypes } from 'sequelize';
 import { sequelize } from './index.js';
-
-const { DataTypes } = pkg;
 
 const Carts = sequelize.define('Carts', {
   userId: {
@@ -32,12 +30,14 @@ const Carts = sequelize.define('Carts', {
   },
 });
 
+// Associations should be defined after the model is initialized
 Carts.associate = (models) => {
   Carts.belongsTo(models.Users, {
     foreignKey: 'userId',
     as: 'user',
     onDelete: 'cascade',
   });
+
   Carts.belongsTo(models.Products, {
     foreignKey: 'productId',
     as: 'product',

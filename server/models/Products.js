@@ -1,7 +1,5 @@
-import pkg from 'sequelize';
+import { DataTypes } from 'sequelize';
 import { sequelize } from './index.js';
-
-const { DataTypes } = pkg;
 
 const Products = sequelize.define('Products', {
   imageUrl: {
@@ -40,11 +38,13 @@ Products.associate = (models) => {
     as: 'user',
     onDelete: 'CASCADE',
   });
+
   Products.hasMany(models.Ratings, {
     foreignKey: 'productId',
     as: 'ratings',
     onDelete: 'CASCADE',
   });
+
   Products.hasMany(models.Carts, {
     foreignKey: 'productId',
     as: 'carts',

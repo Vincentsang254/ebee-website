@@ -31,20 +31,22 @@ export const sequelize = new Sequelize(
 const db = {};
 
 // Synchronously read model files and initialize models
-fs.readdirSync(__dirname)
-  .filter((file) => {
-    return (
-      file.indexOf('.') !== 0 &&
-      file !== path.basename(__filename) &&
-      file.slice(-3) === '.js' &&
-      file.indexOf('.test.js') === -1
-    );
-  })
-  .forEach(async (file) => {
-    const model = (await import(path.join(__dirname, file))).default;
-    model.init(sequelize, DataTypes);
-    db[model.name] = model;
-  });
+const models = await Promise.all(
+  fs.readdirSync(__dirname)
+    .filter((file) => {
+      return (
+        file.indexOf('.') !== 0 &&
+        file !== path.basename(__filename) &&
+        file.slice(-3) === '.js' &&
+        file.indexOf('.test.js') === -1
+      );
+    })
+    .map(async (file) => {
+      const model = (await import(path.join(__dirname, file))).default;
+      model.init(sequelize, DataTypes);
+      db[model.name] = model;
+    })
+);
 
 // Set up associations after models are initialized
 Object.keys(db).forEach((modelName) => {

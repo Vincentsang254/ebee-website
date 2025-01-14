@@ -1,9 +1,7 @@
-import pkg from 'sequelize';
+import { DataTypes } from 'sequelize';
 import { sequelize } from './index.js';
 
-const { DataTypes } = pkg;
-
-const Users = sequelize.define("Users", {
+const Users = sequelize.define('Users', {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -24,7 +22,7 @@ const Users = sequelize.define("Users", {
   profilePic: {
     type: DataTypes.STRING,
     allowNull: true,
-    defaultValue: "https://d2qp0siotla746.cloudfront.net/img/use-cases/profile-picture/template_0.jpg",
+    defaultValue: 'https://d2qp0siotla746.cloudfront.net/img/use-cases/profile-picture/template_0.jpg',
   },
   verified: {
     type: DataTypes.BOOLEAN,
@@ -41,37 +39,37 @@ const Users = sequelize.define("Users", {
   },
   userType: {
     type: DataTypes.ENUM(
-      "Admin",
-      "Client",
-      "Driver",
-      "Finance_manager",
-      "Company_manager"
+      'Admin',
+      'Client',
+      'Driver',
+      'Finance_manager',
+      'Company_manager'
     ),
     allowNull: false,
-    defaultValue: "Client",
+    defaultValue: 'Client',
   },
 });
 
 Users.associate = (models) => {
   Users.hasMany(models.Products, {
-    foreignKey: "userId",
-    as: "products",
-    onDelete: "CASCADE",
+    foreignKey: 'userId',
+    as: 'products',
+    onDelete: 'cascade',
   });
   Users.hasMany(models.Ratings, {
-    foreignKey: "userId",
-    as: "ratings",
-    onDelete: "CASCADE",
+    foreignKey: 'userId',
+    as: 'ratings',
+    onDelete: 'cascade',
   });
   Users.hasMany(models.Orders, {
-    foreignKey: "userId",
-    as: "orders",
-    onDelete: "CASCADE",
+    foreignKey: 'userId',
+    as: 'orders',
+    onDelete: 'cascade',
   });
   Users.hasMany(models.UserAddress, {
-    foreignKey: "userId",
-    as: "addresses",
-    onDelete: "CASCADE",
+    foreignKey: 'userId',
+    as: 'addresses',
+    onDelete: 'cascade',
   });
 };
 

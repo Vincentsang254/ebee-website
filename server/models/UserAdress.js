@@ -1,9 +1,7 @@
-import pkg from 'sequelize';
+import { DataTypes } from 'sequelize';
 import { sequelize } from './index.js';
 
-const { DataTypes } = pkg;
-
-const UserAddress = sequelize.define("UserAddress", {
+const UserAddress = sequelize.define('UserAddress', {
   addressLine: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -36,17 +34,17 @@ const UserAddress = sequelize.define("UserAddress", {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: "Users",
-      key: "id",
+      model: 'Users',
+      key: 'id',
     },
   },
 });
 
 UserAddress.associate = (models) => {
   UserAddress.belongsTo(models.Users, {
-    foreignKey: "userId",
-    as: "user",
-    onDelete: "CASCADE",
+    foreignKey: 'userId',
+    as: 'user',
+    onDelete: 'cascade',
   });
 };
 

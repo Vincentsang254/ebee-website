@@ -1,9 +1,7 @@
-import pkg from 'sequelize';
+import { DataTypes } from 'sequelize';
 import { sequelize } from './index.js';
 
-const { DataTypes } = pkg;
-
-const Payments = sequelize.define("Payments", {
+const Payments = sequelize.define('Payments', {
   phone: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -24,34 +22,35 @@ const Payments = sequelize.define("Payments", {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: "Users",
-      key: "id",
+      model: 'Users',
+      key: 'id',
     },
-    onDelete: "CASCADE",
-    onUpdate: "CASCADE",
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   },
   orderId: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: "Orders",
-      key: "id",
+      model: 'Orders',
+      key: 'id',
     },
-    onDelete: "CASCADE",
-    onUpdate: "CASCADE",
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   },
 });
 
 Payments.associate = (models) => {
   Payments.belongsTo(models.Users, {
-    foreignKey: "userId",
-    as: "user",
-    onDelete: "CASCADE",
+    foreignKey: 'userId',
+    as: 'user',
+    onDelete: 'CASCADE',
   });
+
   Payments.belongsTo(models.Orders, {
-    foreignKey: "orderId",
-    as: "order",
-    onDelete: "CASCADE",
+    foreignKey: 'orderId',
+    as: 'order',
+    onDelete: 'CASCADE',
   });
 };
 
