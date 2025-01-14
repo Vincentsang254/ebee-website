@@ -4,7 +4,7 @@ import { sequelize } from './index.js';
 
 const { DataTypes } = pkg;
 
-  const Users = sequelize.define("Users", {
+  const Images = sequelize.define("Images", {
     imageUrl: {
       type: DataTypes.STRING,
       allowNull: false,
