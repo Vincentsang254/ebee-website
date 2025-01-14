@@ -60,9 +60,23 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-// Sync DB and start server
-db.sequelize.sync().then(() => {
-  app.listen(port, "0.0.0.0", () => {
-    console.log(`Server running on port ${port}`);
-  });
-});
+// Initialize models and sync the database
+const startServer = async () => {
+  try {
+    // Ensure all models are initialized before syncing
+    await db.initializeModels();
+
+    // Sync the database
+    await db.sequelize.sync();
+
+    // Start the server
+    app.listen(port, "0.0.0.0", () => {
+      console.log(`Server running on port ${port}`);
+    });
+  } catch (error) {
+    console.error("Error during initialization:", error);
+    process.exit(1); // Exit with failure code if something goes wrong
+  }
+};
+
+startServer();
