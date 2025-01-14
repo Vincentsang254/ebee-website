@@ -34,11 +34,13 @@ const ShoppingHome = () => {
   const dispatch = useDispatch();
   const { list: products, status } = useSelector((state) => state.products);
 
+  console.table(products);
+
   // State for the search query
   const [query, setQuery] = useState('');
 
   // Filter products based on the query
-  const filteredProducts = products.filter((product) =>
+  const filteredProducts = products?.filter((product) =>
     product.name.toLowerCase().includes(query.toLowerCase()) ||
     product.desc.toLowerCase().includes(query.toLowerCase())
   );

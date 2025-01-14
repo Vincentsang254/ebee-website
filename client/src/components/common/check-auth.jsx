@@ -35,6 +35,7 @@ const CheckAuth = ({ children }) => {
     "/auth/login",
     "/auth/register",
     "/auth/verify",
+    "/auth/verify-otp",
     "/auth/forgot-password",
     "/auth/reset-password",
     "/auth/verify-code"

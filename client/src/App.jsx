@@ -17,13 +17,13 @@ import "react-toastify/dist/ReactToastify.css";
 import AuthLogin from "./pages/auth/login";
 import AuthRegister from "./pages/auth/register";
 import { loadUser } from "./features/slices/authSlice";
-import AccountVerification from "./pages/auth/verify-account";
 import PasswordReset from "./pages/auth/password-reset";
 import VerifyCode from "./pages/auth/verify-code";
 import ForgotPassword from "./pages/auth/forgot-password";
 import AdminOrders from "./pages/admin-view/orders/admin-orders";
 import ShoppingLayout from "./components/shopping-view/common/layout";
 import AdminUsers from "./pages/admin-view/users/admin-users";
+import VerifyAccount from "./pages/auth/verify-account";
 
 
 
@@ -63,6 +63,7 @@ const App = ({isAuthenticated, user}) => {
           <Route path="login" element={<AuthLogin />} />
           <Route path="register" element={<AuthRegister />} />
           <Route path="verify" element={<AccountVerification />} />
+          <Route path="verify-otp" element={<VerifyAccount />} />
           <Route path="reset-password" element={<PasswordReset />} />
           <Route path="verify-code" element={<VerifyCode />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
