@@ -40,8 +40,8 @@ fs.readdirSync(__dirname)
       file.indexOf('.test.js') === -1
     );
   })
-  .forEach((file) => {
-    const model = require(path.join(__dirname, file)).default;
+  .forEach(async (file) => {
+    const model = (await import(path.join(__dirname, file))).default;
     model.init(sequelize, DataTypes);
     db[model.name] = model;
   });
