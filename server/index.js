@@ -46,7 +46,7 @@ app.use("/api/address", userAddressRoutes);
 app.use("/api/ratings", ratingRoutes);
 
 app.get("/test", (req, res) => {
-  res.status(200).send("Backend is working.js");
+  res.status(200).json("Backend is working.js");
 });
 
 const __dirname = path.resolve();

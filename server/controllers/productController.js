@@ -174,7 +174,7 @@ export const getProductById = async (req, res) => {
 };
 
 // 🔍 Search Products by Name
-export const searchProductsByName = async (req, res) => {
+export const searchProducts = async (req, res) => {
   const { name, price, category, desc } = req.body;
 
   try {

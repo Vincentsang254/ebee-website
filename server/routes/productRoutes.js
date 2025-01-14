@@ -6,7 +6,7 @@ import {
   updateProducts,
   getProducts,
   getProductById,
-  searchProductsByName
+  searchProducts
 } from "../controllers/productController.js";
 
 import { verifyRoles, verifyToken } from "../middlewares/AuthMiddleware.js";
@@ -21,7 +21,7 @@ router.delete("/delete/:productId", verifyToken, verifyRoles("Admin"), deletePro
 router.put("/update/:productId", verifyToken, verifyRoles("Admin"), upload.single("image"), updateProducts);
 router.get("/get", getProducts);
 router.get("/get-product/:productId", verifyToken, getProductById);
-router.post("/search", verifyToken, searchProductsByName);
+router.post("/search", verifyToken, searchProducts);
 
 // Export router as default
 export default router;
