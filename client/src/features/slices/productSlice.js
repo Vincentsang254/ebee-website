@@ -16,10 +16,9 @@ export const fetchProducts = createAsyncThunk(
 	"products/fetchProducts",
 	async () => {
 		try {
-			console.log("fetching products....");
-			// Ensure headers are passed as part of an object
+			
 			const response = await axios.get(`${url}/products/get`, setHeaders());
-			console.log("Fetch products response from slice..", response);
+			console.table("Fetch products response from slice..", response);
 			return response.data.data.products;
 
 		} catch (error) {
