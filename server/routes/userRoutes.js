@@ -6,11 +6,8 @@ import {
   createUsers,
   updateUser,
   getUserById
-} from "../controllers/userController.js";  // Make sure to use .js extension
+} from "../controllers/userController.js"; 
 import { verifyToken } from "../middlewares/AuthMiddleware.js";
-
-// If you're using AuthMiddleware, import it here, even though it's not used in your current routes
-// import { someMiddlewareFunction } from "../middlewares/AuthMiddleware.js";  // Example if needed
 
 const router = express.Router();
 
