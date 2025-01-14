@@ -4,7 +4,7 @@ import { sequelize } from './index.js';
 
 const { DataTypes } = pkg;
 
-  const Notifications = sequelize.define("Users", {
+  const Notifications = sequelize.define("Notifications", {
 
 		userId: {
 			type: DataTypes.INTEGER,
