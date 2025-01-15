@@ -23,11 +23,15 @@ const app = express();
 
 // Set up the port dynamically for production
 const port = process.env.PORT || 3001;
-// Log the db object and models correctly
-console.table("db files", Object.entries(db)); // Converts db object to array of entries
-console.table("db models", Object.entries(db.models)); // Converts db.models to array of entries
+// Check db object
+console.log("db object", db);
 
-
+// Ensure db.models exists before calling console.table
+if (db.models) {
+  console.table("db models", Object.entries(db.models));
+} else {
+  console.log("db.models is undefined or null");
+}
 app.use(cors({
   origin: process.env.CLIENT_URL || "https://ebee-app.onrender.com", // Use env var for production URL
   credentials: true,
