@@ -23,9 +23,10 @@ const app = express();
 
 // Set up the port dynamically for production
 const port = process.env.PORT || 3001;
+// Log the db object and models correctly
+console.table("db files", Object.entries(db)); // Converts db object to array of entries
+console.table("db models", Object.entries(db.models)); // Converts db.models to array of entries
 
-console.table("db files", db);
-console.table("db models",db.models);
 
 app.use(cors({
   origin: process.env.CLIENT_URL || "https://ebee-app.onrender.com", // Use env var for production URL
@@ -47,7 +48,7 @@ app.use("/api/address", userAddressRoutes);
 app.use("/api/ratings", ratingRoutes);
 
 app.get("/test", (req, res) => {
-  res.status(200).json("Backend is working.js");
+  res.status(200).json("Backend is working....");
 });
 
 const __dirname = path.resolve();
