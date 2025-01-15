@@ -27,7 +27,7 @@ if (sequelizeConfig.use_env_variable) {
   );
 }
 
-// Wrap the model initialization inside an async function
+// Initialize models function
 const initializeModels = async () => {
   const files = fs.readdirSync(__dirname).filter((file) => {
     return (
@@ -51,6 +51,7 @@ const initializeModels = async () => {
     }
   });
 
+  // Assign sequelize instance to db object
   db.sequelize = sequelize;
   db.Sequelize = Sequelize;
 };
@@ -59,6 +60,15 @@ const initializeModels = async () => {
 initializeModels()
   .then(() => {
     console.log("Models initialized successfully");
+    // Sync the database after models are initialized
+    return db.sequelize.sync();  // sync database only after models are initialized
+  })
+  .then(() => {
+    // Start the server after the database is synced
+    const port = process.env.PORT || 3001;
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
   })
   .catch((error) => {
     console.error("Error during initialization:", error);
