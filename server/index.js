@@ -19,10 +19,13 @@ import { db } from "./models/index.js";
 
 const app = express();
 
+console.table("logged in user", req.user);
+
 // Set up the port dynamically for production
 const port = process.env.PORT || 3001;
 
-console.log(db);
+console.table("db files", db);
+console.table("db models",db.models);
 
 app.use(cors({
   origin: process.env.CLIENT_URL || "https://ebee-app.onrender.com", // Use env var for production URL
@@ -59,24 +62,24 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // Sync the database and start the server
-const startServer = async () => {
-  try {
-    await db.sequelize.sync();
-    console.log("Database synced successfully");
+// const startServer = async () => {
+//   try {
+//     await db.sequelize.sync();
+//     console.log("Database synced successfully");
 
-    app.listen(port, "0.0.0.0", () => {
-      console.log(`Server running on port ${port}`);
-    });
-  } catch (error) {
-    console.error("Error during initialization:", error);
-    process.exit(1); // Exit with failure code if something goes wrong
-  }
-};
+//     app.listen(port, "0.0.0.0", () => {
+//       console.log(`Server running on port ${port}`);
+//     });
+//   } catch (error) {
+//     console.error("Error during initialization:", error);
+//     process.exit(1); // Exit with failure code if something goes wrong
+//   }
+// };
 
-startServer();
-// Sync the database and start the server
-// db.sequelize.sync().then(() => {
-//   app.listen(port, "0.0.0.0", () => {
-//     console.log(`Server running on http://localhost:${port}`);
-//   });
-// });
+// startServer();
+//Sync the database and start the server
+db.sequelize.sync().then(() => {
+  app.listen(port, "0.0.0.0", () => {
+    console.log(`Server running on http://localhost:${port}`);
+  });
+});
