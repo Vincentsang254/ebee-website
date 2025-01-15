@@ -1,45 +1,13 @@
-/** @format */
-// Middleware for generating the Daraja token
-import axios from "axios";
-import moment from "moment";
-import Payments from "../models/Payment.js";
-import cron from "node-cron";
-import { Op } from "sequelize";
+
+const axios = require("axios");
+const moment = require("moment");
+const Payments = require("../models/Payment");
+const cron = require("node-cron");
+const { Op } = require("sequelize");
 
 
-export const generateDarajaToken = async (req, res, next) => {
-	try {
-		const consumer = "mJBID5vnbx55DAODHtaHn8z0c37NoT8lQAZTTc1eYKd79WLW";
-		const secret =
-			"fxoL43QW45xYytkpVLMJKyObv7SJAbbOWAzOilkeW5XGrsYEAZbZeEUBKZ2DO8ws";
-
-		const auth = Buffer.from(`${consumer}:${secret}`).toString("base64");
-
-		const response = await axios.get(
-			"https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials",
-			{
-				headers: {
-					Authorization: `Basic ${auth}`,
-				},
-			}
-		);
-
-		const token = response.data.access_token;
-
-		req.token = token
-
-		console.table(token);
-
-		// return token;
-
-        
-		next();
-	} catch (error) {
-		res.status(500).json({ message: error.message });
-	}
-};
 // Function to initiate STK Push
-export const initiateSTKPush = async (req, res) => {
+const initiateSTKPush = async (req, res) => {
 	try {
 		const phone = req.body.phone.slice(1);
 		const amount = req.body.amount;
@@ -89,7 +57,7 @@ export const initiateSTKPush = async (req, res) => {
 };
 
 
-export const processCallback = async (req, res) => {
+const processCallback = async (req, res) => {
   try {
     const callbackData = req.body;
 
@@ -143,5 +111,10 @@ export const processCallback = async (req, res) => {
   }
 };
 
+module.exports = {
+	initiateSTKPush,
+  processCallback
+  
+}
 
 

@@ -1,21 +1,24 @@
-import cookieParser from "cookie-parser";
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import path from "path";
+
+const cookieParser = require("cookie-parser");
+const express = require("express");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const path = require("path");
 
 dotenv.config();
 
-import authRoutes from "./routes/authRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
-import productRoutes from "./routes/productRoutes.js";
-import cartRoutes from "./routes/cartRoutes.js";
-import paymentRoutes from "./routes/paymentRoutes.js";
-import orderRoutes from "./routes/orderRoutes.js";
-import notificationRoutes from "./routes/notificationRoutes.js";
-import userAddressRoutes from "./routes/userAddressRoutes.js";
-import ratingRoutes from "./routes/ratingRoutes.js";
-import { db } from "./models/index.js";
+// const { otpGenerate} = require("../util")
+
+const authRoutes = require("./routes/authRoutes");
+const productRoutes = require("./routes/productRoutes");
+const userRoutes = require("./routes/userRoutes");
+const cartRoutes = require("./routes/cartRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
+const orderRoutes = require("./routes/orderRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
+const userAddressRoutes = require("./routes/userAddressRoutes");
+const ratingRoutes = require("./routes/ratingRoutes");
+const db = require("./models");
 
 const app = express();
 
@@ -46,6 +49,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/payment", paymentRoutes);
+app.use("/api/images", imageRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/address", userAddressRoutes);
@@ -66,21 +70,8 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-// Sync the database and start the server with try-catch block
-const startServer = async () => {
-  try {
-    // Sync the database
-    await db.sequelize.sync();
-    console.log("Database synced successfully");
-
-    // Start the server after the database sync
-    app.listen(port, "0.0.0.0", () => {
-      console.log(`Server running on http://localhost:${port}`);
-    });
-  } catch (error) {
-    console.error("Error during initialization:", error);
-    process.exit(1); // Exit with failure code if something goes wrong
-  }
-};
-
-startServer();
+db.sequelize.sync().then(() => {
+	app.listen(port, "0.0.0.0", () => {
+		console.log(`Server running on http://localhost:${port}`);
+	});
+});

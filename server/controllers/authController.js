@@ -1,17 +1,17 @@
-// Importing required modules using ES6 import syntax
-import bcryptjs from "bcryptjs";
-import Users from "../models/Users.js"; // Ensure you use .js extension for ES modules
-import CryptoJS from "crypto-js";
-import generateOtp from "../utils/otpGenerator.js";
-import {
+// Importing required modules using ES6 const syntax
+const bcryptjs = require("bcryptjs");
+const CryptoJS = require("crypto-js");
+const generateOtp = require("../utils/otpGenerator");
+const {
   sendPasswordResetEmail,
   sendResetSuccessEmail,
   sendWelcomeEmail,
-  sendVerificationEmail } from "../brevo/email.brevo.js";
-import generateAuthToken from "../utils/generateAuthToken.js";
+  sendVerificationEmail } = require("../brevo/email.brevo");
+const generateAuthToken = require("../utils/generateAuthToken");
+const Users = require("../models/Users");
 
 // Signup function
-export const signup = async (req, res) => {
+const signup = async (req, res) => {
   try {
     let { email, name, password, phoneNumber } = req.body;
 
@@ -64,7 +64,7 @@ export const signup = async (req, res) => {
 };
 
 // Login function
-export const login = async (req, res) => {
+const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -96,7 +96,7 @@ export const login = async (req, res) => {
   }
 };
 
-export const forgotPassword = async (req, res) => {
+const forgotPassword = async (req, res) => {
 	try {
 		const { email } = req.body;
 
@@ -131,7 +131,7 @@ export const forgotPassword = async (req, res) => {
 		
 };
 
-export const verifyAccount = async (req, res) => {
+const verifyAccount = async (req, res) => {
   try {
     const { verificationCode } = req.body;
 
@@ -160,7 +160,7 @@ export const verifyAccount = async (req, res) => {
 };
 
 
-export const changePassword = async (req, res) => {
+const changePassword = async (req, res) => {
 	try {
 		const token = req.params.token
 		const password = req.body.password
@@ -200,3 +200,11 @@ export const changePassword = async (req, res) => {
 };
 
 
+module.exports = {
+  login,
+
+	signup,
+	forgotPassword,
+	changePassword,
+  
+}

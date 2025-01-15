@@ -1,7 +1,8 @@
-import Users from "../models/Users.js";
-import jwt from "jsonwebtoken";
 
-export const verifyToken = async (req, res, next) => {
+const Users = require("../models/Users");
+const jwt = require("jsonwebtoken");
+
+const verifyToken = async (req, res, next) => {
   const authHeader = req.header("Authorization");
 
   if (!authHeader) {
@@ -27,7 +28,7 @@ export const verifyToken = async (req, res, next) => {
 };
 
 
-export const isClient = (req, res, next) => {
+const isClient = (req, res, next) => {
   const userId = req.user.id;
   const paramId = req.params.id;
 
@@ -40,7 +41,7 @@ export const isClient = (req, res, next) => {
 
 
 // Reusable Role Verification Middleware
-export const verifyRoles = (role) => (req, res, next) => {
+const verifyRoles = (role) => (req, res, next) => {
   verifyToken(req, res, () => {
     if (req.user && req.user.userType === role) {
       next();
@@ -49,3 +50,5 @@ export const verifyRoles = (role) => (req, res, next) => {
     }
   });
 };
+
+module.exports = { verifyToken, isClient, verifyRoles };

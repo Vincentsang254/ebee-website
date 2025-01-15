@@ -3,7 +3,7 @@
 import Notifications from "../models/Notification.js";
 
 // Function to create a notification
-export const createNotification = async (userId, type, content) => {
+const createNotification = async (userId, type, content) => {
   try {
     const notification = await Notifications.create({
       userId,
@@ -17,4 +17,4 @@ export const createNotification = async (userId, type, content) => {
   }
 };
 
-
+module.exports = createNotification;

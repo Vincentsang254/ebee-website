@@ -1,11 +1,10 @@
 /** @format */
 
-import Orders from "../models/Order.js";
+const Orders = require("../models/Orders");
+const sendNotificationEmail = require("../brevo/email.brevo");
+const Notifications = require("../models/Notifications");
 
-import { sendNotificationEmail } from "../brevo/email.brevo.js";
-import Notifications from "../models/Notification.js";
-
-export const createOrders = async (req, res) => {
+const createOrders = async (req, res) => {
 	const { totalPrice, orderItems, paymentMethod, userAddressId } = req.body;
 	const userId = req.user.id; // Assuming req.user contains an object with an id property
 
@@ -45,7 +44,7 @@ export const createOrders = async (req, res) => {
 };
 
 
-export const deleteOrders = async (req, res) => {
+const deleteOrders = async (req, res) => {
 	const orderId = req.params.orderId;
 	try {
 		const deletedOrder = await Orders.findOne({ where: { id: orderId } });
@@ -73,7 +72,7 @@ export const deleteOrders = async (req, res) => {
 	}
 };
 
-export const updateOrders = async (req, res) => {
+const updateOrders = async (req, res) => {
 	const orderId = req.params.orderId;
 	const userId = req.user.id; // Make sure req.user contains the authenticated user's info
 
@@ -111,7 +110,7 @@ export const updateOrders = async (req, res) => {
 	}
 };
 
-export const getOrders = async (req, res) => {
+const getOrders = async (req, res) => {
 	try {
 		const orders = await Orders.findAll();
 		res.status(200).json({ status: true, data: orders });
@@ -120,7 +119,7 @@ export const getOrders = async (req, res) => {
 	}
 };
 
-export const getOrder = async (req, res) => {
+const getOrder = async (req, res) => {
 	const orderId = req.params.orderId;
 	try {
 		const order = await Orders.findByPk(orderId);
@@ -136,4 +135,11 @@ export const getOrder = async (req, res) => {
 	}
 };
 
+module.exports = {
+	createOrders,
+	updateOrders,
+	getOrders,
+	getOrder,
+	deleteOrders
+}
 

@@ -1,5 +1,5 @@
 // Import the jwt module using ES6 import syntax
-import jwt from "jsonwebtoken";
+const jwt = require("jsonwebtoken");
 
 // Function to generate authentication token
 const generateAuthToken = (user) => {
@@ -22,4 +22,4 @@ const generateAuthToken = (user) => {
   return token;
 };
 
-export default generateAuthToken;
+module.exports = generateAuthToken;

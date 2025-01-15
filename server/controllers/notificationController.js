@@ -1,6 +1,6 @@
 /** @format */
 
-import Notifications from "../models/Notification.js";
+const Notifications = require("../models/Notifications");
 export const getNotifications = async (req, res) => {
 	try {
 		const userId = req.user.id; 
@@ -43,3 +43,8 @@ export const getNots = async (req, res) => {
 	}
 };
 
+module.expors = {
+	getNotifications,
+	markAsRead,
+	getNots,
+}

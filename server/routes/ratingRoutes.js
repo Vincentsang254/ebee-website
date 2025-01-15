@@ -1,13 +1,13 @@
-// Import necessary modules
-import express from "express";
-import {
+// const necessary modules
+const express= require("express");
+const {
   deleteRatings,
   updateRatings,
   getRatings,
   getRatingById,
   createRatings
-} from "../controllers/ratingsController.js";  // Ensure to use the .js extension
-import { verifyToken } from "../middlewares/AuthMiddleware.js";
+}= require("../controllers/ratingsController");  // Ensure to use the .js extension
+const { verifyToken }= require("../middlewares/AuthMiddleware");
 
 const router = express.Router();
 
@@ -18,5 +18,5 @@ router.delete("/delete/:ratingId",verifyToken, deleteRatings);
 router.put("/update/:ratingId",verifyToken, updateRatings);
 router.get("/get-rating/:ratingId",verifyToken, getRatingById);
 
-// Export the router as default
-export default router;
+
+module.exports = router;

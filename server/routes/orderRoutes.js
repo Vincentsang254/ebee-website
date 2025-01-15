@@ -1,13 +1,13 @@
-// Importing necessary modules
-import express from "express";
-import {
+// consting necessary modules
+const express = require("express");
+const {
   createOrders,
   deleteOrders,
   updateOrders,
   getOrders,
   getOrder,
-} from "../controllers/orderController.js";  // Use `.js` for the module extension
-import { verifyToken } from "../middlewares/AuthMiddleware.js";
+} = require("../controllers/orderController");  // Use `.js` for the module extension
+const { verifyToken } = require("../middlewares/AuthMiddleware");
 
 const router = express.Router();
 
@@ -18,5 +18,5 @@ router.put("/update/:orderId",verifyToken, updateOrders);
 router.get("/get-orders",verifyToken, getOrders);
 router.get("/get-order/:orderId",verifyToken, getOrder);
 
-// Export router as default
-export default router;
+
+module.exports = router;

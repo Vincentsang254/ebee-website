@@ -1,13 +1,13 @@
 /** @format */
 
-// routes/notificationRoutes.js
-import express from "express";
-import {
+// routes/notificationRoutes
+const express = require("express");
+const {
   getNotifications,
   markAsRead,
   getNots,
-} from "../controllers/notificationController.js";
-import { verifyToken } from "../middlewares/AuthMiddleware.js";
+} = require("../controllers/notificationController");
+const { verifyToken } = require("../middlewares/AuthMiddleware");
 
 const router = express.Router();
 
@@ -15,4 +15,4 @@ router.get("/get/:userId", verifyToken, getNotifications);
 router.get("/get", verifyToken, getNots);
 router.put("/marked/:notificationId", verifyToken, markAsRead);
 
-export default router;
+module.exports = router;

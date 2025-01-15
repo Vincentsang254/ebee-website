@@ -1,8 +1,8 @@
 
-import nodemailer from "nodemailer"
+const nodemailer = require("nodemailer")
 
 
-	export const transporter = nodemailer.createTransport({
+	const transporter = nodemailer.createTransport({
 		host: "smtp-relay.brevo.com",
 		port: 587, // Use 465 for SSL or 587 for TLS
         secure: false, // Set to true for port 465
@@ -12,5 +12,6 @@ import nodemailer from "nodemailer"
 		},
 	});
 
-    export const sender = "kiplangatsang08@gmail.com"
+    const sender = "kiplangatsang08@gmail.com"
 
+module.exports = {transporter, sender}

@@ -1,13 +1,13 @@
 /** @format */
 
-import express from "express";
-import {
+const express = require("express");
+const {
 	login,
 
 	signup,
 	forgotPassword,
 	changePassword,
-} from "../controllers/authController.js";
+} = require("../controllers/authController");
 
 const router = express.Router();
 
@@ -17,4 +17,4 @@ router.post("/login", login);
 router.post("/forgot-password", forgotPassword);
 router.put("/change-password", changePassword);
 
-export default router;
+module.exports = router;

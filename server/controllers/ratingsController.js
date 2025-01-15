@@ -1,8 +1,8 @@
 /** @format */
 
-import Ratings from "../models/Ratings.js";
+const Ratings = require("../models/Ratings");
 
-export const createRatings = async (req, res) => {
+const createRatings = async (req, res) => {
 	try {
 		const userId = req.user.id;
 
@@ -21,7 +21,7 @@ export const createRatings = async (req, res) => {
 	}
 };
 
-export const deleteRatings = async (req, res) => {
+const deleteRatings = async (req, res) => {
 	try {
 		const ratingId = req.params.ratingId;
 		// Correct the where clause to use 'id' instead of 'ratingId'
@@ -32,7 +32,7 @@ export const deleteRatings = async (req, res) => {
 	}
 };
 
-export const updateRatings = async (req, res) => {
+const updateRatings = async (req, res) => {
 	const ratingId = req.params.ratingId;
 	const { rating, ratingCount, desc, userId, productId } = req.body;
 
@@ -54,7 +54,7 @@ export const updateRatings = async (req, res) => {
 	}
 };
 
-export const getRatings = async (req, res) => {
+const getRatings = async (req, res) => {
 	try {
 		const ratings = await Ratings.findAll({});
 		res.status(200).json({ status: 200, data: ratings });
@@ -63,7 +63,7 @@ export const getRatings = async (req, res) => {
 	}
 };
 
-export const getRatingById = async (req, res) => {
+const getRatingById = async (req, res) => {
 	const ratingId = req.params.ratingId;
 	try {
 		const ratings = await Ratings.findOne({ where: { id: ratingId } });
@@ -72,3 +72,10 @@ export const getRatingById = async (req, res) => {
 		res.status(500).json({ status: 500, message: error.message });
 	}
 };
+module.exports = {
+	deleteRatings,
+	updateRatings,
+	getRatings,
+	getRatingById,
+	createRatings
+}

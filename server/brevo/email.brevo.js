@@ -1,13 +1,13 @@
-import {
+const {
     NOTIFICATION_EMAIL_TEMPLATE,
     PASSWORD_RESET_REQUEST_TEMPLATE,
     PASSWORD_RESET_SUCCESS_TEMPLATE,
     VERIFICATION_EMAIL_TEMPLATE,
     WELCOME_EMAIL_TEMPLATE,
-} from "./emailTemplates.js";
-import { transporter, sender } from "./brevo.config.js";
+} =require("./emailTemplates");
+const { transporter, sender } = require("./brevo.config");
 
-export const sendVerificationEmail = async (email, verificationCode) => {
+const sendVerificationEmail = async (email, verificationCode) => {
     const recipient = email;
     try {
         const emailContent = VERIFICATION_EMAIL_TEMPLATE.replace(
@@ -29,7 +29,7 @@ export const sendVerificationEmail = async (email, verificationCode) => {
     }
 };
 
-export const sendWelcomeEmail = async (email, name) => {
+const sendWelcomeEmail = async (email, name) => {
     const recipient = email;
 
     // Manually inject variables into the template if you're not using a templating engine
@@ -54,7 +54,7 @@ export const sendWelcomeEmail = async (email, name) => {
 };
 
 
-export const sendPasswordResetEmail = async (email, resetLink) => {
+const sendPasswordResetEmail = async (email, resetLink) => {
     const recipient = email;
 
     try {
@@ -73,7 +73,7 @@ export const sendPasswordResetEmail = async (email, resetLink) => {
     }
 };
 
-export const sendResetSuccessEmail = async (email) => {
+const sendResetSuccessEmail = async (email) => {
     const recipient = email;
 
     try {
@@ -92,7 +92,7 @@ export const sendResetSuccessEmail = async (email) => {
     }
 };
 
-export const sendNotificationEmail = async (email, subject, userData) => {
+const sendNotificationEmail = async (email, subject, userData) => {
     const personalizedTemplate = personalizeEmailTemplate(NOTIFICATION_EMAIL_TEMPLATE, userData);
   
     try {
@@ -111,3 +111,10 @@ export const sendNotificationEmail = async (email, subject, userData) => {
     }
   };
 
+module.exports = {
+    sendVerificationEmail,
+    sendResetSuccessEmail ,
+    sendPasswordResetEmail,
+    sendWelcomeEmail,
+    sendNotificationEmail
+}

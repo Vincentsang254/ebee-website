@@ -5,7 +5,7 @@ import Users from '../models/Users.js';
 import { Op } from 'sequelize';
 
 // 🟢 Create Product
-export const createProducts = async (req, res) => {
+const createProducts = async (req, res) => {
   try {
     const { name, desc, price, category } = req.body;
     const userId = req.user.id;
@@ -51,7 +51,7 @@ export const createProducts = async (req, res) => {
 };
 
 // 🔴 Delete Product
-export const deleteProducts = async (req, res) => {
+const deleteProducts = async (req, res) => {
   const productId = req.params.productId;
 
   try {
@@ -76,7 +76,7 @@ export const deleteProducts = async (req, res) => {
 };
 
 // 🟡 Update Product
-export const updateProducts = async (req, res) => {
+const updateProducts = async (req, res) => {
   const productId = req.params.productId;
   const { name, desc, price, category } = req.body;
 
@@ -118,7 +118,7 @@ export const updateProducts = async (req, res) => {
 };
 
 // 🟢 Get All Products
-export const getProducts = async (req, res) => {
+const getProducts = async (req, res) => {
   try {
     const products = await Products.findAll({
       attributes: { exclude: ['userId'] },
@@ -144,7 +144,7 @@ export const getProducts = async (req, res) => {
 };
 
 // 🟢 Get Product by ID
-export const getProductById = async (req, res) => {
+const getProductById = async (req, res) => {
   const productId = req.params.productId;
 
   try {
@@ -175,7 +175,7 @@ export const getProductById = async (req, res) => {
 };
 
 // 🔍 Search Products by Name
-export const searchProducts = async (req, res) => {
+const searchProducts = async (req, res) => {
   const { name, price, category, desc } = req.body;
 
   try {
@@ -197,4 +197,13 @@ export const searchProducts = async (req, res) => {
     console.error('Error searching products:', error);
     res.status(500).json({ status: false, message: error.message });
   }
+};
+
+module.exports = {
+  createProducts,
+  getProducts,
+  searchProducts,
+  getProductById,
+  updateProducts,
+  deleteProducts
 };

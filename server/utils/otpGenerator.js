@@ -5,5 +5,4 @@ const generateOtp = () => {
   return otp.toString().substring(0, 6);  // Ensure the OTP is 6 digits
 };
 
-// Export the function using ES6 export syntax
-export default generateOtp;
+module.exports = generateOtp;

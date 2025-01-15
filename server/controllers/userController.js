@@ -1,11 +1,10 @@
-/** @format */
 
-import bcryptjs from "bcryptjs";
-import Users from "../models/Users.js";
-import generateOtp from "../utils/otpGenerator.js";
+const generateOtp = require("../utils/otpGenerator");
+const Users = require("../models/Users");
+const bcryptjs = require("bcryptjs");
 
 // TODO revisit createUsers
-export const createUsers = async (req, res) => {
+const createUsers = async (req, res) => {
 	const { email, name, password } = req.body;
 
 	try {
@@ -40,7 +39,7 @@ export const createUsers = async (req, res) => {
 	}
 };
 
-export const deleteUser = async (req, res) => {
+const deleteUser = async (req, res) => {
 	const userId = req.params.userId;
 
 	try {
@@ -65,7 +64,7 @@ export const deleteUser = async (req, res) => {
 	}
 };
 
-export const updateUser = async (req, res) => {
+const updateUser = async (req, res) => {
 	const userId = req.params.userId;
 	const { email, name, password } = req.body;
 
@@ -100,7 +99,7 @@ export const updateUser = async (req, res) => {
 	}
 };
 
-export const getUsers = async (req, res) => {
+const getUsers = async (req, res) => {
 	try {
 		// Fetch all users excluding sensitive fields
 		const users = await Users.findAll({
@@ -129,7 +128,7 @@ export const getUsers = async (req, res) => {
 	}
 };
 
-export const getUserById = async (req, res) => {
+const getUserById = async (req, res) => {
 	const userId = req.params.userId;
 
 	try {
@@ -161,3 +160,11 @@ export const getUserById = async (req, res) => {
 		});
 	}
 };
+
+module.exports = {
+    deleteUser,
+  getUsers,
+  createUsers,
+  updateUser,
+  getUserById
+}

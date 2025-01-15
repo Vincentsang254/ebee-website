@@ -1,8 +1,8 @@
 /** @format */
 
-import UserAddress from "../models/UserAdress.js";
+const UserAddress = require("../models/UserAddress");
 
-export const createAddress = async (req, res) => {
+const createAddress = async (req, res) => {
 	const { firstName, lastName, addressLine, country, city, phone, postalCode } = req.body;
 	const userId = req.user.id;
 
@@ -45,7 +45,8 @@ export const createAddress = async (req, res) => {
 	}
 };
 
-export const updateUserAddress = async (req, res) => {
+
+const updateUserAddress = async (req, res) => {
 	const addressId = req.params.id;
 	const { addressLine, country, city, phone, postalCode, firstName, lastName } = req.body;
 
@@ -88,7 +89,8 @@ export const updateUserAddress = async (req, res) => {
 	}
 };
 
-export const getUserAddress = async (req, res) => {
+
+const getUserAddress = async (req, res) => {
 	const userId = req.user.id;
 
 	try {
@@ -111,3 +113,9 @@ export const getUserAddress = async (req, res) => {
 		});
 	}
 };
+
+module.exports = {
+    createAddress,
+  updateUserAddress,
+  getUserAddress
+}

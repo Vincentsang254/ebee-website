@@ -1,13 +1,13 @@
-// Import necessary modules
-import express from "express";
-import {
+// const necessary modules
+const express = require("express");
+const {
   deleteUser,
   getUsers,
   createUsers,
   updateUser,
   getUserById
-} from "../controllers/userController.js"; 
-import { verifyToken } from "../middlewares/AuthMiddleware.js";
+} = require("../controllers/userController"); 
+const { verifyToken } = require("../middlewares/AuthMiddleware");
 
 const router = express.Router();
 
@@ -18,5 +18,5 @@ router.post("/create",verifyToken, createUsers);
 router.put("/update/:userId",verifyToken, updateUser);
 router.get("/get-user/:userId",verifyToken, getUserById);
 
-// Export the router as default
-export default router;
+
+module.exports = router;

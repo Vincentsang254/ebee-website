@@ -27,4 +27,4 @@ const config = {
 		port: 3306,
 	},
 };
-export default config;
+module.exports = config;

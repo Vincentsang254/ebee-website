@@ -1,11 +1,11 @@
 // Importing necessary modules
-import express from "express";
-import {
+const express = require("express");
+const {
   initiateSTKPush,
   processCallback,
-  generateDarajaToken,
-} from "../controllers/paymentController.js";  // Include the .js extension
-import { verifyToken } from "../middlewares/AuthMiddleware.js";
+} = require("../controllers/paymentController");  // Include the .js extension
+const { verifyToken } = require("../middlewares/AuthMiddleware");
+const generateDarajaToken = require("../middlewares/generaDarajateToken");
 
 const router = express.Router();
 
@@ -14,6 +14,4 @@ router.post("/initiate-stk-push",verifyToken, generateDarajaToken, initiateSTKPu
 router.post("/process-callback", processCallback);
 
 
-
-// Export router as default
-export default router;
+module.exports = router;

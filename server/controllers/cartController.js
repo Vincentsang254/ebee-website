@@ -1,8 +1,8 @@
-/** @format */
-import Products from "../models/Products.js";
-import Carts from "../models/Cart.js" 
 
-export const addProductToCart = async (req, res) => {
+const Carts = require("../models/Carts");
+const Products = require("../models/Products");
+
+const addProductToCart = async (req, res) => {
 	const { productId } = req.body;
 	const userId = req.user.id; // Assuming req.user.id is correctly set
 
@@ -37,7 +37,7 @@ export const addProductToCart = async (req, res) => {
 	}
 };
 
-export const getCartCount = async (req, res) => {
+const getCartCount = async (req, res) => {
 	const userId = req.user.id;
 
 	try {
@@ -48,7 +48,7 @@ export const getCartCount = async (req, res) => {
 	}
 };
 
-export const removeItemFromCart = async (req, res) => {
+const removeItemFromCart = async (req, res) => {
 	try {
 		const cartId = req.params.cartId; // Assuming cartId is passed as a route parameter
 
@@ -66,7 +66,7 @@ export const removeItemFromCart = async (req, res) => {
 	}
 };
 
-export const decreaseProductQuantity = async (req, res) => {
+const decreaseProductQuantity = async (req, res) => {
 	try {
 		const cartId = req.params.cartId; // Assuming cartId is passed as a route parameter
 
@@ -91,7 +91,7 @@ export const decreaseProductQuantity = async (req, res) => {
 	}
 };
 
-export const increaseProductQuantity = async (req, res) => {
+const increaseProductQuantity = async (req, res) => {
 	try {
 		const cartId = req.params.cartId; // Assuming cartId is passed as a route parameter
 
@@ -112,7 +112,7 @@ export const increaseProductQuantity = async (req, res) => {
 	}
 };
 
- export const getCart = async (req, res) => {
+ const getCart = async (req, res) => {
 	try {
 		const cartItems = await Carts.findAll({
 			where: { userId: req.user.id },
@@ -149,4 +149,12 @@ export const increaseProductQuantity = async (req, res) => {
 	}
 };
 
-
+module.exports = {
+	
+	getCart,
+	increaseProductQuantity,
+	decreaseProductQuantity,
+	addProductToCart,
+	removeItemFromCart,
+	getCartCount
+}

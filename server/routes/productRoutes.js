@@ -1,16 +1,16 @@
-// Import necessary modules
-import express from "express";
-import {
+// const necessary modules
+const express = requires("express");
+const {
   createProducts,
   deleteProducts,
   updateProducts,
   getProducts,
   getProductById,
   searchProducts
-} from "../controllers/productController.js";
+} = requires("../controllers/productController");
 
-import { verifyRoles, verifyToken } from "../middlewares/AuthMiddleware.js";
-import { upload } from "../utils/cloudinary.js";
+const { verifyRoles, verifyToken } = requires("../middlewares/AuthMiddleware");
+const { upload } = requires("../utils/cloudinary");
 
 
 const router = express.Router();
@@ -23,5 +23,5 @@ router.get("/get", getProducts);
 router.get("/get-product/:productId", verifyToken, getProductById);
 router.post("/search", verifyToken, searchProducts);
 
-// Export router as default
-export default router;
+
+module.exports = router;
