@@ -3,7 +3,6 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
-import db from "./models/index.js";  // Ensure models are correctly imported
 
 dotenv.config();
 
@@ -16,6 +15,7 @@ import orderRoutes from "./routes/orderRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import userAddressRoutes from "./routes/userAddressRoutes.js";
 import ratingRoutes from "./routes/ratingRoutes.js";
+import { db } from "./models/index.js";
 
 const app = express();
 
