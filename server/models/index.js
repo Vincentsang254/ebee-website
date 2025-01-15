@@ -27,12 +27,14 @@ export const sequelize = new Sequelize(
 
 const db = {};
 
+// Initialize models function
 const initializeModels = async () => {
   const files = fs.readdirSync(__dirname).filter(file => file.endsWith('.js') && file !== path.basename(__filename));
 
+  // Dynamically import and add models to db
   for (const file of files) {
     const model = await import(path.join(__dirname, file));
-    const modelName = model.default.name; // assuming model is exported as default
+    const modelName = model.default.name;
     db[modelName] = model.default;
   }
 
@@ -47,19 +49,20 @@ const initializeModels = async () => {
   db.Sequelize = Sequelize;
 };
 
-// Run the initialization
+// Initialize models and then export db
 const startApp = async () => {
   try {
     await initializeModels();
     console.log("Models initialized successfully");
+    // Export db object only after models are initialized
   } catch (error) {
     console.error("Error during model initialization:", error);
     process.exit(1);
   }
 };
 
-// Start the app
+// Start the app and initialize models
 startApp();
 
-// Correctly export the db object after it's initialized
+// Export db object after models are initialized
 export { db };

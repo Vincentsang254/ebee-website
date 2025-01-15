@@ -22,6 +22,8 @@ const app = express();
 // Set up the port dynamically for production
 const port = process.env.PORT || 3001;
 
+console.log(db);
+
 app.use(cors({
   origin: process.env.CLIENT_URL || "https://ebee-app.onrender.com", // Use env var for production URL
   credentials: true,
@@ -56,16 +58,12 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-// Initialize models and sync the database
+// Sync the database and start the server
 const startServer = async () => {
   try {
-    // Sync the database without needing initializeModels()
-    const res = await db.sequelize.sync();
+    await db.sequelize.sync();
+    console.log("Database synced successfully");
 
-    console.log("Database synced successfully:", res);
-
-    // Start the server
-    
     app.listen(port, "0.0.0.0", () => {
       console.log(`Server running on port ${port}`);
     });
