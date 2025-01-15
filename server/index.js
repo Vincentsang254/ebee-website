@@ -19,7 +19,7 @@ import { db } from "./models/index.js";
 
 const app = express();
 
-console.table("logged in user", req.user);
+// console.table("logged in user", req.user);
 
 // Set up the port dynamically for production
 const port = process.env.PORT || 3001;
