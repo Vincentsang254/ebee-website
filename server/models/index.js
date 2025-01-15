@@ -27,31 +27,43 @@ if (sequelizeConfig.use_env_variable) {
   );
 }
 
-// Dynamically import and initialize models
-const files = fs.readdirSync(__dirname).filter((file) => {
-  return (
-    file.indexOf(".") !== 0 &&
-    file !== path.basename(__filename) &&
-    file.slice(-3) === ".js" &&
-    file.indexOf(".test.js") === -1
-  );
-});
+// Wrap the model initialization inside an async function
+const initializeModels = async () => {
+  const files = fs.readdirSync(__dirname).filter((file) => {
+    return (
+      file.indexOf(".") !== 0 &&
+      file !== path.basename(__filename) &&
+      file.slice(-3) === ".js" &&
+      file.indexOf(".test.js") === -1
+    );
+  });
 
-for (const file of files) {
-  const model = await import(path.join(__dirname, file));
-  const modelInstance = model.default(sequelize, Sequelize.DataTypes);
-  db[modelInstance.name] = modelInstance;
-}
-
-// Set up associations (if any)
-Object.keys(db).forEach((modelName) => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
+  for (const file of files) {
+    const model = await import(path.join(__dirname, file));
+    const modelInstance = model.default(sequelize, Sequelize.DataTypes);
+    db[modelInstance.name] = modelInstance;
   }
-});
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+  // Set up associations (if any)
+  Object.keys(db).forEach((modelName) => {
+    if (db[modelName].associate) {
+      db[modelName].associate(db);
+    }
+  });
 
-// Export sequelize and db
+  db.sequelize = sequelize;
+  db.Sequelize = Sequelize;
+};
+
+// Run the initialization function
+initializeModels()
+  .then(() => {
+    console.log("Models initialized successfully");
+  })
+  .catch((error) => {
+    console.error("Error during initialization:", error);
+    process.exit(1);
+  });
+
+// Export sequelize and db after initialization
 export { sequelize, db };
