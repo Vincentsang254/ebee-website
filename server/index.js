@@ -65,6 +65,7 @@ const startServer = async () => {
     console.log("Database synced successfully:", res);
 
     // Start the server
+    
     app.listen(port, "0.0.0.0", () => {
       console.log(`Server running on port ${port}`);
     });
@@ -75,3 +76,9 @@ const startServer = async () => {
 };
 
 startServer();
+// Sync the database and start the server
+// db.sequelize.sync().then(() => {
+//   app.listen(port, "0.0.0.0", () => {
+//     console.log(`Server running on http://localhost:${port}`);
+//   });
+// });

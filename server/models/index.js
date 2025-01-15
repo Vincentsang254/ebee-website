@@ -1,10 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-import { Sequelize, DataTypes } from 'sequelize';
+import { Sequelize } from 'sequelize';
 import { fileURLToPath } from 'url';
-import config from '../config/db.js';  // Make sure to import your DB config
+import config from '../config/db.js';
 
-// Get the current filename and directory path
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -15,7 +14,6 @@ if (!sequelizeConfig) {
   throw new Error(`Configuration for environment ${env} not found`);
 }
 
-// Initialize Sequelize instance
 export const sequelize = new Sequelize(
   sequelizeConfig.database,
   sequelizeConfig.username,
@@ -29,7 +27,6 @@ export const sequelize = new Sequelize(
 
 const db = {};
 
-// Create an async function to load models and set up associations
 const initializeModels = async () => {
   const files = fs.readdirSync(__dirname).filter(file => file.endsWith('.js') && file !== path.basename(__filename));
 
@@ -39,10 +36,10 @@ const initializeModels = async () => {
     db[modelName] = model.default;
   }
 
-  // Set up associations after all models are initialized
+  // Associate models if necessary
   Object.keys(db).forEach((modelName) => {
     if (db[modelName].associate) {
-      db[modelName].associate(db); // Apply associations
+      db[modelName].associate(db);
     }
   });
 
@@ -50,13 +47,19 @@ const initializeModels = async () => {
   db.Sequelize = Sequelize;
 };
 
-await initializeModels()
-  .then(() => {
+// Run the initialization
+const startApp = async () => {
+  try {
+    await initializeModels();
     console.log("Models initialized successfully");
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error("Error during model initialization:", error);
-    process.exit(1); // Exit with failure code if something goes wrong
-  });
+    process.exit(1);
+  }
+};
 
-export default db;
+// Start the app
+startApp();
+
+// Correctly export the db object after it's initialized
+export { db };
