@@ -1,4 +1,4 @@
-// @format
+// index.js
 
 import fs from "fs";
 import path from "path";
@@ -53,5 +53,5 @@ Object.keys(db).forEach((modelName) => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-// Export db object
-export { db };
+// Export sequelize and db
+export { sequelize, db };
