@@ -1,79 +1,64 @@
-// index.js
+import fs from 'fs';
+import path from 'path';
+import { Sequelize, DataTypes } from 'sequelize';
+import process from 'process';
+import { fileURLToPath } from 'url';
+import config from '../config/db.js';  // Ensure correct relative path
 
-import fs from "fs";
-import path from "path";
-import { Sequelize } from "sequelize";
-import { fileURLToPath } from "url";
-import config from "../config/db.js";
+// Get the current file's URL and convert it to a path
+const __filename = new URL('', import.meta.url).pathname;
+const __dirname = path.dirname(__filename);  // Fix for __dirname in ES modules
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Log the directory to check if it's correct
+console.log(`Current directory: ${__dirname}`);
 
-const env = process.env.NODE_ENV || "development";
-const sequelizeConfig = config[env];
+// Log the configuration to ensure it's loaded
+const env = process.env.NODE_ENV || 'development';  // Defaults to 'development'
+const sequelizeConfig = config[env];  // Get the correct configuration based on NODE_ENV
 
-const db = {};
-
-// Initialize Sequelize connection
-let sequelize;
-if (sequelizeConfig.use_env_variable) {
-  sequelize = new Sequelize(process.env[sequelizeConfig.use_env_variable], sequelizeConfig);
-} else {
-  sequelize = new Sequelize(
-    sequelizeConfig.database,
-    sequelizeConfig.username,
-    sequelizeConfig.password,
-    sequelizeConfig
-  );
+// Handle missing configuration
+if (!sequelizeConfig) {
+  throw new Error(`Configuration for environment ${env} not found`);
 }
 
-// Initialize models function
-const initializeModels = async () => {
-  const files = fs.readdirSync(__dirname).filter((file) => {
+// Create the Sequelize instance using the config for the current environment
+export const sequelize = new Sequelize(sequelizeConfig.database, sequelizeConfig.username, sequelizeConfig.password, {
+  host: sequelizeConfig.host,
+  dialect: sequelizeConfig.dialect,
+  port: sequelizeConfig.port,
+});
+
+export const db = {};
+
+// Reading all model files and dynamically importing them
+fs.readdirSync(__dirname)  // Correctly using __dirname here
+  .filter((file) => {
     return (
-      file.indexOf(".") !== 0 &&
-      file !== path.basename(__filename) &&
-      file.slice(-3) === ".js" &&
-      file.indexOf(".test.js") === -1
+      file.indexOf('.') !== 0 &&       // Exclude hidden files
+      file !== path.basename(__filename) && // Exclude the current file
+      file.slice(-3) === '.js' &&     // Only JavaScript files
+      file.indexOf('.test.js') === -1 // Exclude test files
     );
-  });
+  })
+  .forEach((file) => {
+    import(path.join(__dirname, file))  // Dynamically import models
+      .then((module) => {
+        const model = new module.default(sequelize, DataTypes);  // Initialize the model
+        db[model.name] = model;  // Add the model to the db object
+      })
+      .catch((err) => {
+        console.error('Error loading model:', err);
+      });
+});
 
-  for (const file of files) {
-    const model = await import(path.join(__dirname, file));
-    const modelInstance = model.default(sequelize, Sequelize.DataTypes);
-    db[modelInstance.name] = modelInstance;
+// Set up associations after all models have been loaded
+Object.keys(db).forEach((modelName) => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);  // Set up associations if they exist
   }
+});
 
-  // Set up associations (if any)
-  Object.keys(db).forEach((modelName) => {
-    if (db[modelName].associate) {
-      db[modelName].associate(db);
-    }
-  });
+// Add Sequelize and Sequelize instance to db for access in other parts of the application
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
 
-  // Assign sequelize instance to db object
-  db.sequelize = sequelize;
-  db.Sequelize = Sequelize;
-};
-
-// Run the initialization function
-initializeModels()
-  .then(() => {
-    console.log("Models initialized successfully");
-    // Sync the database after models are initialized
-    return db.sequelize.sync();  // sync database only after models are initialized
-  })
-  .then(() => {
-    // Start the server after the database is synced
-    const port = process.env.PORT || 3001;
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
-    });
-  })
-  .catch((error) => {
-    console.error("Error during initialization:", error);
-    process.exit(1);
-  });
-
-// Export sequelize and db after initialization
-export { sequelize, db };
