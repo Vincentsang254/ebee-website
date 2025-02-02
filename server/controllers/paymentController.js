@@ -73,19 +73,19 @@ const processCallback = async (req, res) => {
     const trnx_date = moment(items[3]?.Value).format("YYYY-MM-DD HH:mm:ss"); // Transaction date
 
     // Fetch user based on payment number
-    let currentUser = req.user 
+    let currentUserId = req.user?.id
 
-    if (!currentUser) {
+    if (!currentUserId) {
       return res.status(404).json({
         status: false,
-        message: "User not found.",
+        message: "User ID is found.",
       });
     }
 
-    currentUser.phone = paymentNumber;
-    currentUser.amount = amount.toString();
-    currentUser.trnx_id = trnx_id;
-    currentUser.trnx_date = trnx_date;
+    currentUserId.phone = paymentNumber;
+    currentUserId.amount = amount.toString();
+    currentUserId.trnx_id = trnx_id; 
+    currentUserId.trnx_date = trnx_date;
 
    
   // Save payment details to the database
@@ -94,8 +94,8 @@ const processCallback = async (req, res) => {
     amount: amount.toString(),
     trnx_id,
     trnx_date,
-    userId: req.body.userId, // Pass the userId from your request body
-    orderId: req.body.orderId, // Pass the orderId from your request body
+    userId: req.body.userId,
+    orderId: req.body.orderId,
   });
 
     // Send response to confirm the processing
