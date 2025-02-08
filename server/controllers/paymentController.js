@@ -1,7 +1,7 @@
 
 const axios = require("axios");
 const moment = require("moment");
-const {Payments} = require("../models");
+const Payments = require("../models");
 const cron = require("node-cron");
 const { Op } = require("sequelize");
 
