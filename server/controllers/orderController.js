@@ -1,8 +1,7 @@
 /** @format */
 
-const Orders = require("../models/Orders");
 const sendNotificationEmail = require("../brevo/email.brevo");
-const Notifications = require("../models/Notifications");
+const {Notifications, Orders} = require("../models");
 
 const createOrders = async (req, res) => {
 	const { totalPrice, orderItems, paymentMethod, userAddressId } = req.body;

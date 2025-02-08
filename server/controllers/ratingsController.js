@@ -1,6 +1,6 @@
 /** @format */
 
-const Ratings = require("../models/Ratings");
+const {Ratings} = require("../models");
 
 const createRatings = async (req, res) => {
 	try {

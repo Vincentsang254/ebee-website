@@ -1,6 +1,6 @@
 /** @format */
 
-const Notifications = require("../models/Notifications");
+const {Notifications} = require("../models");
 export const getNotifications = async (req, res) => {
 	try {
 		const userId = req.user.id; 

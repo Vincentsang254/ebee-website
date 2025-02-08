@@ -8,7 +8,7 @@ const {
   sendWelcomeEmail,
   sendVerificationEmail } = require("../brevo/email.brevo");
 const generateAuthToken = require("../utils/generateAuthToken");
-const Users = require("../models/Users");
+const {Users} = require("../models");
 
 // Signup function
 const signup = async (req, res) => {

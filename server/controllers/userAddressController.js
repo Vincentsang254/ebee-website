@@ -1,6 +1,6 @@
 /** @format */
 
-const UserAddress = require("../models/UserAddress");
+const {UserAddress} = require("../models");
 
 const createAddress = async (req, res) => {
 	const { firstName, lastName, addressLine, country, city, phone, postalCode } = req.body;
