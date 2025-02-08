@@ -1,5 +1,5 @@
 // const necessary modules
-const express = requires("express");
+const express = require("express");
 const {
   createProducts,
   deleteProducts,
@@ -7,10 +7,10 @@ const {
   getProducts,
   getProductById,
   searchProducts
-} = requires("../controllers/productController");
+} = require("../controllers/productController");
 
-const { verifyRoles, verifyToken } = requires("../middlewares/AuthMiddleware");
-const { upload } = requires("../utils/cloudinary");
+const { verifyRoles, verifyToken } = require("../middlewares/AuthMiddleware");
+const { upload } = require("../utils/cloudinary");
 
 
 const router = express.Router();
