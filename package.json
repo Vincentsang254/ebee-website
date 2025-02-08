@@ -8,6 +8,6 @@
     "start": "npm run start --prefix server"
   },
   "keywords": [],
-  "author": "",
+  "author": "sangtosha",
   "license": "ISC"
 }
