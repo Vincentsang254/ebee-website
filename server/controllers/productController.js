@@ -1,8 +1,10 @@
-import { imageUploadUtil, deleteImageUtil } from '../utils/cloudinary.js';
-import Products from '../models/Products.js';
-import Ratings from '../models/Ratings.js';
-import Users from '../models/Users.js';
-import { Op } from 'sequelize';
+const { imageUploadUtil, deleteImageUtil } = require("../utils/cloudinary");
+const Products = require("../models/Products");
+const Ratings = require("../models/Ratings");
+const Users = require("../models/Users");
+const { Op } = require("sequelize");
+
+
 
 // 🟢 Create Product
 const createProducts = async (req, res) => {
@@ -198,7 +200,6 @@ const searchProducts = async (req, res) => {
     res.status(500).json({ status: false, message: error.message });
   }
 };
-
 module.exports = {
   createProducts,
   getProducts,
