@@ -1,6 +1,6 @@
 // Import necessary models using ES6 import syntax
 
-import Notifications from "../models/Notification.js";
+const Notifications = require("../models/Notification");
 
 // Function to create a notification
 const createNotification = async (userId, type, content) => {
