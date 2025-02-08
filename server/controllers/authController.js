@@ -6,9 +6,10 @@ const {
   sendPasswordResetEmail,
   sendResetSuccessEmail,
   sendWelcomeEmail,
-  sendVerificationEmail } = require("../brevo/email.brevo");
+  sendVerificationEmail,
+} = require("../brevo/email.brevo");
 const generateAuthToken = require("../utils/generateAuthToken");
-const {Users} = require("../models");
+const { Users } = require("../models");
 
 // Signup function
 const signup = async (req, res) => {
@@ -29,12 +30,16 @@ const signup = async (req, res) => {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ status: false, message: "Please use a valid email!" });
+      return res
+        .status(400)
+        .json({ status: false, message: "Please use a valid email!" });
     }
 
     const existingUser = await Users.findOne({ where: { email } });
     if (existingUser) {
-      return res.status(400).json({ status: false, message: "User already registered" });
+      return res
+        .status(400)
+        .json({ status: false, message: "User already registered" });
     }
 
     const hashPassword = await bcryptjs.hash(password, 10);
@@ -47,7 +52,7 @@ const signup = async (req, res) => {
       verificationCode,
       verificationCodeExpires: expirationTime,
       password: hashPassword,
-      verified: false
+      verified: false,
     });
 
     // Send a verification email
@@ -55,8 +60,9 @@ const signup = async (req, res) => {
 
     res.status(201).json({
       status: 201,
-      message: "User registered successfully. A verification code has been sent to your email.",
-      data: { userId: user.id, email: user.email }
+      message:
+        "User registered successfully. A verification code has been sent to your email.",
+      data: { userId: user.id, email: user.email },
     });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
@@ -69,25 +75,36 @@ const login = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ status: false, message: "Please fill in email and password!" });
+      return res
+        .status(400)
+        .json({ status: false, message: "Please fill in email and password!" });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ status: false, message: "Please use a valid email!" });
+      return res
+        .status(400)
+        .json({ status: false, message: "Please use a valid email!" });
     }
 
     const user = await Users.findOne({ where: { email } });
     if (!user) {
-      return res.status(404).json({ status: false, message: "User doesn't exist" });
+      return res
+        .status(404)
+        .json({ status: false, message: "User doesn't exist" });
     }
 
     const match = await bcryptjs.compare(password, user.password);
     if (!match) {
-      return res.status(401).json({ status: false, message: "Wrong username and password combination" });
+      return res
+        .status(401)
+        .json({
+          status: false,
+          message: "Wrong username and password combination",
+        });
     }
 
-    const userToken = generateAuthToken(user)
+    const userToken = generateAuthToken(user);
 
     res.status(200).json({ message: "Login success", token: userToken });
   } catch (error) {
@@ -97,38 +114,39 @@ const login = async (req, res) => {
 };
 
 const forgotPassword = async (req, res) => {
-	try {
-		const { email } = req.body;
+  try {
+    const { email } = req.body;
 
-		// Find the user by email
-		const user = await Users.findOne({ where: { email } });
+    // Find the user by email
+    const user = await Users.findOne({ where: { email } });
 
-		if (!user) {
-			return res.status(404).json({ status: false, message: "User not found" });
-		}
+    if (!user) {
+      return res.status(404).json({ status: false, message: "User not found" });
+    }
 
-		// Generate a reset token using crypto
-		const resetToken = CryptoJS.lib.WordArray.random(20).toString(CryptoJS.enc.Hex);
-		const resetTokenExpires = Date.now() + 3600000; // Token expires in 1 hour
-	
-		// Save the reset token and expiration time to the user's record
-		user.resetToken = resetToken;
-		user.resetTokenExpires = resetTokenExpires;
-		await user.save();
+    // Generate a reset token using crypto
+    const resetToken = CryptoJS.lib.WordArray.random(20).toString(
+      CryptoJS.enc.Hex
+    );
+    const resetTokenExpires = Date.now() + 3600000; // Token expires in 1 hour
 
-	
+    // Save the reset token and expiration time to the user's record
+    user.resetToken = resetToken;
+    user.resetTokenExpires = resetTokenExpires;
+    await user.save();
 
-		// Send an email to the user with the reset link
-		const resetLink = `https://monster-client.onrender.com/auth/reset-password/${resetToken}`
-		// const resetLink = `https://yourapp.com/reset-password?token=${resetToken}`;
+    // Send an email to the user with the reset link
+    const resetLink = `https://monster-client.onrender.com/auth/reset-password/${resetToken}`;
+    // const resetLink = `https://yourapp.com/reset-password?token=${resetToken}`;
 
-		sendPasswordResetEmail(email, resetLink)
+    sendPasswordResetEmail(email, resetLink);
 
-		res.status(200).json({ status: true, message: "Password reset link sent successfully" });
-	} catch (error) {
-		res.status(500).json({ status: false, message: error.message });
-	}
-		
+    res
+      .status(200)
+      .json({ status: true, message: "Password reset link sent successfully" });
+  } catch (error) {
+    res.status(500).json({ status: false, message: error.message });
+  }
 };
 
 const verifyAccount = async (req, res) => {
@@ -139,11 +157,16 @@ const verifyAccount = async (req, res) => {
     if (!user) {
       return res
         .status(400)
-        .json({status: false, message: "Invalid or expired verification code" });
+        .json({
+          status: false,
+          message: "Invalid or expired verification code",
+        });
     }
 
     if (user.verificationCodeExpiresAt < Date.now()) {
-      return res.status(400).json({ status: false, message: "Verification code has expired" });
+      return res
+        .status(400)
+        .json({ status: false, message: "Verification code has expired" });
     }
 
     user.verified = true;
@@ -153,58 +176,65 @@ const verifyAccount = async (req, res) => {
 
     await sendWelcomeEmail(user.email, user.name);
 
-    res.status(200).json({ status: true, message: "Account successfully verified" });
+    res
+      .status(200)
+      .json({ status: true, message: "Account successfully verified" });
   } catch (error) {
-    res.status(500).json({status: false, message: error.message });
+    res.status(500).json({ status: false, message: error.message });
   }
 };
 
-
 const changePassword = async (req, res) => {
-	try {
-		const token = req.params.token
-		const password = req.body.password
+  try {
+    const token = req.params.token;
+    const password = req.body.password;
 
-		// Check if newPassword is provided
-		if (!password) {
-			return res.status(400).json({ status: false, message: "New password is required" });
-		}
+    // Check if newPassword is provided
+    if (!password) {
+      return res
+        .status(400)
+        .json({ status: false, message: "New password is required" });
+    }
 
-		// Find the user by reset token
-		const user = await Users.findOne({ where: { resetToken: token } });
+    // Find the user by reset token
+    const user = await Users.findOne({ where: { resetToken: token } });
 
-		if (!user) {
-			return res.status(400).json({ status: false, message: "Invalid reset token" });
-		}
+    if (!user) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Invalid reset token" });
+    }
 
-		// Check if the reset token has expired
-		if (!user.resetTokenExpires || user.resetTokenExpires < Date.now()) {
-			return res.status(400).json({ status: false, message: "Reset token has expired" });
-		}
+    // Check if the reset token has expired
+    if (!user.resetTokenExpires || user.resetTokenExpires < Date.now()) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Reset token has expired" });
+    }
 
-		// Hash the new password
-		const hashedPassword = await bcryptjs.hash(password, 10);
+    // Hash the new password
+    const hashedPassword = await bcryptjs.hash(password, 10);
 
-		// Update the user's password
-		user.password = hashedPassword;
-		user.resetToken = null; // Remove reset token after successful password change
-		user.resetTokenExpires = null; // Remove token expiration
-		await user.save();
+    // Update the user's password
+    user.password = hashedPassword;
+    user.resetToken = null; // Remove reset token after successful password change
+    user.resetTokenExpires = null; // Remove token expiration
+    await user.save();
 
-		await sendResetSuccessEmail(user.email)
+    await sendResetSuccessEmail(user.email);
 
-		res.status(200).json({ status: true, message: "Password reset successfully" });
-	} catch (error) {
-		res.status(500).json({ status: false, message: error.message });
-	}
+    res
+      .status(200)
+      .json({ status: true, message: "Password reset successfully" });
+  } catch (error) {
+    res.status(500).json({ status: false, message: error.message });
+  }
 };
-
 
 module.exports = {
   login,
 
-	signup,
-	forgotPassword,
-	changePassword,
-  
-}
+  signup,
+  forgotPassword,
+  changePassword,
+};
