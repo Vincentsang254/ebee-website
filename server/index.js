@@ -25,7 +25,7 @@ const port = 3001;
 
 
 app.use(cors(
-    { origin: "https://ebee-web-app.onrender.com",
+    { origin: "https://ebee-website.onrender.com",
     credentials: true
     }
 ));

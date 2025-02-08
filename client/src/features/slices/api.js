@@ -1,5 +1,5 @@
 /** @format */
-// https://ebee-server.onrender.com
+// https://ebee-website.onrender.com
 export const url = "/api";
 
 
