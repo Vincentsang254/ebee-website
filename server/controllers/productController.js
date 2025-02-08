@@ -1,7 +1,5 @@
 const { imageUploadUtil, deleteImageUtil } = require("../utils/cloudinary");
-const Products = require("../models/Products");
-const Ratings = require("../models/Ratings");
-const Users = require("../models/Users");
+const {Users, Products, Ratings} = require("../models");
 const { Op } = require("sequelize");
 
 

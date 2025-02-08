@@ -15,7 +15,7 @@ const userRoutes = require("./routes/userRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const orderRoutes = require("./routes/orderRoutes");
-const notificationRoutes = require("./routes/notificationRoutes");
+// const notificationRoutes = require("./routes/notificationRoutes");
 const userAddressRoutes = require("./routes/userAddressRoutes");
 const ratingRoutes = require("./routes/ratingRoutes");
 
@@ -41,7 +41,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/orders", orderRoutes);
-app.use("/api/notifications", notificationRoutes);
+// app.use("/api/notifications", notificationRoutes);
 app.use("/api/address", userAddressRoutes);
 app.use("/api/ratings", ratingRoutes);
 
