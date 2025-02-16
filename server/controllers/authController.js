@@ -152,28 +152,24 @@ const verifyAccount = async (req, res) => {
     const { verificationCode } = req.body;
 
     const user = await Users.findOne({ where: { verificationCode } });
-    if (!user) {
-      return res
-        .status(400)
-        .json({status: false, message: "Invalid or expired verification code" });
-    }
 
-    if (user.verificationCodeExpiresAt < Date.now()) {
-      return res.status(400).json({ status: false, message: "Verification code has expired" });
+    if (!user || !user.verificationCodeExpires || user.verificationCodeExpires < Date.now()) {
+      return res.status(400).json({ status: false, message: "Invalid or expired verification code" });
     }
 
     user.verified = true;
     user.verificationCode = null;
-    user.verificationCodeExpiresAt = null;
+    user.verificationCodeExpires = null;
     await user.save();
 
     await sendWelcomeEmail(user.email, user.name);
 
     res.status(200).json({ status: true, message: "Account successfully verified" });
   } catch (error) {
-    res.status(500).json({status: false, message: error.message });
+    res.status(500).json({ status: false, message: error.message });
   }
 };
+
 
 const changePassword = async (req, res) => {
   try {

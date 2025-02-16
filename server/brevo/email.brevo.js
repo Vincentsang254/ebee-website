@@ -7,15 +7,22 @@ const {
 } = require("./emailTemplates");
 const { transporter, sender } = require("./brevo.config");
 
+
+// Utility function for replacing placeholders
+const applyTemplate = (template, data) => {
+  return Object.keys(data).reduce(
+    (acc, key) => acc.replace(new RegExp(`{${key}}`, "g"), data[key]),
+    template
+  );
+};
+
 const sendVerificationEmail = async (email, verificationCode, name) => {
   const recipient = email;
   try {
-    const emailContent = VERIFICATION_EMAIL_TEMPLATE.replace(
-      "{verificationCode}",
-      verificationCode,
-      "{name}",
-      name
-    );
+    const emailContent = VERIFICATION_EMAIL_TEMPLATE
+  .replace(/{verificationCode}/g, verificationCode)
+  .replace(/{name}/g, name);
+
 
     const info = await transporter.sendMail({
       from: sender,
@@ -95,12 +102,10 @@ const sendNotificationEmail = async (
   userName,
   notificationContent
 ) => {
-  const personalizedTemplate = NOTIFICATION_EMAIL_TEMPLATE.replace(
-    "{userName}",
-    userName,
-    "{notificationContent}",
-    notificationContent
-  );
+  const personalizedTemplate = NOTIFICATION_EMAIL_TEMPLATE
+  .replace(/{userName}/g, userName)
+  .replace(/{notificationContent}/g, notificationContent);
+
   const recipient = userEmail;
   try {
     const response = await transporter.sendMail({
