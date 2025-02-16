@@ -56,7 +56,7 @@ const signup = async (req, res) => {
     });
 
     // Send a verification email
-    await sendVerificationEmail(email, verificationCode);
+    await sendVerificationEmail(email, name, verificationCode);
 
     res.status(201).json({
       status: 201,
@@ -125,9 +125,7 @@ const forgotPassword = async (req, res) => {
     }
 
     // Generate a reset token using crypto
-    const resetToken = CryptoJS.lib.WordArray.random(20).toString(
-      CryptoJS.enc.Hex
-    );
+    const resetToken = generateOtp()
     const resetTokenExpires = Date.now() + 3600000; // Token expires in 1 hour
 
     // Save the reset token and expiration time to the user's record
@@ -136,14 +134,14 @@ const forgotPassword = async (req, res) => {
     await user.save();
 
     // Send an email to the user with the reset link
-    const resetLink = `https://monster-client.onrender.com/auth/reset-password/${resetToken}`;
+    const resetLink = resetToken
     // const resetLink = `https://yourapp.com/reset-password?token=${resetToken}`;
 
     sendPasswordResetEmail(email, resetLink);
 
     res
       .status(200)
-      .json({ status: true, message: "Password reset link sent successfully" });
+      .json({ status: true, message: "Password reset code sent successfully" });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
   }
@@ -157,16 +155,11 @@ const verifyAccount = async (req, res) => {
     if (!user) {
       return res
         .status(400)
-        .json({
-          status: false,
-          message: "Invalid or expired verification code",
-        });
+        .json({status: false, message: "Invalid or expired verification code" });
     }
 
     if (user.verificationCodeExpiresAt < Date.now()) {
-      return res
-        .status(400)
-        .json({ status: false, message: "Verification code has expired" });
+      return res.status(400).json({ status: false, message: "Verification code has expired" });
     }
 
     user.verified = true;
@@ -176,18 +169,18 @@ const verifyAccount = async (req, res) => {
 
     await sendWelcomeEmail(user.email, user.name);
 
-    res
-      .status(200)
-      .json({ status: true, message: "Account successfully verified" });
+    res.status(200).json({ status: true, message: "Account successfully verified" });
   } catch (error) {
-    res.status(500).json({ status: false, message: error.message });
+    res.status(500).json({status: false, message: error.message });
   }
 };
 
 const changePassword = async (req, res) => {
   try {
-    const token = req.params.token;
-    const password = req.body.password;
+    // const token = req.params.token;
+    // const password = req.body.password;
+
+    const { code, email, password} = req.body
 
     // Check if newPassword is provided
     if (!password) {
@@ -197,12 +190,12 @@ const changePassword = async (req, res) => {
     }
 
     // Find the user by reset token
-    const user = await Users.findOne({ where: { resetToken: token } });
+    const user = await Users.findOne({ where: { email: email } });
 
-    if (!user) {
+    if (!user || user.resetToken !== code || user.resetTokenExpires < Date.now()) {
       return res
         .status(400)
-        .json({ status: false, message: "Invalid reset token" });
+        .json({ status: false, message: "Invalid or expired code." });
     }
 
     // Check if the reset token has expired
@@ -233,8 +226,8 @@ const changePassword = async (req, res) => {
 
 module.exports = {
   login,
-
-  signup,
-  forgotPassword,
-  changePassword,
+	verifyAccount,
+	signup,
+	forgotPassword,
+	changePassword,
 };

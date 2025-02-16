@@ -62,7 +62,7 @@ const VERIFICATION_EMAIL_TEMPLATE = `
       <h1>Verify Your Email</h1>
     </div>
     <div class="content">
-      <p>Hello,</p>
+      <p>Dear {name},</p>
       <p>Thank you for signing up! Your verification code is:</p>
       <div class="verification-code">{verificationCode}</div>
       <p>Enter this code on the verification page to complete your registration.</p>
@@ -239,7 +239,7 @@ const WELCOME_EMAIL_TEMPLATE = `
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome to Monster</title>
+  <title>Dear, {name}! Welcome to our company..</title>
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -300,7 +300,7 @@ const NOTIFICATION_EMAIL_TEMPLATE = `
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome Email</title>
+  <title>Order placed successfully.</title>
   <style>
     * {
       
@@ -339,9 +339,15 @@ const NOTIFICATION_EMAIL_TEMPLATE = `
     <div class="header">
       <h1>Order placed successfully!</h1>
     </div>
+    // <div class="content">
+    //   <p>Dear {userName},</p>
+    //   <p>Thank you for your order! We're excited to have you on board.</p>
+    // </div>
     <div class="content">
-      <p>Dear {{name}},</p>
-      <p>Thank you for your order! We're excited to have you on board.</p>
+      <p>Dear {userName},</p>
+      <p>Thank you for your order! You will receive your order within 72 working hours.</p>
+      <div class="order">{notificationContent}</div>
+      <p>If you didn't create an order with us, please ignore let us know.</p>
     </div>
     <div class="footer">
       <p>Best regards,</p>

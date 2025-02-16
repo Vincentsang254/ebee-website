@@ -3,7 +3,7 @@
 const express = require("express");
 const {
 	login,
-
+	verifyAccount,
 	signup,
 	forgotPassword,
 	changePassword,
@@ -13,8 +13,7 @@ const router = express.Router();
 
 router.post("/signup", signup);
 router.post("/login", login);
-// router.post("/verify/:verificationCode", verificationAccount);
+router.post("/verify-account", verifyAccount);
 router.post("/forgot-password", forgotPassword);
-router.put("/change-password", changePassword);
-
+router.post("/change-password/:token", changePassword);
 module.exports = router;

@@ -24,15 +24,24 @@ module.exports = (sequelize, DataTypes) => {
 			defaultValue:
 				"https://d2qp0siotla746.cloudfront.net/img/use-cases/profile-picture/template_0.jpg",
 		},
-		verified: {
-			type: DataTypes.BOOLEAN,
-			allowNull: false,
-			defaultValue: false,
-		},
 		verificationCode: {
 			type: DataTypes.STRING,
 			allowNull: true,
 		},
+		resetToken: {
+			type: DataTypes.STRING,
+			allowNull: true,
+		  },
+		  verified: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false,
+		  },
+		  verificationCodeExpiresAt: {
+			type: DataTypes.DATE,
+		  },
+		  resetTokenExpires: {
+			type: DataTypes.DATE,
+		  },
 		userType: {
 			type: DataTypes.ENUM(
 				"Admin",
