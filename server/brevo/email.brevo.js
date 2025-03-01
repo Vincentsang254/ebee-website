@@ -20,8 +20,9 @@ const sendVerificationEmail = async (email, verificationCode, name) => {
   const recipient = email;
   try {
     const emailContent = VERIFICATION_EMAIL_TEMPLATE
+    .replace(/{name}/g, name)
   .replace(/{verificationCode}/g, verificationCode)
-  .replace(/{name}/g, name);
+  ;
 
 
     const info = await transporter.sendMail({
