@@ -22,7 +22,7 @@ const AuthRegister = () => {
 
 	const handleSubmit = (values) => {
 		dispatch(registerUser(values));
-	  };
+	};
 
 	  useEffect(() => {
 		if (registerStatus === "success") {

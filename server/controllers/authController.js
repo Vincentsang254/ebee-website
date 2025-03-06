@@ -121,7 +121,7 @@ const forgotPassword = async (req, res) => {
     const user = await Users.findOne({ where: { email } });
 
     if (!user) {
-      return res.status(404).json({ status: false, message: "User not found" });
+      return res.status(404).json({ status: false, message: "No such user, please register first." });
     }
 
     // Generate a reset token using crypto
@@ -206,8 +206,8 @@ const changePassword = async (req, res) => {
 
     // Update the user's password
     user.password = hashedPassword;
-    user.resetToken = null; // Remove reset token after successful password change
-    user.resetTokenExpires = null; // Remove token expiration
+    user.resetToken = null; 
+    user.resetTokenExpires = null;
     await user.save();
 
     await sendResetSuccessEmail(user.email);
