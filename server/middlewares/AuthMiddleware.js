@@ -3,52 +3,57 @@ const Users = require("../models/Users");
 const jwt = require("jsonwebtoken");
 
 const verifyToken = async (req, res, next) => {
-  const authHeader = req.header("Authorization");
+  const token = req.headers["x-auth-token"];
 
-  if (!authHeader) {
-    return res.status(401).json({ status: false, message: "No token, authorization denied" });
+  if (!token) {
+    return res
+      .status(403)
+      .json({
+        status: false,
+        message: "Access denied. You must be authenticated. ",
+      });
   }
-
-  // Extract the token by removing the "Bearer" prefix
-  const token = authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : authHeader;
 
   try {
     const decoded = jwt.verify(token, "sangkiplaimportantkey78");
 
     if (!decoded) {
-      return res.status(401).json({ status: false, message: "Token is not valid" });
+      return res
+        .status(401)
+        .json({ status: false, message: "Token is not valid" });
     }
 
     req.user = decoded;
     next();
   } catch (error) {
-    console.error("JWT Error:", error);
-    res.status(401).json({ status: false, message: "Not authorized, please login" });
+    res.status(500).json({ status: false, message: error.message });
   }
 };
 
+const verifyTokenAndAuthorization =
+  (allowedRoles) =>{
+    return (req, res, next) => {
+      try {
+        const userType = req.user?.userType
 
-const isClient = (req, res, next) => {
-  const userId = req.user.id;
-  const paramId = req.params.id;
+        if(!userType){
+          return res.status(403).json({status: false, message: "Access denied. No user provided."})
+        }
 
-  if (userId === paramId || req.user.admin) {
-    next();
-  } else {
-    res.status(403).json({ status: false, message: "Access denied. Not authorized..." });
-  }
-};
+        if (allowedRoles.length > 0 && !allowedRoles.includes(userType)) {
+          return res
+            .status(403)
+            .json({
+              status: false,
+              message: "You are not allowed to access this resource",
+            });
+        } 
 
-
-// Reusable Role Verification Middleware
-const verifyRoles = (role) => (req, res, next) => {
-  verifyToken(req, res, () => {
-    if (req.user && req.user.userType === role) {
-      next();
-    } else {
-      res.status(403).json({ status: false, message: `Access denied. You must be ${role}.` });
+        next()
+      } catch (error) {
+        
+      }
     }
-  });
-};
+  }
 
-module.exports = { verifyToken, isClient, verifyRoles };
+module.exports = { verifyToken, verifyTokenAndAuthorization };

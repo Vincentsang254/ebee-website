@@ -8,7 +8,6 @@ import { setHeaders, url } from "./api";
 const initialState = {
 	list: [],
 	status: null,
-	productsCount: 0,
 };
 
 // Thunks
