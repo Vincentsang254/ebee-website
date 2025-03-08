@@ -3,32 +3,31 @@ const Users = require("../models/Users");
 const jwt = require("jsonwebtoken");
 
 const verifyToken = async (req, res, next) => {
-  const token = req.headers["x-auth-token"] || req.headers["authorization"]?.split(" ")[1]; 
-
-  if (!token) {
-    return res
-      .status(403)
-      .json({
+    const token = req.headers["x-auth-token"];
+  
+    if (!token) {
+      return res.status(403).json({
         status: false,
-        message: "Access denied. You must be authenticated. ",
+        message: "Access denied. No token provided.",
       });
-  }
-
-  try {
-    const decoded = jwt.verify(token, "sangkiplaimportantkey78");
-
-    if (!decoded) {
-      return res
-        .status(401)
-        .json({ status: false, message: "Token is not valid" });
     }
+  
+    try {
+      const decoded = jwt.verify(token, "sangkiplaimportantkey78");
+  
+      console.log("Decoded Token:", decoded); // ✅ Log decoded token to check
+  
+      if (!decoded || !decoded.id) {
+        return res.status(401).json({ status: false, message: "Token is not valid" });
+      }
+  
+      req.user = decoded; // ✅ Ensure `req.user` is set
+      next();
+    } catch (error) {
+      return res.status(401).json({ status: false, message: "Invalid or expired token" });
+    }
+  };
 
-    req.user = decoded;
-    next();
-  } catch (error) {
-    res.status(500).json({ status: false, message: error.message });
-  }
-};
 
 const verifyTokenAndAuthorization =
   (allowedRoles) =>{
