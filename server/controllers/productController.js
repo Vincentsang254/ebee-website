@@ -4,6 +4,7 @@ const { Op } = require("sequelize");
 
 
 const createProducts = async (req, res) => {
+  console.log("Current User:", req.user); // ✅ Should print full user details
   try {
     const { name, desc, price, category } = req.body;
 
