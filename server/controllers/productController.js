@@ -3,14 +3,11 @@ const {Users, Products, Ratings} = require("../models");
 const { Op } = require("sequelize");
 
 
-
-// 🟢 Create Product
 const createProducts = async (req, res) => {
   try {
     const { name, desc, price, category } = req.body;
     const userId = req.user.id;
 
-    // Validation
     if (!name || !desc || !price || !category) {
       return res.status(400).json({ status: false, message: 'All fields are required' });
     }
@@ -33,7 +30,6 @@ const createProducts = async (req, res) => {
     
     const imageUrl = uploadedResponse.secure_url;
 
-    // Create Product
     const product = await Products.create({
       name,
       desc,
@@ -43,7 +39,7 @@ const createProducts = async (req, res) => {
       imageUrl,
     });
 
-    res.status(200).json({ message: 'Product created successfully', product });
+    res.status(200).json({staus: true, message: 'Product created successfully', product });
   } catch (error) {
     console.error('Error creating product:', error);
     res.status(500).json({ status: false, message: error.message });
