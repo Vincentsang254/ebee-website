@@ -9,7 +9,7 @@ export const setHeaders = () => {
 
   const headers = {
     headers: {
-      Authorization: `Bearer ${token}`,
+      "x-auth-token": localStorage.getItem("token"),
     },
   };
 
