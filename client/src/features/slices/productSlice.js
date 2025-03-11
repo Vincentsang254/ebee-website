@@ -18,7 +18,7 @@ export const fetchProducts = createAsyncThunk(
 			
 			const response = await axios.get(`${url}/products/get`, setHeaders());
 			console.table("Fetch products response from slice..", response);
-			return response.data.data.products;
+			return response.data.data;
 
 		} catch (error) {
 			// Handle any error and log the error response
