@@ -92,19 +92,7 @@ export const searchProducts = createAsyncThunk(
 	}
 );
 
-export const fetchProductsCount = createAsyncThunk(
-	"products/fetchProductsCount",
-	async () => {
-		try {
-			const response = await axios.get(`${url}/products/get-productscount`,  setHeaders());
-			return response.data.count;
-		} catch (error) {
-			const message = error.response?.data || "Error fetching products count";
-			toast.error(message, { position: "bottom-left" });
-			throw new Error(message); // Re-throw for rejected action
-		}
-	}
-);
+
 
 // Slice
 const productsSlice = createSlice({
@@ -113,16 +101,7 @@ const productsSlice = createSlice({
 	reducers: {},
 	extraReducers: (builder) => {
 		builder
-			.addCase(fetchProductsCount.fulfilled, (state, action) => {
-				state.productsCount = action.payload;
-				state.status = "success";
-			})
-			.addCase(fetchProductsCount.pending, (state) => {
-				state.status = "pending";
-			})
-			.addCase(fetchProductsCount.rejected, (state) => {
-				state.status = "rejected";
-			})
+			
 			.addCase(fetchProducts.fulfilled, (state, action) => {
 				console.log("Fetched products payload:", action.payload); 
 				state.list = action.payload;

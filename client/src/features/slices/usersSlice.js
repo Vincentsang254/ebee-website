@@ -13,59 +13,7 @@ const initialState = {
 	userCreatedToday: [],
 };
 
-export const fetchPreviousUsers = createAsyncThunk(
-	"users/fetchPreviousUsers",
-	async () => {
-		try {
-			const response = await axios.get(
-				`${url}/users/get-previoususers`,
-				setHeaders()
-			);
-			return response.data;
-		} catch (error) {
-			console.log("Error fetching previous users", error.response.data);
-			toast.error(error.response?.data, {
-				position: "bottom-left",
-			});
-		}
-	}
-);
 
-export const fetchUserCount = createAsyncThunk(
-	"users/fetchUserCount",
-	async () => {
-		try {
-			const response = await axios.get(
-				`${url}/users/get-usercount`,
-				setHeaders()
-			);
-			return response.data;
-		} catch (error) {
-			console.log("Error fetching user count", error.response.data);
-			toast.error(error.response?.data, {
-				position: "bottom-left",
-			});
-		}
-	}
-);
-
-export const fetchUserCreatedToday = createAsyncThunk(
-	"users/fetchUserCreatedToday",
-	async () => {
-		try {
-			const response = await axios.get(
-				`${url}/users/get-todaysusers`,
-				setHeaders()
-			);
-			return response.data;
-		} catch (error) {
-			console.log("Error fetching user created today", error.response.data);
-			toast.error(error.response?.data, {
-				position: "bottom-left",
-			});
-		}
-	}
-);
 
 export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
 	try {
@@ -183,40 +131,7 @@ const usersSlice = createSlice({
 			.addCase(updateUser.rejected, (state) => {
 				state.status = "rejected";
 			})
-			.addCase(fetchPreviousUsers.pending, (state) => {
-				state.status = "pending";
-			})
-			.addCase(fetchPreviousUsers.fulfilled, (state, action) => {
-				// Handle successful fetch of previous users
-				state.previousUsers = action.payload;
-				state.status = "success";
-			})
-			.addCase(fetchPreviousUsers.rejected, (state) => {
-				// Handle rejected fetch of previous users
-				state.status = "rejected";
-			})
-			.addCase(fetchUserCount.pending, (state) => {
-				state.status = "pending";
-			})
-			.addCase(fetchUserCount.fulfilled, (state, action) => {
-				// Handle successful fetch of user count
-				state.userCount = action.payload;
-				state.status = "success";
-			})
-			.addCase(fetchUserCount.rejected, (state) => {
-				// Handle rejected fetch of user count
-				state.status = "rejected";
-			})
-			.addCase(fetchUserCreatedToday.pending, (state) => {
-				state.status = "pending";
-			})
-			.addCase(fetchUserCreatedToday.fulfilled, (state, action) => {
-				state.userCreatedToday = action.payload;
-				state.status = "success";
-			})
-			.addCase(fetchUserCreatedToday.rejected, (state) => {
-				state.status = "rejected";
-			});
+			
 	},
 });
 
