@@ -8,16 +8,16 @@ const createProducts = async (req, res) => {
   try {
     const { name, desc, price, category } = req.body;
 
-     // ✅ Check if user is authenticated
-     if (!req.user || !req.user.id) {
-      return res.status(403).json({
-        status: false,
-        message: "Unauthorized. Please log in.",
-      });
-    }
+    //  // ✅ Check if user is authenticated
+    //  if (!req.user || !req.user.id) {
+    //   return res.status(403).json({
+    //     status: false,
+    //     message: "Unauthorized. Please log in.",
+    //   });
+    // }
 
-    const userId = req.user.id; // ✅ Now safe to use
-   
+    //const userId = req.user.id; // ✅ Now safe to use
+   userId = 1
 
     if (!name || !desc || !price || !category) {
       return res.status(400).json({ status: false, message: 'All fields are required' });

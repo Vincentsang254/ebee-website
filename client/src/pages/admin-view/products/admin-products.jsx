@@ -11,6 +11,7 @@ import { createProduct, fetchProducts, removeProduct, updateProduct } from '@/fe
 const AdminProducts = () => {
   const dispatch = useDispatch();
   const { list: products, status } = useSelector((state) => state.products);
+  const { id} = useSelector((state) => state.auth);// use this to get the user id so that you can use it to post the products, to avoid using req.user.id in the backend but instead use the id from the redux store
 
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null); // Track if editing an existing product
@@ -51,6 +52,8 @@ const AdminProducts = () => {
     formData.append('desc', productDesc);
     formData.append('category', productCategory);
     formData.append('imageUrl', productImage);
+      formData.append("userId", id);
+      // formData.append("userId", id); // ✅ Include userId
 
     if (editingProduct) {
       dispatch(updateProduct({ id: editingProduct.id, updatedData: formData }));
