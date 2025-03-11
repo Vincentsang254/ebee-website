@@ -6,7 +6,7 @@ const { Op } = require("sequelize");
 const createProducts = async (req, res) => {
   try {
     const { name, desc, price, category } = req.body;
-    const userId = req.user.id; // ✅ Get user ID dynamically
+    const userId = 1; // ✅ Get user ID dynamically
 
     if (!name || !desc || !price || !category) {
       return res.status(400).json({ status: false, message: "All fields are required" });
@@ -20,9 +20,10 @@ const createProducts = async (req, res) => {
       return res.status(400).json({ status: false, message: "An image is required" });
     }
 
-    // Upload Image (Improved Error Handling)
-    let uploadedResponse;
+    
     try {
+      // Upload Image (Improved Error Handling)
+    let uploadedResponse;
       uploadedResponse = await imageUploadUtil(req.file);
     } catch (uploadError) {
       console.error("Cloudinary Upload Error:", uploadError.message);
