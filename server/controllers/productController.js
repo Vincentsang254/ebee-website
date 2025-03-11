@@ -1,12 +1,12 @@
-const { imageUploadUtil, deleteImageUtil } = require("../utils/cloudinary");
-const {Users, Products, Ratings} = require("../models");
+const { imageUploadUtil, deleteImageUtil, getPublicIdFromUrl } = require("../utils/cloudinary");
+const { Users, Products, Ratings } = require("../models");
 const { Op } = require("sequelize");
 
-
+// 🟢 Create Product
 const createProducts = async (req, res) => {
   try {
     const { name, desc, price, category } = req.body;
-    const userId = 1; // ✅ Get user ID dynamically
+    const userId = req.user.id; // ✅ Get user ID dynamically
 
     if (!name || !desc || !price || !category) {
       return res.status(400).json({ status: false, message: "All fields are required" });
@@ -20,12 +20,13 @@ const createProducts = async (req, res) => {
       return res.status(400).json({ status: false, message: "An image is required" });
     }
 
-    // Upload Image
+    // Upload Image (Improved Error Handling)
     let uploadedResponse;
     try {
       uploadedResponse = await imageUploadUtil(req.file);
     } catch (uploadError) {
-      return res.status(500).json({ status: false, message: "Image upload failed" });
+      console.error("Cloudinary Upload Error:", uploadError.message);
+      return res.status(500).json({ status: false, message: `Image upload failed: ${uploadError.message}` });
     }
 
     const imageUrl = uploadedResponse.secure_url;
@@ -54,13 +55,12 @@ const deleteProducts = async (req, res) => {
     const product = await Products.findByPk(productId);
     if (!product) return res.status(404).json({ status: false, message: "Product not found" });
 
-    // Check if user has permission to delete (admin or the product owner)
     if (product.userId !== req.user.id && req.user.role !== "Admin") {
       return res.status(403).json({ status: false, message: "You do not have permission to delete this product" });
     }
 
-    // Extract publicId correctly
-    const publicId = product.imageUrl.split("/").pop().split(".")[0];
+    // Extract Cloudinary Public ID
+    const publicId = getPublicIdFromUrl(product.imageUrl);
 
     await deleteImageUtil(publicId);
     await Products.destroy({ where: { id: productId } });
@@ -81,7 +81,6 @@ const updateProducts = async (req, res) => {
     const product = await Products.findByPk(productId);
     if (!product) return res.status(404).json({ status: false, message: "Product not found" });
 
-    // Check if user has permission to update (admin or the product owner)
     if (product.userId !== req.user.id && req.user.role !== "Admin") {
       return res.status(403).json({ status: false, message: "You do not have permission to update this product" });
     }
@@ -90,15 +89,14 @@ const updateProducts = async (req, res) => {
 
     if (req.file) {
       try {
-        // ✅ Delete previous image
-        const publicId = product.imageUrl.split("/").pop().split(".")[0];
+        const publicId = getPublicIdFromUrl(product.imageUrl);
         await deleteImageUtil(publicId);
 
-        // ✅ Upload new image
         const uploadResponse = await imageUploadUtil(req.file);
         updatedImageUrl = uploadResponse.secure_url;
       } catch (error) {
-        return res.status(500).json({ status: false, message: "Image upload failed" });
+        console.error("Error updating product image:", error.message);
+        return res.status(500).json({ status: false, message: `Image update failed: ${error.message}` });
       }
     }
 
