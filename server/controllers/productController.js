@@ -4,31 +4,20 @@ const { Op } = require("sequelize");
 
 
 const createProducts = async (req, res) => {
-  console.log("Current User:", req.user); // ✅ Should print full user details
   try {
     const { name, desc, price, category } = req.body;
-
-    //  // ✅ Check if user is authenticated
-    //  if (!req.user || !req.user.id) {
-    //   return res.status(403).json({
-    //     status: false,
-    //     message: "Unauthorized. Please log in.",
-    //   });
-    // }
-
-    //const userId = req.user.id; // ✅ Now safe to use
-   userId = 1
+    const userId = 1; // ✅ Get user ID dynamically
 
     if (!name || !desc || !price || !category) {
-      return res.status(400).json({ status: false, message: 'All fields are required' });
+      return res.status(400).json({ status: false, message: "All fields are required" });
     }
 
     if (isNaN(price)) {
-      return res.status(400).json({ status: false, message: 'Price must be a valid number' });
+      return res.status(400).json({ status: false, message: "Price must be a valid number" });
     }
 
     if (!req.file) {
-      return res.status(400).json({ status: false, message: 'An image is required' });
+      return res.status(400).json({ status: false, message: "An image is required" });
     }
 
     // Upload Image
@@ -36,9 +25,9 @@ const createProducts = async (req, res) => {
     try {
       uploadedResponse = await imageUploadUtil(req.file);
     } catch (uploadError) {
-      return res.status(500).json({ status: false, message: 'Image upload failed' });
+      return res.status(500).json({ status: false, message: "Image upload failed" });
     }
-    
+
     const imageUrl = uploadedResponse.secure_url;
 
     const product = await Products.create({
@@ -50,9 +39,9 @@ const createProducts = async (req, res) => {
       imageUrl,
     });
 
-    res.status(200).json({staus: true, message: 'Product created successfully', product });
+    res.status(200).json({ status: true, message: "Product created successfully", product });
   } catch (error) {
-    console.error('Error creating product:', error);
+    console.error("Error creating product:", error);
     res.status(500).json({ status: false, message: error.message });
   }
 };
@@ -63,21 +52,22 @@ const deleteProducts = async (req, res) => {
 
   try {
     const product = await Products.findByPk(productId);
-    if (!product) return res.status(404).json({ status: false, message: 'Product not found' });
+    if (!product) return res.status(404).json({ status: false, message: "Product not found" });
 
     // Check if user has permission to delete (admin or the product owner)
-    if (product.userId !== req.user.id && req.user.role !== 'Admin') {
-      return res.status(403).json({ status: false, message: 'You do not have permission to delete this product' });
+    if (product.userId !== req.user.id && req.user.role !== "Admin") {
+      return res.status(403).json({ status: false, message: "You do not have permission to delete this product" });
     }
 
-    const publicId = product.imageUrl.split('/').pop().split('.')[0];
-    await deleteImageUtil(publicId);
+    // Extract publicId correctly
+    const publicId = product.imageUrl.split("/").pop().split(".")[0];
 
+    await deleteImageUtil(publicId);
     await Products.destroy({ where: { id: productId } });
 
-    res.status(200).json({ status: true, message: 'Product deleted successfully' });
+    res.status(200).json({ status: true, message: "Product deleted successfully" });
   } catch (error) {
-    console.error('Error deleting product:', error);
+    console.error("Error deleting product:", error);
     res.status(500).json({ status: false, message: error.message });
   }
 };
@@ -89,27 +79,27 @@ const updateProducts = async (req, res) => {
 
   try {
     const product = await Products.findByPk(productId);
-    if (!product) return res.status(404).json({ status: false, message: 'Product not found' });
+    if (!product) return res.status(404).json({ status: false, message: "Product not found" });
 
     // Check if user has permission to update (admin or the product owner)
-    if (product.userId !== req.user.id && req.user.role !== 'Admin') {
-      return res.status(403).json({ status: false, message: 'You do not have permission to update this product' });
+    if (product.userId !== req.user.id && req.user.role !== "Admin") {
+      return res.status(403).json({ status: false, message: "You do not have permission to update this product" });
     }
 
     let updatedImageUrl = product.imageUrl;
 
     if (req.file) {
-      const publicId = product.imageUrl.split('/').pop().split('.')[0];
-      await deleteImageUtil(publicId);
-
-      let uploadResponse;
       try {
-        uploadResponse = await imageUploadUtil(req.file);
-      } catch (uploadError) {
-        return res.status(500).json({ status: false, message: 'Image upload failed' });
-      }
+        // ✅ Delete previous image
+        const publicId = product.imageUrl.split("/").pop().split(".")[0];
+        await deleteImageUtil(publicId);
 
-      updatedImageUrl = uploadResponse.secure_url;
+        // ✅ Upload new image
+        const uploadResponse = await imageUploadUtil(req.file);
+        updatedImageUrl = uploadResponse.secure_url;
+      } catch (error) {
+        return res.status(500).json({ status: false, message: "Image upload failed" });
+      }
     }
 
     await Products.update(
@@ -117,9 +107,9 @@ const updateProducts = async (req, res) => {
       { where: { id: productId } }
     );
 
-    res.status(200).json({ status: true, message: 'Product updated successfully', product });
+    res.status(200).json({ status: true, message: "Product updated successfully" });
   } catch (error) {
-    console.error('Error updating product:', error);
+    console.error("Error updating product:", error);
     res.status(500).json({ status: false, message: error.message });
   }
 };
@@ -128,24 +118,23 @@ const updateProducts = async (req, res) => {
 const getProducts = async (req, res) => {
   try {
     const products = await Products.findAll({
-      attributes: { exclude: ['userId'] },
+      attributes: { exclude: ["userId"] },
       include: [
         {
           model: Ratings,
-          as: 'ratings',
+          as: "ratings",
           include: {
             model: Users,
-            as: 'user',
-            attributes: ['name'],
+            as: "user",
+            attributes: ["name"],
           },
         },
       ],
     });
 
-
     res.status(200).json({ status: true, data: products });
   } catch (error) {
-    console.error('Error fetching products:', error);
+    console.error("Error fetching products:", error);
     res.status(500).json({ status: false, message: error.message });
   }
 };
@@ -160,23 +149,23 @@ const getProductById = async (req, res) => {
       include: [
         {
           model: Ratings,
-          as: 'ratings',
+          as: "ratings",
           include: {
             model: Users,
-            as: 'user',
-            attributes: ['name'],
+            as: "user",
+            attributes: ["name"],
           },
         },
       ],
     });
 
     if (!product) {
-      return res.status(404).json({ status: false, message: 'Product not found' });
+      return res.status(404).json({ status: false, message: "Product not found" });
     }
 
     res.status(200).json({ status: true, data: product });
   } catch (error) {
-    console.error('Error fetching product:', error);
+    console.error("Error fetching product:", error);
     res.status(500).json({ status: false, message: error.message });
   }
 };
@@ -196,20 +185,21 @@ const searchProducts = async (req, res) => {
     const products = await Products.findAll({ where: searchConditions });
 
     if (products.length === 0) {
-      return res.status(404).json({ status: false, message: 'No products found' });
+      return res.status(404).json({ status: false, message: "No products found" });
     }
 
     res.status(200).json({ status: true, data: products });
   } catch (error) {
-    console.error('Error searching products:', error);
+    console.error("Error searching products:", error);
     res.status(500).json({ status: false, message: error.message });
   }
 };
+
 module.exports = {
   createProducts,
   getProducts,
   searchProducts,
   getProductById,
   updateProducts,
-  deleteProducts
+  deleteProducts,
 };
