@@ -2,8 +2,8 @@
 const Users = require("../models/Users");
 const jwt = require("jsonwebtoken");
 
-const Users = require("../models/Users");
-const jwt = require("jsonwebtoken");
+// // const Users = require("../models/Users");
+// const jwt = require("jsonwebtoken");
 
 const verifyToken = async (req, res, next) => {
   const token = req.headers["x-auth-token"];
