@@ -15,9 +15,9 @@ export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
 	try {
 		const response = await axios.get(`${url}/users/get`, setHeaders());
 
-		console.log("fetch user response:", response.data);
+		console.log("fetch user response:", response.data.data);
 		
-		return response.data;
+		return response.data.data;
 	} catch (error) {
 		console.log(" Error fetching a user", error.response?.data?.message);
 		toast.error(error.response?.data?.message, {
