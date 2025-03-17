@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 
 const CartPage = () => {
   const dispatch = useDispatch();
-  const { items: cartItems, status } = useSelector((state) => state.cart);
+  const { list: cartItems, status } = useSelector((state) => state.carts);
   const { id: userId } = useSelector((state) => state.auth);
 
   useEffect(() => {
