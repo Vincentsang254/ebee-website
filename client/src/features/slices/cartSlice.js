@@ -8,7 +8,7 @@ const iniialState = {
   status: null,
 };
 
-export const addProductToCart = createAsyncThunk("cart/addProductToCart", async (product) => {
+export const addProductToCart = createAsyncThunk("carts/addProductToCart", async (product) => {
   try {
     const response = await axios.post(
       `${url}/cart/add-product-to-cart`,
@@ -23,7 +23,7 @@ export const addProductToCart = createAsyncThunk("cart/addProductToCart", async 
   }
 });
 
-export const clearCart = createAsyncThunk("cart/clearCart", async () => {
+export const clearCart = createAsyncThunk("carts/clearCart", async () => {
   try {
     const response = await axios.delete(`${url}/cart/clear`, setHeaders());
     return response.data;
@@ -34,7 +34,7 @@ export const clearCart = createAsyncThunk("cart/clearCart", async () => {
 });
 
 export const removeProductFromCart = createAsyncThunk(
-  "cart/removeProductFromCart",
+  "carts/removeProductFromCart",
   async (product) => {
     try {
       const response = await axios.delete(
@@ -52,7 +52,7 @@ export const removeProductFromCart = createAsyncThunk(
 );
 
 export const decreaseProductQuantity = createAsyncThunk(
-  "cart/decreaseProductQuantity",
+  "carts/decreaseProductQuantity",
   async (product) => {
     try {
       const response = await axios.delete(
@@ -69,7 +69,7 @@ export const decreaseProductQuantity = createAsyncThunk(
   }
 );
 export const increaseProductQuantity = createAsyncThunk(
-    "cart/increaseProductQuantity",
+    "carts/increaseProductQuantity",
     async (product) => {
       try {
         const response = await axios.delete(
@@ -85,7 +85,7 @@ export const increaseProductQuantity = createAsyncThunk(
       }
     }
   );
-export const getCart = createAsyncThunk("cart/getCart", async () => {
+export const getCart = createAsyncThunk("carts/getCart", async () => {
   try {
     const response = await axios.get(`${url}/cart/get`, setHeaders());
     return response.data;

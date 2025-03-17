@@ -31,9 +31,9 @@ const ProductSkeleton = () => (
   </Card>
 );
 
-const handleAddProductToCart = () => {
-   dispatch(addProductToCart(product));
-}
+// const handleAddProductToCart = () => {
+//    dispatch(addProductToCart(product));
+// }
 
 const ShoppingHome = () => {
   const dispatch = useDispatch();
