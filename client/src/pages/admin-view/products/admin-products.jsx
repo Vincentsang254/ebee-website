@@ -50,7 +50,7 @@ const AdminProducts = () => {
     formData.append('price', productPrice);
     formData.append('desc', productDesc);
     formData.append('category', productCategory);
-    formData.append('image', productImage);
+    formData.append('my_file', productImage);
     formData.append("userId", id);
   
     const action = editingProduct

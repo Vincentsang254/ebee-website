@@ -33,31 +33,18 @@ export const createProduct = createAsyncThunk(
 	async (formData, { rejectWithValue }) => {
 	  try {
 		const response = await axios.post(`${url}/products/create`, formData, setHeaders());
-		console.log("Create product response:", response); // Correctly log response after getting it
+		console.log("Create product response:", response?.data); // Correctly log response after getting it
+		toast.success(response?.data.message, { position: "top-center" });
 		return response.data;
 	  } catch (error) {
-		console.log( "Error creating product",error.response?.data.message)
-		toast.error(error.response?.data.message, { position: "bottom-left" });
+		console.log( "Error creating product",error.response?.data?.message)
+		toast.error(error.response?.data.message, { position: "top-center" });
 		return rejectWithValue(error.response?.data.message);
 	  }
 	}
   );
 
-  export const handleImageUpload = createAsyncThunk(
-	"products/handleImageUpload",
-	async (formData, { rejectWithValue }) => {
-	    
-		try {
-			const response = await axios.post(`${url}/products/upload-image`, formData, setHeaders());
-			console.log("Upload image response:", response);
-			return response.data;
-		} catch (error) {
-			console.log("Error uploading image:", error.response?.data.message);
-			toast.error(error.response?.data.message, { position: "bottom-left" });
-			return rejectWithValue(error.response?.data.message);
-		}
-	}
-  );
+
 export const removeProduct = createAsyncThunk(
 	"products/removeProduct",
 	async (productId, { rejectWithValue }) => {
