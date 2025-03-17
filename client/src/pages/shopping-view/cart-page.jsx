@@ -14,8 +14,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const CartPage = () => {
   const dispatch = useDispatch();
-  const { list: cartItems, status } = useSelector((state) => state.carts);
-
+  const cartItems = useSelector((state) => state.carts.list);
+const {status} = useSelector((state) => state.carts);
   // Fetch cart items on page load
   useEffect(() => {
     dispatch(getCart());
