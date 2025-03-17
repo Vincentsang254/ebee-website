@@ -38,32 +38,31 @@ const AdminProducts = () => {
     setEditingProduct(null);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!productName || !productDesc || !productPrice || !productCategory || !productImage) {
       alert('All fields are required');
       return;
     }
-
+  
     const formData = new FormData();
     formData.append('name', productName);
     formData.append('price', productPrice);
     formData.append('desc', productDesc);
     formData.append('category', productCategory);
-    formData.append('imageUrl', productImage);
-      formData.append("userId", id);
-      // formData.append("userId", id); // ✅ Include userId
-
-    if (editingProduct) {
-      dispatch(updateProduct({ id: editingProduct.id, updatedData: formData }));
-    } else {
-      dispatch(createProduct(formData));
-    }
-
-    setDialogOpen(false);
-    resetForm();
+    formData.append('image', productImage);
+    formData.append("userId", id);
+  
+    const action = editingProduct
+      ? dispatch(updateProduct({ id: editingProduct.id, updatedData: formData }))
+      : dispatch(createProduct(formData));
+  
+    action.then(() => {
+      setDialogOpen(false); // ✅ Close only after the API call completes
+      resetForm();
+    });
   };
+  
 
   const handleEditProduct = (product) => {
     setEditingProduct(product);
