@@ -52,19 +52,17 @@ const {id} = useSelector((state) => state.auth);
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
+
+
   const handleAddProductToCart = (product) => {
     if (!id) {
       console.error("User ID is missing");
       return;
     }
   
-    const cartItem = {
-      userId: id,  // Send the userId
-      productId: product.id,  // Send the productId
-    };
-  
-    dispatch(addProductToCart(cartItem));
+    dispatch(addProductToCart({ userId: id, productId: product.id }));
   };
+  
   
 
   return (

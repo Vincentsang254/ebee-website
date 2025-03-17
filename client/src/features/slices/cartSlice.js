@@ -9,23 +9,24 @@ const initialState = {
   status: null,
 };
 
-// Add product to cart
 export const addProductToCart = createAsyncThunk(
   "cart/addProductToCart",
-  async (product) => {
+  async ({ userId, productId }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         `${url}/cart/add-product-to-cart`,
-        product,
+        { userId, productId },  // Ensure only the required fields are sent
         setHeaders()
       );
       return response.data;
     } catch (error) {
-      toast.error(error.response?.data, { position: "top-center" });
-      throw error;
+      const errorMessage = error.response?.data?.message || "Failed to add product to cart";
+      toast.error(errorMessage, { position: "top-center" });
+      return rejectWithValue(errorMessage);
     }
   }
 );
+
 
 // Get cart items
 export const getCart = createAsyncThunk("cart/getCart", async () => {
