@@ -37,6 +37,16 @@ const createProducts = async (req, res) => {
       return res.status(400).json({ status: false, message: "Price must be a valid number" });
     }
 
+    
+    console.log("Uploading image to Cloudinary...");
+    const b64 = Buffer.from(req.file.buffer).toString("base64");
+    const fileData = `data:${req.file.mimetype};base64,${b64}`;
+    
+    const result = await imageUploadUtil(fileData);
+    console.log("Cloudinary Response:", result);
+
+    const imageUrl = result.secure_url; // ✅ Use Cloudinary URL
+
     const product = await Products.create({
       name,
       desc,
