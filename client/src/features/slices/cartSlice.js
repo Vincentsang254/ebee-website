@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { setHeaders, url } from "./api";
 const iniialState = {
-  cart: [],
+  list: [],
   total: 0,
   status: null,
 };
@@ -101,17 +101,19 @@ const cartSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(addToCart.fulfilled, (state, action) => {
+      .addCase(addProductToCart.fulfilled, (state, action) => {
+        state.status = "success"
         state.cart = action.payload;
         state.total = action.payload.total;
       })
-      .addCase(addToCart.pending, (state) => {
+      .addCase(addProductToCart.pending, (state) => {
         state.status = "pending";
       })
-      .addCase(addToCart.rejected, (state) => {
+      .addCase(addProductToCart.rejected, (state) => {
         state.status = "rejected";
       })
       .addCase(removeProductFromCart.fulfilled, (state, action) => {
+        state.status = "success"
         state.cart = action.payload;
         state.total = action.payload.total;
       })
@@ -122,6 +124,7 @@ const cartSlice = createSlice({
         state.status = "rejected";
       })
       .addCase(decreaseProductQuantity.fulfilled, (state, action) => {
+        state.status = "success"
         state.cart = action.payload;
         state.total = action.payload.total;
       })
@@ -132,6 +135,7 @@ const cartSlice = createSlice({
         state.status = "rejected";
       })
       .addCase(increaseProductQuantity.fulfilled, (state, action) => {
+        state.status = "success"
         state.cart = action.payload;
         state.total = action.payload.total;
       })
@@ -142,6 +146,7 @@ const cartSlice = createSlice({
         state.status = "rejected";
       })
       .addCase(clearCart.fulfilled, (state, action) => {
+        state.status = "success"
         state.cart = action.payload;
         state.total = action.payload.total;
       })
@@ -152,6 +157,7 @@ const cartSlice = createSlice({
         state.status = "rejected";
       })
       .addCase(getCart.fulfilled, (state, action) => {
+        state.status = "success"
         state.cart = action.payload;
         state.total = action.payload.total;
       })
