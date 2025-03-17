@@ -1,5 +1,6 @@
 import React from 'react'
-import UserCartItemsContent from './UserCartItemsContent'
+import UserCartItemsContent from './cart-items-content'
+
 
 const UserCartWrapper = () => {
   return (
