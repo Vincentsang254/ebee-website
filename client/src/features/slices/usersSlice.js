@@ -11,11 +11,9 @@ const initialState = {
 
 };
 
-
-
 export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
 	try {
-		const response = await axios.get(`${url}/users/get-users`, setHeaders());
+		const response = await axios.get(`${url}/users/get`, setHeaders());
 
 		console.log("fetch user response:", response.data);
 		
@@ -33,7 +31,7 @@ export const deleteUser = createAsyncThunk(
 	async (userId) => {
 		try {
 			const response = await axios.delete(
-				`${url}/users/delete-user/${userId}`,
+				`${url}/users/delete/${userId}`,
 				setHeaders()
 			);
 			toast.success(response?.data?.message, {

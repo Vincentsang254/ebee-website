@@ -12,11 +12,11 @@ const { verifyToken } = require("../middlewares/AuthMiddleware");
 const router = express.Router();
 
 // Define routes
-router.delete("/delete/:userId",verifyToken, deleteUser);
-router.get("/get-users",verifyToken, getUsers);
-router.post("/create",verifyToken, createUsers);
-router.put("/update/:userId",verifyToken, updateUser);
-router.get("/get-user/:userId",verifyToken, getUserById);
+router.delete("/delete/:userId",deleteUser);
+router.get("/get",getUsers);
+router.post("/create",createUsers);
+router.put("/update/:userId",updateUser);
+router.get("/get/:userId",getUserById);
 
 
 module.exports = router;

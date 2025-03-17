@@ -12,11 +12,11 @@ const { verifyToken }= require("../middlewares/AuthMiddleware");
 const router = express.Router();
 
 // Define routes
-router.post("/create",verifyToken, createRatings);
-router.get("/get",verifyToken, getRatings);
-router.delete("/delete/:ratingId",verifyToken, deleteRatings);
-router.put("/update/:ratingId",verifyToken, updateRatings);
-router.get("/get-rating/:ratingId",verifyToken, getRatingById);
+router.post("/create",createRatings);
+router.get("/get",getRatings);
+router.delete("/delete/:ratingId",deleteRatings);
+router.put("/update/:ratingId",updateRatings);
+router.get("/get-rating/:ratingId",getRatingById);
 
 
 module.exports = router;

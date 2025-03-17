@@ -10,8 +10,8 @@ const { verifyToken } = require("../middlewares/AuthMiddleware");
 const router = express.Router();
 
 // Define routes
-router.get("/get",verifyToken, getUserAddress);
-router.post("/create",verifyToken, createAddress);
-router.put("/update/:addressId",verifyToken, updateUserAddress);
+router.get("/get",getUserAddress);
+router.post("/create",createAddress);
+router.put("/update/:addressId",updateUserAddress);
 
 module.exports = router;

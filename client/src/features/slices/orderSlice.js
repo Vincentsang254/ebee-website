@@ -16,7 +16,7 @@ const initialState = {
 // Thunks
 export const fetchOrders = createAsyncThunk("orders/fetchOrders", async () => {
 	try {
-		const response = await axios.get(`${url}/orders/get-orders`, setHeaders());
+		const response = await axios.get(`${url}/orders/get`, setHeaders());
 		return response.data;
 	} catch (error) {
 		console.error("Error fetching orders:", error.response?.message);
@@ -80,23 +80,7 @@ export const updateOrder = createAsyncThunk(
 	}
 );
 
-export const fetchOrdersCount = createAsyncThunk(
-	"orders/fetchOrdersCount",
-	async () => {
-		try {
-			const response = await axios.get(
-				`${url}/orders/get-orderscount`,
-				setHeaders()
-			);
-			return response.data.count;
-		} catch (error) {
-			console.error("Error fetching orders count:", error.response?.message);
-			toast.error(error.response?.data, {
-				position: "bottom-left",
-			});
-		}
-	}
-);
+
 
 // Slice
 const ordersSlice = createSlice({
@@ -105,16 +89,7 @@ const ordersSlice = createSlice({
 	reducers: {},
 	extraReducers: (builder) => {
 		builder
-			.addCase(fetchOrdersCount.fulfilled, (state, action) => {
-				state.ordersCount = action.payload;
-				state.status = "success";
-			})
-			.addCase(fetchOrdersCount.pending, (state) => {
-				state.status = "pending";
-			})
-			.addCase(fetchOrdersCount.rejected, (state) => {
-				state.status = "rejected";
-			})
+			
 			.addCase(fetchOrders.fulfilled, (state, action) => {
 				state.list = action.payload;
 				state.status = "success";
