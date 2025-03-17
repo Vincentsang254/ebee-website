@@ -32,10 +32,7 @@ const ProductSkeleton = () => (
 );
 
 
- // Function to add product to cart
- const handleAddProductToCart = (product) => {
-  dispatch(addProductToCart(product));
-};
+
 
 const ShoppingHome = () => {
   const dispatch = useDispatch();
@@ -55,6 +52,10 @@ const ShoppingHome = () => {
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
+   // Function to add product to cart
+ const handleAddProductToCart = (product) => {
+  dispatch(addProductToCart(product));
+};
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
