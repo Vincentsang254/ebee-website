@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton"; // Import ShadCN Skeleton component
 import { fetchProducts } from '@/features/slices/productSlice';
+import { addProductToCart } from '@/features/slices/cartSlice';
 
 // Skeleton loader for product cards using ShadCN
 const ProductSkeleton = () => (
@@ -30,7 +31,7 @@ const ProductSkeleton = () => (
   </Card>
 );
 
-const addProductToCart = () => {
+const handleAddProductToCart = () => {
    dispatch(addProductToCart(product));
 }
 
