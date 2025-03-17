@@ -32,16 +32,7 @@ const addProductToCart = async (req, res) => {
   }
 };
 
-const getCartCount = async (req, res) => {
-  const userId = req.user.id;
 
-  try {
-    const count = await Carts.count({ where: { id: userId } });
-    res.status(200).json({ status: true, data: count });
-  } catch (error) {
-    res.status(500).json({ status: false, message: error.message });
-  }
-};
 
 const removeItemFromCart = async (req, res) => {
   try {
@@ -177,5 +168,5 @@ module.exports = {
   decreaseProductQuantity,
   addProductToCart,
   removeItemFromCart,
-  getCartCount,
+ 
 };

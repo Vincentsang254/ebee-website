@@ -27,14 +27,14 @@ export const addProductToCart = createAsyncThunk(
 );
 
 
-// Get cart items
-export const getCart = createAsyncThunk("cart/getCart", async () => {
+export const getCart = createAsyncThunk("cart/getCart", async (_, { rejectWithValue }) => {
   try {
     const response = await axios.get(`${url}/cart/get`, setHeaders());
-    return response.data;
+    return response.data.cartItems ;
   } catch (error) {
-    toast.error(error.response?.data, { position: "top-center" });
-    throw error;
+    toast.error(error.response?.data?.message || "Failed to fetch cart items", { position: "top-center" });
+
+    return rejectWithValue(error.response?.data || { message: "An error occurred" });
   }
 });
 
