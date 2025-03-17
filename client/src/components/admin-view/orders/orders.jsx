@@ -34,6 +34,17 @@ const AdminOrdersView = () => {
     dispatch(fetchOrders());
   }, []);
 
+  if (!orders.length) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        No orders found.
+      </div>
+    );
+  }
+  if(status === "rejected") {
+    return <div className="flex items-center justify-center min-h-screen">Failed to load orders</div>;
+  }
+
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-semibold">Orders</h1>

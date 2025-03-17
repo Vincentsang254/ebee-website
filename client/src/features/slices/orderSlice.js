@@ -10,7 +10,6 @@ import { setHeaders, url } from "./api";
 const initialState = {
 	list: [],
 	status: null,
-	ordersCount: 0,
 };
 
 // Thunks
@@ -35,6 +34,9 @@ export const createOrder = createAsyncThunk(
 				formData,
 				setHeaders()
 			);
+			toast.success(response.data.message, {
+				position: "top-center",
+			});
 			return response.data;
 		} catch (error) {
 			console.error("Error creating order:", error.response.message);
@@ -50,12 +52,16 @@ export const deleteOrder = createAsyncThunk(
 	"orders/deleteOrder",
 	async (orderId) => {
 		try {
-			await axios.delete(`${url}/orders/delete/${orderId}`, setHeaders());
+			const response = await axios.delete(`${url}/orders/delete/${orderId}`, setHeaders());
+			toast.success(response.data.message, {
+				position: "top-center",
+			});
 			return orderId; // Return the deleted order's ID
+			
 		} catch (error) {
 			console.error("Error deleting order:", error.response?.message);
-			toast.error(error.response?.data, {
-				position: "bottom-left",
+			toast.error(error.response?.data?.message, {
+				position: "top-center",
 			});
 		}
 	}
@@ -70,6 +76,9 @@ export const updateOrder = createAsyncThunk(
 				values,
 				setHeaders()
 			);
+			toast.success(response.data.message, {
+				position: "top-center",
+			})
 			return response.data; // Assuming the server returns the updated order
 		} catch (error) {
 			console.error("Error updating order:", error.response?.message);
