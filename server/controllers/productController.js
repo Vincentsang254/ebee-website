@@ -2,18 +2,27 @@ const { imageUploadUtil, deleteImageUtil, getPublicIdFromUrl } = require("../uti
 const { Users, Products, Ratings } = require("../models");
 const { Op } = require("sequelize");
 
-
 const handleImageUpload = async (req, res) => {
   try {
+    if (!req.file) {
+      return res.status(400).json({ status: false, message: "No file uploaded" });
+    }
+
     const b64 = Buffer.from(req.file.buffer).toString("base64");
     const url = `data:${req.file.mimetype};base64,${b64}`;
+
+    console.log("Uploading to Cloudinary...");
     const result = await imageUploadUtil(url);
+    console.log("Cloudinary Response:", result);
+
     res.status(200).json({ status: true, message: "Image uploaded successfully", result });
   } catch (error) {
-    console.log(error);
+    console.error("Upload Error:", error);
     return res.status(500).json({ status: false, message: "Error uploading image" });
   }
-}
+};
+
+
 
 const createProducts = async (req, res) => {
   try {

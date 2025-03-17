@@ -1,6 +1,6 @@
 const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
-const uuidv4 = require("uuid").v4;
+require("dotenv").config(); // Load environment variables
 
 // 🔧 Configure Cloudinary
 cloudinary.config({
@@ -10,21 +10,22 @@ cloudinary.config({
 });
 
 const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
+// 📤 Cloudinary Upload Utility
 const imageUploadUtil = async (file) => {
   try {
-    const result = await cloudinary.uploader.upload(file, {
-      resourse_type: "auto",
-     })
-     return result
-  }catch(error) {
-    res.status(500).json({status: false, message: error.message });
-  
+    const result = await cloudinary.uploader.upload(file,{
+      upload_preset: "ebee", // 👈 Use your preset name
+      resource_type: "auto",
+    } );
+    return result;
+  } catch (error) {
+    console.error("Cloudinary Upload Error:", error);
+    throw new Error(error.message); // ✅ Properly throw error
   }
-}
+};
 
-
-const upload = multer({ storage });
 
 const deleteImageUtil = async (publicId) => {
   try {
