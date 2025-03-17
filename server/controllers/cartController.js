@@ -1,33 +1,28 @@
 const { Carts, Products } = require("../models");
 
 const addProductToCart = async (req, res) => {
-  const { productId } = req.body;
-  const userId = req.user.id; // Assuming req.user.id is correctly set
+  const { productId, userId } = req.body; // Fix: Extract userId properly
 
   try {
-    let cart = await Carts.findOne({
-      where: { id: userId, productId: productId },
-    });
-
     const product = await Products.findByPk(productId);
-
     if (!product) {
-      return res
-        .status(404)
-        .json({ status: false, message: "Product not found" });
+      return res.status(404).json({ status: false, message: "Product not found" });
     }
 
+    let cart = await Carts.findOne({
+      where: { userId, productId }, // Fix: Correct query using userId
+    });
+
     if (cart) {
-      cart.quantity += 1;
+      await cart.increment("quantity"); // Safer way to update quantity
       cart.totalPrice = cart.quantity * parseFloat(product.price);
       await cart.save();
     } else {
-      const totalPrice = parseFloat(product.price);
       cart = await Carts.create({
-        userId: userId,
-        productId: productId,
+        userId,
+        productId,
         quantity: 1,
-        totalPrice: totalPrice,
+        totalPrice: parseFloat(product.price),
       });
     }
 

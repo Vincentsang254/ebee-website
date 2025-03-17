@@ -37,7 +37,7 @@ const ProductSkeleton = () => (
 const ShoppingHome = () => {
   const dispatch = useDispatch();
   const { list: products, status } = useSelector((state) => state.products);
-
+const {id} = useSelector((state) => state.auth);
   console.table("products", products);
 
   // State for the search query
@@ -52,10 +52,20 @@ const ShoppingHome = () => {
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
-   // Function to add product to cart
- const handleAddProductToCart = (product) => {
-  dispatch(addProductToCart(product));
-};
+  const handleAddProductToCart = (product) => {
+    if (!id) {
+      console.error("User ID is missing");
+      return;
+    }
+  
+    const cartItem = {
+      userId: id,  // Send the userId
+      productId: product.id,  // Send the productId
+    };
+  
+    dispatch(addProductToCart(cartItem));
+  };
+  
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
