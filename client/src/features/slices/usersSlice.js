@@ -17,11 +17,13 @@ export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
 	try {
 		const response = await axios.get(`${url}/users/get-users`, setHeaders());
 
+		console.log("fetch user response:", response.data);
+		
 		return response.data;
 	} catch (error) {
-		console.log(" Error fetching a user", error.response.data);
-		toast.error(error.response?.data, {
-			position: "bottom-left",
+		console.log(" Error fetching a user", error.response?.data?.message);
+		toast.error(error.response?.data?.message, {
+			position: "top-center",
 		});
 	}
 });
@@ -34,12 +36,14 @@ export const deleteUser = createAsyncThunk(
 				`${url}/users/delete-user/${userId}`,
 				setHeaders()
 			);
-
+			toast.success(response?.data?.message, {
+				position: "top-center",
+			})
 			return response.data;
 		} catch (error) {
 			console.log("Error deleting a user", error.response.data);
-			toast.error(error.response?.data, {
-				position: "bottom-left",
+			toast.error(error.response?.data?.message, {
+				position: "top-center",
 			});
 		}
 	}
@@ -50,11 +54,14 @@ export const createUser = createAsyncThunk(
 	async (userData) => {
 		try {
 			const response = await axios.post(`${url}/users/create`, userData);
+			toast.success(response?.data?.message, {
+				position: "top-center",
+			})
 			return response.data;
 		} catch (error) {
-			console.log(error.response.data);
-			toast.error(" Error creating a user", error.response?.data, {
-				position: "bottom-left",
+			console.log(error.response.data.message);
+			toast.error(" Error creating a user", error.response?.data?.message, {
+				position: "top-center",
 			});
 		}
 	}
@@ -68,11 +75,14 @@ export const updateUser = createAsyncThunk(
 				`${url}/users/update/${userData.id}`,
 				userData
 			);
+			toast.success(response?.data?.message, {
+				position: "top-center",
+			})
 			return response.data;
 		} catch (error) {
-			console.log("Error updating user", error.response.data);
-			toast.error(error.response?.data, {
-				position: "bottom-left",
+			console.log("Error updating user", error.response?.data?.message);
+			toast.error(error.response?.data?.message, {
+				position: "top-center",
 			});
 		}
 	}
