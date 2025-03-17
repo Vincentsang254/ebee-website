@@ -16,6 +16,8 @@ const AdminUsers = () => {
 
   const {list : users, status} = useSelector((state) => state.users);
 
+  console.log("users from database", users);
+
   // Mock data for users (replace with actual data fetching logic)
   // useEffect(() => {
   //   setUsers([

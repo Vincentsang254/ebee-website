@@ -8,9 +8,7 @@ import { toast } from "react-toastify";
 const initialState = {
 	list: [],
 	status: null,
-	previousUsers: [],
-	userCount: 0,
-	userCreatedToday: [],
+
 };
 
 
