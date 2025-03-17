@@ -16,9 +16,6 @@ const AdminUsers = () => {
 
   const {list : users, status} = useSelector((state) => state.users);
 
-  console.log("users from database", users.data);
-
-
 
   useEffect(() => {
     dispatch(fetchUsers());

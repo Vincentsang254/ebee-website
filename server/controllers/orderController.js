@@ -2,10 +2,11 @@
 
 const sendNotificationEmail = require("../brevo/email.brevo");
 const { Notifications, Orders } = require("../models");
+const createNotification = require("../utils/createNotifications");
 
 const createOrders = async (req, res) => {
   const { totalPrice, orderItems, paymentMethod, userAddressId } = req.body;
-  const userId = req.user.id; // Assuming req.user contains an object with an id property
+  const userId = 1; // Assuming req.user contains an object with an id property
 
   // Validate required fields
   if (
