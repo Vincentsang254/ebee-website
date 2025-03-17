@@ -9,40 +9,33 @@ cloudinary.config({
   api_secret: "764okYVYwP9WOp5iXMKS7Oxbr7c",
 });
 
-// 🖼️ Multer Memory Storage (Storing file in memory)
 const storage = multer.memoryStorage();
+
+const imageUploadUtil = async (file) => {
+  try {
+    const result = await cloudinary.uploader.upload(file, {
+      resourse_type: "auto",
+     })
+     return result
+  }catch(error) {
+    res.status(500).json({status: false, message: error.message });
+  
+  }
+}
+
+
 const upload = multer({ storage });
 
-// 🔄 Image Upload Function (Fixed & Improved)
-const imageUploadUtil = (file) => {
-  return new Promise((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
-      {
-        public_id: uuidv4(),
-        folder: "products",
-      },
-      (error, result) => {
-        if (error) {
-          return reject(new Error(`Image upload failed: ${error.message}`));
-        }
-        resolve(result);
-      }
-    );
-    uploadStream.end(file.buffer); // Upload buffer data
-  });
-};
-
-// 🗑️ Image Delete Utility Function
 const deleteImageUtil = async (publicId) => {
   try {
     const result = await cloudinary.uploader.destroy(publicId);
     return result;
   } catch (error) {
-    throw new Error(`Error deleting image: ${error.message}`);
+    
+    res.status(500).json({status: false, message: error.message });
   }
 };
 
-// Extract Cloudinary Public ID from Image URL
 const getPublicIdFromUrl = (imageUrl) => {
   const urlParts = imageUrl.split("/");
   return urlParts[urlParts.length - 1].split(".")[0];

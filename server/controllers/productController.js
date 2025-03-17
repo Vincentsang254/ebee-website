@@ -2,11 +2,23 @@ const { imageUploadUtil, deleteImageUtil, getPublicIdFromUrl } = require("../uti
 const { Users, Products, Ratings } = require("../models");
 const { Op } = require("sequelize");
 
-// 🟢 Create Product
+
+const handleImageUpload = async (req, res) => {
+  try {
+    const b64 = Buffer.from(req.file.buffer).toString("base64");
+    const url = `data:${req.file.mimetype};base64,${b64}`;
+    const result = await imageUploadUtil(url);
+    res.status(200).json({ status: true, message: "Image uploaded successfully", result });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ status: false, message: "Error uploading image" });
+  }
+}
+
 const createProducts = async (req, res) => {
   try {
     const { name, desc, price, category } = req.body;
-    const userId = 1; // ✅ Get user ID dynamically
+    const userId = 1;//from frontend
 
     if (!name || !desc || !price || !category) {
       return res.status(400).json({ status: false, message: "All fields are required" });
@@ -15,22 +27,6 @@ const createProducts = async (req, res) => {
     if (isNaN(price)) {
       return res.status(400).json({ status: false, message: "Price must be a valid number" });
     }
-
-    if (!req.file) {
-      return res.status(400).json({ status: false, message: "An image is required" });
-    }
-
-    
-    try {
-      // Upload Image (Improved Error Handling)
-    let uploadedResponse;
-      uploadedResponse = await imageUploadUtil(req.file);
-    } catch (uploadError) {
-      console.error("Cloudinary Upload Error:", uploadError.message);
-      return res.status(500).json({ status: false, message: `Image upload failed: ${uploadError.message}` });
-    }
-
-    const imageUrl = uploadedResponse.secure_url;
 
     const product = await Products.create({
       name,
@@ -201,4 +197,5 @@ module.exports = {
   getProductById,
   updateProducts,
   deleteProducts,
+  handleImageUpload
 };
