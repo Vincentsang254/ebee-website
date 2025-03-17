@@ -31,9 +31,11 @@ const ProductSkeleton = () => (
   </Card>
 );
 
-const handleAddProductToCart = () => {
-   dispatch(addProductToCart(product));
-}
+
+ // Function to add product to cart
+ const handleAddProductToCart = (product) => {
+  dispatch(addProductToCart(product));
+};
 
 const ShoppingHome = () => {
   const dispatch = useDispatch();
@@ -98,7 +100,7 @@ const ShoppingHome = () => {
                 <p className="text-xl font-bold text-gray-900">${product?.price}</p>
               </CardContent>
               <CardFooter className="p-4">
-                <Button className="w-full bg-blue-500 text-white hover:bg-blue-600">
+                <Button className="w-full bg-blue-500 text-white hover:bg-blue-600" onClick={() => handleAddProductToCart(product)}>
                   Add to Cart
                 </Button>
               </CardFooter>

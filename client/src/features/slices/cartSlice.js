@@ -2,102 +2,112 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { setHeaders, url } from "./api";
-const iniialState = {
+
+const initialState = {
   list: [],
   total: 0,
   status: null,
 };
 
-export const addProductToCart = createAsyncThunk("carts/addProductToCart", async (product) => {
-  try {
-    const response = await axios.post(
-      `${url}/cart/add-product-to-cart`,
-      product,
-      setHeaders()
-    );
-
-    return response.data;
-  } catch (error) {
-    const message = error.response?.data;
-    toast.error(message, { position: "top-center" });
-  }
-});
-
-export const clearCart = createAsyncThunk("carts/clearCart", async () => {
-  try {
-    const response = await axios.delete(`${url}/cart/clear`, setHeaders());
-    return response.data;
-    } catch (error) {
-    const message = error.response?.data;
-    toast.error(message, { position: "top-center" });
-  }
-});
-
-export const removeProductFromCart = createAsyncThunk(
-  "carts/removeProductFromCart",
+// Add product to cart
+export const addProductToCart = createAsyncThunk(
+  "cart/addProductToCart",
   async (product) => {
     try {
-      const response = await axios.delete(
-        `${url}/cart/delete/:cartId`,
+      const response = await axios.post(
+        `${url}/cart/add-product-to-cart`,
         product,
         setHeaders()
       );
-      toast.success(response.data.message, { position: "top-center" });
       return response.data;
     } catch (error) {
-      const message = error.response?.data;
-      toast.error(message, { position: "top-center" });
+      toast.error(error.response?.data, { position: "top-center" });
+      throw error;
     }
   }
 );
 
-export const decreaseProductQuantity = createAsyncThunk(
-  "carts/decreaseProductQuantity",
-  async (product) => {
-    try {
-      const response = await axios.delete(
-        `${url}/cart/delete/:cartId/descrease`,
-        product,
-        setHeaders()
-      );
-      toast.success(response.data.message, { position: "top-center" });
-      return response.data;
-    } catch (error) {
-      const message = error.response?.data;
-      toast.error(message, { position: "top-center" });
-    }
-  }
-);
-export const increaseProductQuantity = createAsyncThunk(
-    "carts/increaseProductQuantity",
-    async (product) => {
-      try {
-        const response = await axios.delete(
-          `${url}/cart/delete/:cartId/increase`,
-          product,
-          setHeaders()
-        );
-        toast.success(response.data.message, { position: "top-center" });
-        return response.data;
-      } catch (error) {
-        const message = error.response?.data;
-        toast.error(message, { position: "top-center" });
-      }
-    }
-  );
-export const getCart = createAsyncThunk("carts/getCart", async () => {
+// Get cart items
+export const getCart = createAsyncThunk("cart/getCart", async () => {
   try {
     const response = await axios.get(`${url}/cart/get`, setHeaders());
     return response.data;
   } catch (error) {
-    const message = error.response?.data;
-    toast.error(message, { position: "top-center" });
+    toast.error(error.response?.data, { position: "top-center" });
+    throw error;
+  }
+});
+
+// Remove product from cart
+export const removeProductFromCart = createAsyncThunk(
+  "cart/removeProductFromCart",
+  async (cartId) => {
+    try {
+      const response = await axios.delete(
+        `${url}/cart/delete/${cartId}`,
+        setHeaders()
+      );
+      toast.success(response.data.message, { position: "top-center" });
+      return response.data;
+    } catch (error) {
+      toast.error(error.response?.data, { position: "top-center" });
+      throw error;
+    }
+  }
+);
+
+// Decrease product quantity
+export const decreaseProductQuantity = createAsyncThunk(
+  "cart/decreaseProductQuantity",
+  async (cartId) => {
+    try {
+      const response = await axios.put(
+        `${url}/cart/update/${cartId}/decrease`,
+        {},
+        setHeaders()
+      );
+      toast.success(response.data.message, { position: "top-center" });
+      return response.data;
+    } catch (error) {
+      toast.error(error.response?.data, { position: "top-center" });
+      throw error;
+    }
+  }
+);
+
+// Increase product quantity
+export const increaseProductQuantity = createAsyncThunk(
+  "cart/increaseProductQuantity",
+  async (cartId) => {
+    try {
+      const response = await axios.put(
+        `${url}/cart/update/${cartId}/increase`,
+        {},
+        setHeaders()
+      );
+      toast.success(response.data.message, { position: "top-center" });
+      return response.data;
+    } catch (error) {
+      toast.error(error.response?.data, { position: "top-center" });
+      throw error;
+    }
+  }
+);
+
+// Clear cart
+export const clearCart = createAsyncThunk("cart/clearCart", async () => {
+  try {
+    const response = await axios.delete(`${url}/cart/clear`, setHeaders());
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data, { position: "top-center" });
+    throw error;
   }
 });
 
 const cartSlice = createSlice({
   name: "carts",
-  initialState: iniialState,
+  initialState: initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder

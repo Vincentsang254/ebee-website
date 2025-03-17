@@ -11,14 +11,14 @@ import {
 import { useDispatch } from "react-redux";
 import { fetchOrders } from "@/features/slices/orderSlice";
 
-// Sample data (replace with real data from an API or state)
-const sampleOrders = [
-  { id: 1, customer: "John Doe", product: "Laptop", status: "Pending", total: "$1200", date: "2024-11-10" },
-  { id: 2, customer: "Jane Smith", product: "Smartphone", status: "Completed", total: "$800", date: "2024-11-09" },
-  { id: 3, customer: "Michael Brown", product: "Headphones", status: "Shipped", total: "$150", date: "2024-11-08" },
-  { id: 4, customer: "Sarah White", product: "Monitor", status: "Cancelled", total: "$350", date: "2024-11-07" },
-  // Add more sample data as needed
-];
+// // Sample data (replace with real data from an API or state)
+// const sampleOrders = [
+//   { id: 1, customer: "John Doe", product: "Laptop", status: "Pending", total: "$1200", date: "2024-11-10" },
+//   { id: 2, customer: "Jane Smith", product: "Smartphone", status: "Completed", total: "$800", date: "2024-11-09" },
+//   { id: 3, customer: "Michael Brown", product: "Headphones", status: "Shipped", total: "$150", date: "2024-11-08" },
+//   { id: 4, customer: "Sarah White", product: "Monitor", status: "Cancelled", total: "$350", date: "2024-11-07" },
+//   // Add more sample data as needed
+// ];
 
 const AdminOrdersView = () => {
   // const [orders, setOrders] = useState([]);
@@ -27,7 +27,7 @@ const AdminOrdersView = () => {
 
   const {list : orders, status} = useSelector((state) => state.orders);
 
-  console.log("oders", orders);
+  console.log("oders.........", orders);
 
   useEffect(() => {
     // setOrders(sampleOrders); // Replace with API call for real data
