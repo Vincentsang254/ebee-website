@@ -135,7 +135,7 @@ const getCart = async (req, res) => {
       return total + item.quantity * parseFloat(item.product.price);
     }, 0);
 
-    res.json({
+    const response = {
       total: cartItems.length,
       totalPrice,
       cartItems: cartItems.map((item) => ({
@@ -143,14 +143,21 @@ const getCart = async (req, res) => {
         userId: item.userId,
         productId: item.productId,
         quantity: item.quantity,
-        totalPrice: item.totalPrice,
+        totalPrice: item.quantity * parseFloat(item.product.price),
         product: item.product,
       })),
+    };
+
+    res.json({
+      status: true,
+      data: response,
     });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
   }
 };
+
+
 
 const clearCart = async (req, res) => {
   try {

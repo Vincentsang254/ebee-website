@@ -30,7 +30,8 @@ export const addProductToCart = createAsyncThunk(
 export const getCart = createAsyncThunk("cart/getCart", async (_, { rejectWithValue }) => {
   try {
     const response = await axios.get(`${url}/cart/get`, setHeaders());
-    return response.data.cartItems ;
+    console.log(response.data);
+    return response.data.data;
   } catch (error) {
     toast.error(error.response?.data?.message || "Failed to fetch cart items", { position: "top-center" });
 
@@ -168,7 +169,7 @@ const cartSlice = createSlice({
       })
       .addCase(getCart.fulfilled, (state, action) => {
         state.status = "success"
-        state.list = action.payload;
+        state.list = action.payload.cartItems;
       
       })
       .addCase(getCart.pending, (state) => {
