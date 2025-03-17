@@ -4,21 +4,35 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { MdEdit, MdDelete, MdClose } from "react-icons/md"; // Edit and Delete icons
 import { Skeleton } from "@/components/ui/skeleton"; // Skeleton for loading state
+import { useDispatch } from 'react-redux';
+import { fetchUsers } from '@/features/slices/usersSlice';
 
 const AdminUsers = () => {
-  const [users, setUsers] = useState([]);
+  // const [users, setUsers] = useState([]);
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
 
+  const dispatch = useDispatch();
+
+  const {list : users, status} = useSelector((state) => state.users);
+
   // Mock data for users (replace with actual data fetching logic)
+  // useEffect(() => {
+  //   setUsers([
+  //     { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin' },
+  //     { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User' },
+  //     { id: 3, name: 'Michael Johnson', email: 'michael@example.com', role: 'User' },
+  //     { id: 4, name: 'Emily Davis', email: 'emily@example.com', role: 'Admin' }
+  //   ]);
+  // }, []);
+
   useEffect(() => {
-    setUsers([
-      { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin' },
-      { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User' },
-      { id: 3, name: 'Michael Johnson', email: 'michael@example.com', role: 'User' },
-      { id: 4, name: 'Emily Davis', email: 'emily@example.com', role: 'Admin' }
-    ]);
-  }, []);
+    dispatch(fetchUsers());
+  }, [dispatch]);
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
 
   const handleEditUser = (user) => {
     setEditingUser(user);
