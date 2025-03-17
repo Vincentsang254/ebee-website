@@ -26,8 +26,8 @@ const handleImageUpload = async (req, res) => {
 
 const createProducts = async (req, res) => {
   try {
-    const { name, desc, price, category } = req.body;
-    const userId = 1;//from frontend
+    const { name, desc, price, category, userId } = req.body;
+    // const userId = 1;//from frontend
 
     if (!name || !desc || !price || !category) {
       return res.status(400).json({ status: false, message: "All fields are required" });
