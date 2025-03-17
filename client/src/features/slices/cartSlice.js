@@ -5,7 +5,6 @@ import { setHeaders, url } from "./api";
 
 const initialState = {
   list: [],
-  total: 0,
   status: null,
 };
 
@@ -114,8 +113,8 @@ const cartSlice = createSlice({
     builder
       .addCase(addProductToCart.fulfilled, (state, action) => {
         state.status = "success"
-        state.cart = action.payload;
-        state.total = action.payload.total;
+        state.list = action.payload;
+
       })
       .addCase(addProductToCart.pending, (state) => {
         state.status = "pending";
@@ -125,8 +124,8 @@ const cartSlice = createSlice({
       })
       .addCase(removeProductFromCart.fulfilled, (state, action) => {
         state.status = "success"
-        state.cart = action.payload;
-        state.total = action.payload.total;
+        state.list = action.payload;
+  
       })
       .addCase(removeProductFromCart.pending, (state) => {
         state.status = "pending";
@@ -136,8 +135,8 @@ const cartSlice = createSlice({
       })
       .addCase(decreaseProductQuantity.fulfilled, (state, action) => {
         state.status = "success"
-        state.cart = action.payload;
-        state.total = action.payload.total;
+        state.list = action.payload;
+        
       })
       .addCase(decreaseProductQuantity.pending, (state) => {
         state.status = "pending";
@@ -147,8 +146,8 @@ const cartSlice = createSlice({
       })
       .addCase(increaseProductQuantity.fulfilled, (state, action) => {
         state.status = "success"
-        state.cart = action.payload;
-        state.total = action.payload.total;
+        state.list = action.payload;
+      
       })
       .addCase(increaseProductQuantity.pending, (state) => {
         state.status = "pending";
@@ -158,8 +157,8 @@ const cartSlice = createSlice({
       })
       .addCase(clearCart.fulfilled, (state, action) => {
         state.status = "success"
-        state.cart = action.payload;
-        state.total = action.payload.total;
+        state.list = action.payload;
+      
       })
       .addCase(clearCart.pending, (state) => {
         state.status = "pending";
@@ -169,8 +168,8 @@ const cartSlice = createSlice({
       })
       .addCase(getCart.fulfilled, (state, action) => {
         state.status = "success"
-        state.cart = action.payload;
-        state.total = action.payload.total;
+        state.list = action.payload;
+      
       })
       .addCase(getCart.pending, (state) => {
         state.status = "pending";
