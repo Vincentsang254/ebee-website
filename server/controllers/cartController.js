@@ -166,7 +166,17 @@ const getCart = async (req, res) => {
   }
 };
 
+const clearCart = async (req, res) => {
+  try {
+    await Carts.destroy({ where: { userId: req.user.id } });
+    res.json({ status: true, message: "Cart cleared successfully" });
+  } catch (error) {
+    res.status(500).json({ status: false, message: error.message });
+  }
+}
+
 module.exports = {
+  clearCart,
   getCart,
   increaseProductQuantity,
   decreaseProductQuantity,

@@ -55,12 +55,22 @@ const AdminUsers = () => {
   if (!users.length) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-semibold mb-8 text-center">Manage Users</h1>
+        <h1 className="text-2xl font-semibold mb-8 text-center">Manage Users</h1>
         
         {/* Shadcn Skeleton Loader */}
         <Skeleton className="w-full h-72 rounded-lg" />
       </div>
     );
+  }
+
+  if(status === "rejected") {
+    return <div className="flex items-center justify-center min-h-screen">Failed to load users</div>;
+  }
+
+  if(
+    status === "pending" 
+  ){
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
   return (
@@ -105,7 +115,7 @@ const AdminUsers = () => {
                   type="text"
                   className="mt-1 block w-full border rounded-md"
                   placeholder="User Role"
-                  defaultValue={editingUser?.role}
+                  defaultValue={editingUser?.userType}
                 />
               </div>
             </div>
@@ -136,7 +146,7 @@ const AdminUsers = () => {
             <TableRow key={user.id}>
               <TableCell>{user.name}</TableCell>
               <TableCell>{user.email}</TableCell>
-              <TableCell>{user.role}</TableCell>
+              <TableCell>{user.userType}</TableCell>
               <TableCell>
                 <div className="flex space-x-2">
                   <MdEdit

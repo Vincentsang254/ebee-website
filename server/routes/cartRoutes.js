@@ -2,7 +2,7 @@
 
 const express = require("express");
 const {
-	getCartCount,
+	clearCart,
 	addProductToCart,
 	removeItemFromCart,
 	getCart,
@@ -14,11 +14,11 @@ const { verifyToken } = require("../middlewares/AuthMiddleware");
 
 const router = express.Router();
 
-router.get("/get-cart-count/:userId", verifyToken, getCartCount);
-router.get("/get", verifyToken, getCart);
-router.post("/add-product-to-cart",verifyToken, addProductToCart);
-router.delete("/delete/:cartId",verifyToken, removeItemFromCart);
-router.put("/delete/:cartId/descrease",verifyToken, decreaseProductQuantity);
-router.put("/delete/:cartId/increase",verifyToken, increaseProductQuantity);
+router.get("/clear", clearCart);//done
+router.get("/get", getCart);//done
+router.post("/add-product-to-cart",addProductToCart);//done
+router.delete("/delete/:cartId",removeItemFromCart);//done
+router.put("/delete/:cartId/descrease",decreaseProductQuantity);//done
+router.put("/delete/:cartId/increase",increaseProductQuantity);//done
 
 module.exports = router;

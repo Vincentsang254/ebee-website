@@ -30,6 +30,10 @@ const ProductSkeleton = () => (
   </Card>
 );
 
+const addProductToCart = () => {
+   dispatch(addProductToCart(product));
+}
+
 const ShoppingHome = () => {
   const dispatch = useDispatch();
   const { list: products, status } = useSelector((state) => state.products);

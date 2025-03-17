@@ -1,7 +1,7 @@
 import { fetchOrders } from "@/features/slices/orderSlice";
 import { fetchProducts } from "@/features/slices/productSlice";
 import { fetchUsers } from "@/features/slices/usersSlice";
-import React from "react";
+import React, {useEffect} from "react";
 import { useDispatch, useSelector } from "react-redux";
 // Import necessary components from recharts
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
