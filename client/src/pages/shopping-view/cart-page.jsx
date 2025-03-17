@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCart, removeProductFromCart } from '@/features/slices/cartSlice';
+import {  getCart,  removeProductFromCart } from '@/features/slices/cartSlice';
 import {
   Card,
   CardContent,
@@ -18,7 +18,7 @@ const CartPage = () => {
 
   useEffect(() => {
     if (userId) {
-      dispatch(fetchCart(userId));
+      dispatch(getCart(userId));
     }
   }, [dispatch, userId]);
 
