@@ -32,15 +32,24 @@ const deleteImageUtil = async (publicId) => {
     const result = await cloudinary.uploader.destroy(publicId);
     return result;
   } catch (error) {
-    
-    res.status(500).json({status: false, message: error.message });
+    console.error("Error deleting image from Cloudinary:", error);
+    throw new Error("Failed to delete image from Cloudinary");
   }
 };
 
+
 const getPublicIdFromUrl = (imageUrl) => {
-  const urlParts = imageUrl.split("/");
-  return urlParts[urlParts.length - 1].split(".")[0];
+  try {
+    const url = new URL(imageUrl); // Ensure it's a valid URL
+    const pathParts = url.pathname.split("/"); // Get parts after domain
+    const fileNameWithExt = pathParts.pop(); // Extract last part (filename)
+    return fileNameWithExt.split(".")[0]; // Remove extension and return ID
+  } catch (error) {
+    console.error("Invalid Cloudinary URL:", error);
+    return null; // Handle invalid URL gracefully
+  }
 };
+
 
 module.exports = {
   upload,

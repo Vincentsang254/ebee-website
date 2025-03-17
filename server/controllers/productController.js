@@ -63,22 +63,34 @@ const createProducts = async (req, res) => {
   }
 };
 
-// 🔴 Delete Product
 const deleteProducts = async (req, res) => {
   const productId = req.params.productId;
+
+  if (!productId || isNaN(productId)) {
+    return res.status(400).json({ status: false, message: "Invalid product ID" });
+  }
 
   try {
     const product = await Products.findByPk(productId);
     if (!product) return res.status(404).json({ status: false, message: "Product not found" });
 
-    // if (product.userId !== req.user.id && req.user.userType !== "Admin") {
-    //   return res.status(403).json({ status: false, message: "You do not have permission to delete this product" });
-    // }
+    // Ensure only the owner or an admin can delete
+    if (product.userId !== req.user.id && req.user.userType !== "Admin") {
+      return res.status(403).json({ status: false, message: "Unauthorized action" });
+    }
 
     // Extract Cloudinary Public ID
     const publicId = getPublicIdFromUrl(product.imageUrl);
+    console.log("Extracted Public ID:", publicId);
 
-    await deleteImageUtil(publicId);
+    // Delete from Cloudinary
+    try {
+      await deleteImageUtil(publicId);
+    } catch (error) {
+      return res.status(500).json({ status: false, message: error.message });
+    }
+
+    // Delete product from database
     await Products.destroy({ where: { id: productId } });
 
     res.status(200).json({ status: true, message: "Product deleted successfully" });
