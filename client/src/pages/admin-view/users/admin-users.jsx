@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { MdEdit, MdDelete, MdClose } from "react-icons/md"; // Edit and Delete icons
 import { Skeleton } from "@/components/ui/skeleton"; // Skeleton for loading state
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { fetchUsers } from '@/features/slices/usersSlice';
 
 const AdminUsers = () => {

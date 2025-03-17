@@ -1,13 +1,22 @@
+import { fetchOrders } from "@/features/slices/orderSlice";
+import { fetchProducts } from "@/features/slices/productSlice";
+import { fetchUsers } from "@/features/slices/usersSlice";
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 // Import necessary components from recharts
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
 
 const AdminDashboard = () => {
   // Placeholder data for charts and stats
+  const dispatch = useDispatch();
+
+  const {list: products, status: productStatus} = useSelector((state) => state.products);
+  const {list: orders, status: orderStatus} = useSelector((state) => state.orders);
+  const {list: users, status: userStatus} = useSelector((state) => state.users);
   const analyticsData = {
-    users: 4500,
-    orders: 1200,
-    products: 350,
+    users: users.length,
+    orders: orders.length,
+    products: products.length,
     revenueGrowth: [
       { month: "Jan", revenue: 15000 },
       { month: "Feb", revenue: 20000 },
@@ -16,6 +25,12 @@ const AdminDashboard = () => {
       { month: "May", revenue: 40000 },
     ],
   };
+
+  useEffect(() => {
+    dispatch(fetchProducts());
+    dispatch(fetchOrders());
+    dispatch(fetchUsers());
+  }, [dispatch])
 
   return (
     <div className="p-4 space-y-8">
