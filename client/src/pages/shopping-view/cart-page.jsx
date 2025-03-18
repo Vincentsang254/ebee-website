@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getCart, removeProductFromCart, updateCartQuantity } from "@/features/slices/cartSlice";
+import {
+  decreaseProductQuantity,
+  getCart,
+  increaseProductQuantity,
+  removeProductFromCart,
+} from "@/features/slices/cartSlice";
 import {
   Card,
   CardContent,
@@ -37,14 +42,19 @@ const CartPage = () => {
     }
   };
 
-  const handleUpdateQuantity = (cartId, quantity) => {
-    if (quantity > 0) {
-      dispatch(updateCartQuantity({ userId: id, cartId, quantity }));
+  const handleUpdateQuantity = (cartId, type) => {
+    if (type === "increase") {
+      dispatch(increaseProductQuantity(cartId));
+    } else if (type === "decrease") {
+      dispatch(decreaseProductQuantity(cartId));
     }
   };
 
   // Calculate grand total price
-  const grandTotal = cartItems.reduce((acc, item) => acc + item.quantity * item.product.price, 0);
+  const grandTotal = cartItems.reduce(
+    (acc, item) => acc + item.quantity * item.product.price,
+    0
+  );
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
@@ -72,7 +82,9 @@ const CartPage = () => {
       )}
 
       {/* Error state */}
-      {status === "rejected" && <p className="text-center text-red-500">Failed to load cart items.</p>}
+      {status === "rejected" && (
+        <p className="text-center text-red-500">Failed to load cart items.</p>
+      )}
 
       {/* Empty cart */}
       {status === "success" && cartItems.length === 0 && (
@@ -93,27 +105,36 @@ const CartPage = () => {
                   />
                 </CardHeader>
                 <CardContent className="p-4">
-                  <CardTitle className="text-lg font-semibold">{item.product.name}</CardTitle>
-                  <CardDescription className="text-gray-500 mb-2">{item.product.desc}</CardDescription>
-                  <p className="text-xl font-bold text-gray-900">${item.product.price}</p>
+                  <CardTitle className="text-lg font-semibold">
+                    {item.product.name}
+                  </CardTitle>
+                  <CardDescription className="text-gray-500 mb-2">
+                    {item.product.desc}
+                  </CardDescription>
+                  <p className="text-xl font-bold text-gray-900">
+                    ${item.product.price}
+                  </p>
                   <div className="flex items-center gap-3 mt-4">
                     <Button
                       variant="outline"
                       className="p-2"
-                      onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                      onClick={() => handleUpdateQuantity(item.id, "decrease")}
                       disabled={item.quantity === 1}
                     >
                       <Minus size={18} />
                     </Button>
-                    <span className="text-lg font-semibold">{item.quantity}</span>
+                    <span className="text-lg font-semibold">
+                      {item.quantity}
+                    </span>
                     <Button
                       variant="outline"
                       className="p-2"
-                      onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                      onClick={() => handleUpdateQuantity(item.id, "increase")}
                     >
                       <Plus size={18} />
                     </Button>
                   </div>
+
                   <p className="text-lg font-semibold text-gray-700 mt-2">
                     Total: ${(item.quantity * item.product.price).toFixed(2)}
                   </p>
@@ -124,7 +145,13 @@ const CartPage = () => {
                     onClick={() => handleRemoveItem(item.id)} // ✅ Correct ID
                     disabled={loadingCartId === item.id}
                   >
-                    {loadingCartId === item.id ? "Removing..." : <><Trash size={18} className="mr-2" /> Remove</>}
+                    {loadingCartId === item.id ? (
+                      "Removing..."
+                    ) : (
+                      <>
+                        <Trash size={18} className="mr-2" /> Remove
+                      </>
+                    )}
                   </Button>
                 </CardFooter>
               </Card>
@@ -133,7 +160,9 @@ const CartPage = () => {
 
           {/* Grand Total Price and Checkout Button */}
           <div className="mt-8 p-4 bg-white shadow-md rounded-lg flex flex-col items-center">
-            <h2 className="text-2xl font-bold">Grand Total: ${grandTotal.toFixed(2)}</h2>
+            <h2 className="text-2xl font-bold">
+              Grand Total: ${grandTotal.toFixed(2)}
+            </h2>
             <Button className="mt-4 w-64 bg-blue-500 text-white hover:bg-blue-600">
               Proceed to Checkout
             </Button>
