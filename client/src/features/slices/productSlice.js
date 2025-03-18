@@ -33,7 +33,7 @@ export const fetchProduct
 	"products/fetchProduct",
 	async (productId, { rejectWithValue }) => {
 		try {
-			const response = await axios.get(`${url}/get/${productId}`, setHeaders());
+			const response = await axios.get(`${url}/products/get/${productId}`, setHeaders());
 			return response.data.data;
 		} catch (error) {
 			// Handle any error and log the error response
@@ -76,9 +76,9 @@ export const removeProduct = createAsyncThunk(
 
 export const updateProduct = createAsyncThunk(
 	"products/updateProduct",
-	async ({ id, values }, { rejectWithValue }) => {
+	async ({ productId, values }, { rejectWithValue }) => {
 		try {
-			const response = await axios.put(`${url}/products/update/${id}`, values,  setHeaders());
+			const response = await axios.put(`${url}/products/update/${productId}`, values,  setHeaders());
 			return response.data; // Assuming the server returns the updated product
 		} catch (error) {
 			console.log( "Error updating product",error.response?.data.message)

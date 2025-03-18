@@ -7,12 +7,11 @@ import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState, useMemo } from "react";
-
+import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
+import { setProductDetails } from "@/store/shop/products-slice";
+import { addReview, getRating } from "@/store/shop/review-slice";
 import StarRatingComponent from "../../common/star-rating";
 import { toast } from "sonner";
-import { addProductToCart, getCart } from "@/features/slices/cartSlice";
-import { fetchProduct } from "@/features/slices/productSlice";
-import { getRating } from "@/features/slices/ratingSlice";
 
 const ProductDetails = ({ open, setOpen, productDetails }) => {
   const [reviewMsg, setReviewMsg] = useState("");
@@ -22,7 +21,7 @@ const ProductDetails = ({ open, setOpen, productDetails }) => {
   const { id, name } = useSelector((state) => state.auth);
   const ratings = useSelector((state) => state.rating?.list || []);
   const cartItems = useSelector((state) => state.cart?.list || []);
-  const products = useSelector((state) => state.products?.list);
+
   const averageReview = useMemo(() => {
     return ratings.length
       ? ratings.reduce((sum, item) => sum + item.reviewValue, 0) / ratings.length
@@ -32,12 +31,6 @@ const ProductDetails = ({ open, setOpen, productDetails }) => {
   function handleRatingChange(newRating) {
     setRating(newRating);
   }
-
-  // useEffect(() => {
-  //   if (id) {
-  //     dispatch(getRating({ productId: productDetails.id }));
-  //   }
-  // })
 
   function handleAddToCart(productId, totalStock) {
     const cartItem = cartItems.find((item) => item.productId === productId);
@@ -50,9 +43,9 @@ const ProductDetails = ({ open, setOpen, productDetails }) => {
       return;
     }
 
-    dispatch(addProductToCart({ userId: id, productId, quantity: 1 })).then((data) => {
+    dispatch(addToCart({ userId: id, productId, quantity: 1 })).then((data) => {
       if (data?.payload?.success) {
-        dispatch(getCart(id));
+        dispatch(fetchCartItems(id));
         toast({ title: "Product is added to cart" });
       }
     });
@@ -60,7 +53,7 @@ const ProductDetails = ({ open, setOpen, productDetails }) => {
 
   function handleDialogClose() {
     setOpen(false);
-    dispatch(fetchProduct());
+    dispatch(setProductDetails());
     setRating(0);
     setReviewMsg("");
   }
