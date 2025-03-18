@@ -52,7 +52,7 @@ const CartPage = () => {
 
   // Calculate grand total price
   const grandTotal = cartItems.reduce(
-    (acc, item) => acc + item.quantity * item.product.price,
+    (acc, item) => acc + item.quantity * item?.product?.price,
     0
   );
 
@@ -136,7 +136,7 @@ const CartPage = () => {
                   </div>
 
                   <p className="text-lg font-semibold text-gray-700 mt-2">
-                    Total: ${(item.quantity * item.product.price).toFixed(2)}
+                    Total: ${(item?.quantity * item?.product?.price).toFixed(2)}
                   </p>
                 </CardContent>
                 <CardFooter className="p-4">
