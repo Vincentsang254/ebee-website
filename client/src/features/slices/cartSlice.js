@@ -37,7 +37,7 @@ export const getCart = createAsyncThunk(
     try {
       const response = await axios.get(`${url}/cart/get/${userId}`, setHeaders());
       console.log("Cart response:", response.data.data);
-      return response.data.data; // Ensure it always returns data
+      return response.data; // Ensure it always returns data
     } catch (error) {
       const errorMessage = error.response?.data?.message || "Failed to fetch cart";
       toast.error(errorMessage, { position: "top-center" });
