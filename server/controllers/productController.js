@@ -74,10 +74,10 @@ const deleteProducts = async (req, res) => {
     const product = await Products.findByPk(productId);
     if (!product) return res.status(404).json({ status: false, message: "Product not found" });
 
-    // Ensure only the owner or an admin can delete
-    if (product.userId !== req.user.id && req.user.userType !== "Admin") {
-      return res.status(403).json({ status: false, message: "Unauthorized action" });
-    }
+    // // Ensure only the owner or an admin can delete
+    // if (product.userId !== req.user.id && req.user.userType !== "Admin") {
+    //   return res.status(403).json({ status: false, message: "Unauthorized action" });
+    // }
 
     // Extract Cloudinary Public ID
     const publicId = getPublicIdFromUrl(product.imageUrl);
