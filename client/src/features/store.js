@@ -16,7 +16,7 @@ const store = configureStore({
 		orders: orderReducer,
 		auth: authReducer,
 		cart: cartReducer,
-		// notifications: notificationReducer,
+		
 	},
 });
 

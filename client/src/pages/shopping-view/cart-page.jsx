@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getCart, removeProductFromCart } from "@/features/slices/cartSlice";
+import { getCart, removeProductFromCart, updateCartQuantity } from "@/features/slices/cartSlice";
 import {
   Card,
   CardContent,
@@ -11,15 +11,14 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Minus, Plus, Trash } from "lucide-react"; // ✅ Icons for plus, minus, and remove
 
 const CartPage = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart?.list || []); // ✅ Prevents undefined error
-  const status = useSelector((state) => state.cart?.status || "idle");
+  const status = useSelector((state) => state.cart?.status || null);
   const { id } = useSelector((state) => state.auth); // ✅ Get userId from Redux
   const [loadingCartId, setLoadingCartId] = useState(null); // Track which item is being removed
-
-  console.log("Cart Items from Redux:", cartItems);
 
   useEffect(() => {
     if (id) {
@@ -38,8 +37,14 @@ const CartPage = () => {
     }
   };
 
-  // Calculate total price
-  const totalPrice = cartItems.reduce((acc, item) => acc + item.totalPrice, 0);
+  const handleUpdateQuantity = (cartId, quantity) => {
+    if (quantity > 0) {
+      dispatch(updateCartQuantity({ userId: id, cartId, quantity }));
+    }
+  };
+
+  // Calculate grand total price
+  const grandTotal = cartItems.reduce((acc, item) => acc + item.quantity * item.product.price, 0);
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
@@ -91,24 +96,44 @@ const CartPage = () => {
                   <CardTitle className="text-lg font-semibold">{item.product.name}</CardTitle>
                   <CardDescription className="text-gray-500 mb-2">{item.product.desc}</CardDescription>
                   <p className="text-xl font-bold text-gray-900">${item.product.price}</p>
-                  <p className="text-gray-600">Quantity: {item.quantity}</p>
+                  <div className="flex items-center gap-3 mt-4">
+                    <Button
+                      variant="outline"
+                      className="p-2"
+                      onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                      disabled={item.quantity === 1}
+                    >
+                      <Minus size={18} />
+                    </Button>
+                    <span className="text-lg font-semibold">{item.quantity}</span>
+                    <Button
+                      variant="outline"
+                      className="p-2"
+                      onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                    >
+                      <Plus size={18} />
+                    </Button>
+                  </div>
+                  <p className="text-lg font-semibold text-gray-700 mt-2">
+                    Total: ${(item.quantity * item.product.price).toFixed(2)}
+                  </p>
                 </CardContent>
                 <CardFooter className="p-4">
                   <Button
-                    className="w-full bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
+                    className="w-full bg-red-500 text-white hover:bg-red-600 disabled:opacity-50 flex items-center justify-center"
                     onClick={() => handleRemoveItem(item.id)} // ✅ Correct ID
                     disabled={loadingCartId === item.id}
                   >
-                    {loadingCartId === item.id ? "Removing..." : "Remove"}
+                    {loadingCartId === item.id ? "Removing..." : <><Trash size={18} className="mr-2" /> Remove</>}
                   </Button>
                 </CardFooter>
               </Card>
             ))}
           </div>
 
-          {/* Total Price and Checkout Button */}
+          {/* Grand Total Price and Checkout Button */}
           <div className="mt-8 p-4 bg-white shadow-md rounded-lg flex flex-col items-center">
-            <h2 className="text-2xl font-bold">Total: ${totalPrice.toFixed(2)}</h2>
+            <h2 className="text-2xl font-bold">Grand Total: ${grandTotal.toFixed(2)}</h2>
             <Button className="mt-4 w-64 bg-blue-500 text-white hover:bg-blue-600">
               Proceed to Checkout
             </Button>
