@@ -18,7 +18,7 @@ router.get("/clear/:userId", clearCart);//done
 router.get("/get/:userId", getCart);//done
 router.post("/add-product-to-cart",addProductToCart);//done
 router.delete("/delete/:cartId",removeItemFromCart);//done
-router.put("/delete/:cartId/descrease",decreaseProductQuantity);//done
-router.put("/delete/:cartId/increase",increaseProductQuantity);//done
+router.put("/update/:cartId/descrease",decreaseProductQuantity);//done
+router.put("/update/:cartId/increase",increaseProductQuantity);//done
 
 module.exports = router;

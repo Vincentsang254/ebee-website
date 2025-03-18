@@ -52,11 +52,11 @@ export const removeProductFromCart = createAsyncThunk(
         `${url}/cart/delete/${cartId}`,
         setHeaders()
       );
-      toast.success(response.data.message, { position: "top-center" });
+      toast.success(response.message, { position: "top-center" });
       return response.data;
     } catch (error) {
-      toast.error(error.response?.data, { position: "top-center" });
-      throw error;
+      toast.error(error.response?.message, { position: "top-center" });
+      console.log("Failed to remove product from cart:", error.response.message);
     }
   }
 );
@@ -74,8 +74,8 @@ export const decreaseProductQuantity = createAsyncThunk(
       toast.success(response.data.message, { position: "top-center" });
       return response.data;
     } catch (error) {
-      toast.error(error.response?.data, { position: "top-center" });
-      throw error;
+      toast.error(error.response?.message, { position: "top-center" });
+      console.log("Failed to decrease product quantity:", error.response.message);
     }
   }
 );
@@ -90,11 +90,11 @@ export const increaseProductQuantity = createAsyncThunk(
         {},
         setHeaders()
       );
-      toast.success(response.data.message, { position: "top-center" });
+      toast.success(response.message, { position: "top-center" });
       return response.data;
     } catch (error) {
-      toast.error(error.response?.data, { position: "top-center" });
-      throw error;
+      toast.error(error.response?.message, { position: "top-center" });
+      console.log("Failed to increase product quantity:", error.response.message);
     }
   }
 );
