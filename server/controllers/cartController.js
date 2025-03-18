@@ -166,7 +166,12 @@ const getCart = async (req, res) => {
       return res.status(400).json({ status: false, message: "User ID is required" });
     }
 
-    const cartItems = await Carts.findAll({ where: { userId } });
+    const cartItems = await Carts.findAll({ where: { userId },include: [
+              {
+                model: Products,
+                as: "product",
+              },
+            ], });
 
     if (!cartItems.length) {
       return res.status(404).json({ status: false, message: "Cart not found" });
