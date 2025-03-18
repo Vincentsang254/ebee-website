@@ -14,14 +14,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const CartPage = () => {
   const dispatch = useDispatch();
-  const cartItems = useSelector((state) => state.carts.list);
-  const status = useSelector((state) => state.carts.status);
-  const { id } = useSelector((state) => state.auth); // Get userId from Redux
+  const cartItems = useSelector((state) => state.cart.list); // ✅ Correct Redux state
+  const status = useSelector((state) => state.cart.status); // ✅ Correct Redux state
+  const { id } = useSelector((state) => state.auth); // ✅ Get userId from Redux
   const [loadingCartId, setLoadingCartId] = useState(null); // Track which item is being removed
 
-
-  const cartState = useSelector((state) => state.carts);
-console.log("Cart State:", cartState); 
+  console.log("Cart Items from Redux:", cartItems);
 
   useEffect(() => {
     if (id) {
@@ -77,27 +75,27 @@ console.log("Cart State:", cartState);
       {status === "success" && cartItems.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {cartItems.map((item) => (
-            <Card key={item.cartId} className="bg-white shadow-lg rounded-lg">
+            <Card key={item.id} className="bg-white shadow-lg rounded-lg">
               <CardHeader className="p-0">
                 <img
-                  src={item.imageUrl || "/placeholder.jpg"}
-                  alt={item.name}
+                  src={item.product.imageUrl || "/placeholder.jpg"} // ✅ Correct data mapping
+                  alt={item.product.name}
                   className="w-full h-48 object-cover rounded-t-lg"
                 />
               </CardHeader>
               <CardContent className="p-4">
-                <CardTitle className="text-lg font-semibold">{item.name}</CardTitle>
-                <CardDescription className="text-gray-500 mb-2">{item.desc}</CardDescription>
-                <p className="text-xl font-bold text-gray-900">${item.price}</p>
+                <CardTitle className="text-lg font-semibold">{item.product.name}</CardTitle>
+                <CardDescription className="text-gray-500 mb-2">{item.product.desc}</CardDescription>
+                <p className="text-xl font-bold text-gray-900">${item.product.price}</p>
                 <p className="text-gray-600">Quantity: {item.quantity}</p>
               </CardContent>
               <CardFooter className="p-4">
                 <Button
                   className="w-full bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
-                  onClick={() => handleRemoveItem(item.cartId)}
-                  disabled={loadingCartId === item.cartId}
+                  onClick={() => handleRemoveItem(item.id)} // ✅ Correct ID
+                  disabled={loadingCartId === item.id}
                 >
-                  {loadingCartId === item.cartId ? "Removing..." : "Remove"}
+                  {loadingCartId === item.id ? "Removing..." : "Remove"}
                 </Button>
               </CardFooter>
             </Card>

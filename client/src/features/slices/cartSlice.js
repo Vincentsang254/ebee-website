@@ -31,22 +31,17 @@ export const addProductToCart = createAsyncThunk(
   }
 );
 
-export const getCart = createAsyncThunk(
-  "cart/getCart",
-  async (userId, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`${url}/cart/get/${userId}`, setHeaders());
-      console.log("Cart response:", response.data.data);
-      return response.data; // Ensure it always returns data
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || "Failed to fetch cart";
-      toast.error(errorMessage, { position: "top-center" });
-      return rejectWithValue(errorMessage); // Properly return error
-    }
+export const getCart = createAsyncThunk("cart/getCart", async (userId, { rejectWithValue }) => {
+  try {
+    const response = await axios.get(`${url}/cart/get/${userId}`, setHeaders());
+    console.log("Cart API Response:", response.data); // ✅ Log entire response
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching cart:", error.response?.data);
+    toast.error(error.response?.data?.message, { position: "top-center" });
+    return rejectWithValue(error.response?.data?.message);
   }
-);
-
-
+});
 
 // Remove product from cart
 export const removeProductFromCart = createAsyncThunk(
@@ -116,7 +111,7 @@ export const clearCart = createAsyncThunk("cart/clearCart", async () => {
 });
 
 const cartSlice = createSlice({
-  name: "carts",
+  name: "cart",
   initialState: initialState,
   reducers: {},
   extraReducers: (builder) => {
