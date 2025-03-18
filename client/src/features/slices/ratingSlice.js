@@ -58,7 +58,7 @@ export const updateRating = createAsyncThunk(
 
 const ratingSlice = createSlice({
   name: "rating",
-  initialState,
+  initialState: initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
@@ -71,7 +71,7 @@ const ratingSlice = createSlice({
       })
       .addCase(getRating.rejected, (state, action) => {
         state.status = "rejected";
-        state.error = action.payload;
+       
       })
       .addCase(addRating.pending, (state) => {
         state.status = "pending";
@@ -82,7 +82,7 @@ const ratingSlice = createSlice({
       })
       .addCase(addRating.rejected, (state, action) => {
         state.status = "rejected";
-        state.error = action.payload;
+        
       })
       .addCase(deleteRating.pending, (state) => {
         state.status = "pending";
@@ -93,7 +93,7 @@ const ratingSlice = createSlice({
       })
       .addCase(deleteRating.rejected, (state, action) => {
         state.status = "rejected";
-        state.error = action.payload;
+        
       })
       .addCase(updateRating.pending, (state) => {
         state.status = "pending";
@@ -104,7 +104,7 @@ const ratingSlice = createSlice({
       })
       .addCase(updateRating.rejected, (state, action) => {
         state.status = "rejected";
-        state.error = action.payload;
+     
       })
   },
 });

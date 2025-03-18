@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState, useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import {
   Card,
   CardContent,
@@ -10,8 +11,8 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { fetchProducts } from '@/features/slices/productSlice';
-import { addProductToCart } from '@/features/slices/cartSlice';
+import { fetchProducts } from "@/features/slices/productSlice";
+import { addProductToCart } from "@/features/slices/cartSlice";
 
 // Skeleton loader for product cards
 const ProductSkeleton = () => (
@@ -32,20 +33,22 @@ const ProductSkeleton = () => (
 
 const ShoppingHome = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Initialize navigate
+
   const { list: products = [], status } = useSelector((state) => state.products);
   const { id } = useSelector((state) => state.auth);
-  const [query, setQuery] = useState('');
-  const [loadingProductId, setLoadingProductId] = useState(null); // Track loading state for individual products
+  const [query, setQuery] = useState("");
+  const [loadingProductId, setLoadingProductId] = useState(null);
 
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
-  // Memoized filtered products to avoid unnecessary calculations
   const filteredProducts = useMemo(() => {
-    return products?.filter((product) =>
-      product?.name.toLowerCase().includes(query.toLowerCase()) ||
-      product?.desc.toLowerCase().includes(query.toLowerCase())
+    return products?.filter(
+      (product) =>
+        product?.name.toLowerCase().includes(query.toLowerCase()) ||
+        product?.desc.toLowerCase().includes(query.toLowerCase())
     );
   }, [query, products]);
 
@@ -60,21 +63,25 @@ const ShoppingHome = () => {
       return;
     }
 
-    setLoadingProductId(product.id); // Start loading state
+    setLoadingProductId(product.id);
     try {
       await dispatch(addProductToCart({ userId: id, productId: product.id })).unwrap();
     } catch (error) {
       console.error("Failed to add product:", error);
     } finally {
-      setLoadingProductId(null); // Reset loading state
+      setLoadingProductId(null);
     }
+  };
+
+  // Function to navigate to Product Details
+  const handleViewProduct = (productId) => {
+    navigate(`/shop/product/${productId}`);
   };
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold text-center mb-8">Product List</h1>
 
-      {/* Search Input */}
       <div className="flex justify-center mb-6">
         <input
           type="text"
@@ -85,8 +92,7 @@ const ShoppingHome = () => {
         />
       </div>
 
-      {/* Show Skeletons while loading */}
-      {status === 'pending' && (
+      {status === "pending" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {[...Array(8)].map((_, index) => (
             <ProductSkeleton key={index} />
@@ -94,28 +100,33 @@ const ShoppingHome = () => {
         </div>
       )}
 
-      {/* Show error message if failed to load products */}
-      {status === 'rejected' && <p className="text-center text-red-500">Failed to load products.</p>}
+      {status === "rejected" && <p className="text-center text-red-500">Failed to load products.</p>}
 
-      {/* Show message if no products are found */}
-      {status === 'success' && filteredProducts.length === 0 && (
+      {status === "success" && filteredProducts.length === 0 && (
         <p className="text-center text-gray-500">No products found.</p>
       )}
 
-      {/* Display products when successfully fetched */}
-      {status === 'success' && (
+      {status === "success" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredProducts.map((product) => (
             <Card key={product?.id} className="bg-white shadow-lg rounded-lg">
-              <CardHeader className="p-0">
+              <CardHeader
+                className="p-0 cursor-pointer"
+                onClick={() => handleViewProduct(product.id)} // Navigate on click
+              >
                 <img
-                  src={product?.imageUrl || '/placeholder.jpg'}
+                  src={product?.imageUrl || "/placeholder.jpg"}
                   alt={product?.name}
                   className="w-full h-48 object-cover rounded-t-lg"
                 />
               </CardHeader>
               <CardContent className="p-4">
-                <CardTitle className="text-lg font-semibold">{product?.name}</CardTitle>
+                <CardTitle
+                  className="text-lg font-semibold cursor-pointer"
+                  onClick={() => handleViewProduct(product.id)} // Navigate on click
+                >
+                  {product?.name}
+                </CardTitle>
                 <CardDescription className="text-gray-500 mb-2">{product?.desc}</CardDescription>
                 <p className="text-xl font-bold text-gray-900">Ksh {product?.price}</p>
               </CardContent>
@@ -123,7 +134,7 @@ const ShoppingHome = () => {
                 <Button
                   className="w-full bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50"
                   onClick={() => handleAddProductToCart(product)}
-                  disabled={loadingProductId === product.id} // Disable button while loading
+                  disabled={loadingProductId === product.id}
                 >
                   {loadingProductId === product.id ? "Adding..." : "Add to Cart"}
                 </Button>

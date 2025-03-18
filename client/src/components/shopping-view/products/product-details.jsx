@@ -4,21 +4,29 @@ import { Button } from "../../ui/button";
 import { Dialog, DialogContent } from "../../ui/dialog";
 import { Separator } from "../../ui/separator";
 import { Input } from "../../ui/input";
+import { Label } from "../../ui/label";
 import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState, useMemo } from "react";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 import { setProductDetails } from "@/store/shop/products-slice";
-import { Label } from "../../ui/label";
-import StarRatingComponent from "../../common/star-rating";
-import { useEffect, useState } from "react";
 import { addReview, getRating } from "@/store/shop/review-slice";
+import StarRatingComponent from "../../common/star-rating";
+import { toast } from "sonner";
 
-function ProductDetailsDialog({ open, setOpen, productDetails }) {
+const ProductDetails = ({ open, setOpen, productDetails }) => {
   const [reviewMsg, setReviewMsg] = useState("");
   const [rating, setRating] = useState(0);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const { id, name } = useSelector((state) => state.auth);
   const ratings = useSelector((state) => state.rating?.list || []);
   const cartItems = useSelector((state) => state.cart?.list || []);
+
+  const averageReview = useMemo(() => {
+    return ratings.length
+      ? ratings.reduce((sum, item) => sum + item.reviewValue, 0) / ratings.length
+      : 0;
+  }, [ratings]);
 
   function handleRatingChange(newRating) {
     setRating(newRating);
@@ -50,33 +58,36 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     setReviewMsg("");
   }
 
-  function handleAddReview() {
-    dispatch(
-      addReview({
-        productId: productDetails?._id,
-        userId: id,
-        userName: name,
-        reviewValue: rating,
-        reviewMessage: reviewMsg,
-      })
-    ).then((data) => {
-      if (data.payload.success) {
+  async function handleAddReview() {
+    if (!reviewMsg.trim()) return;
+    setLoading(true);
+    try {
+      const response = await dispatch(
+        addReview({
+          productId: productDetails?._id,
+          userId: id,
+          userName: name,
+          reviewValue: rating,
+          reviewMessage: reviewMsg,
+        })
+      ).unwrap();
+
+      if (response.success) {
         setRating(0);
         setReviewMsg("");
         dispatch(getRating(productDetails?._id));
         toast({ title: "Review added successfully!" });
       }
-    });
+    } catch (error) {
+      toast({ title: "Failed to add review", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
     if (productDetails) dispatch(getRating(productDetails._id));
   }, [productDetails, dispatch]);
-
-  const averageReview =
-    ratings.length > 0
-      ? ratings.reduce((sum, item) => sum + item.reviewValue, 0) / ratings.length
-      : 0;
 
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
@@ -129,7 +140,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
                     <div className="grid gap-1">
                       <h3 className="font-bold">{reviewItem?.userName}</h3>
                       <StarRatingComponent rating={reviewItem?.reviewValue} />
-                      <p className="text-muted-foreground">{reviewItem.reviewMessage}</p>
+                      <p className="text-muted-foreground">{reviewItem.reviewMessage || "No message provided"}</p>
                     </div>
                   </div>
                 ))
@@ -141,13 +152,15 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
               <Label>Write a review</Label>
               <StarRatingComponent rating={rating} handleRatingChange={handleRatingChange} />
               <Input value={reviewMsg} onChange={(e) => setReviewMsg(e.target.value)} placeholder="Write a review..." />
-              <Button onClick={handleAddReview} disabled={!reviewMsg.trim()}>Submit</Button>
+              <Button onClick={handleAddReview} disabled={!reviewMsg.trim() || loading}>
+                {loading ? "Submitting..." : "Submit"}
+              </Button>
             </div>
           </div>
         </div>
       </DialogContent>
     </Dialog>
   );
-}
+};
 
-export default ProductDetailsDialog;
+export default ProductDetails;
