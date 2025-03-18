@@ -11,6 +11,7 @@ import { createProduct, fetchProducts, removeProduct, updateProduct } from '@/fe
 const AdminProducts = () => {
   const dispatch = useDispatch();
   const { list: products, status } = useSelector((state) => state.products);
+  const totalProducts = products.length;
   const { id} = useSelector((state) => state.auth);// use this to get the user id so that you can use it to post the products, to avoid using req.user.id in the backend but instead use the id from the redux store
 
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -92,7 +93,7 @@ const AdminProducts = () => {
         
         {/* Shadcn Skeleton Loader */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {[...Array(4)].map((_, index) => (
+          {[...Array(totalProducts)].map((_, index) => (
             <Skeleton key={index} className="w-full h-72 rounded-lg" />
           ))}
         </div>
@@ -213,7 +214,7 @@ const AdminProducts = () => {
           alt={product.name}
           className="w-full h-40 object-cover rounded-md mb-4"
         />
-        <p className="text-gray-600">Price: ${product.price}</p>
+        <p className="text-gray-600">Price: Ksh {product.price}</p>
         <p className="text-gray-600">Description: {product.desc}</p>
       </CardContent>
       {/* Edit and Delete Icons */}

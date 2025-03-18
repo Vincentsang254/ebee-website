@@ -40,7 +40,6 @@ function MenuItems() {
 }
 
 function HeaderRightContent() {
-  const [openCartSheet, setOpenCartSheet] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -49,14 +48,13 @@ function HeaderRightContent() {
 
   // Hardcoded user data and cart items
   const hardcodedCartItems = { items: Array(3).fill({ name: "Product", quantity: 1 }) };
-
+  const cartItems = useSelector((state) => state.cart?.list || [] );
   function handleLogout() {
     dispatch(logoutUser());
   }
 
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-4">
-      <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
         <Button
           onClick={() => navigate("/shop/cart")}
           variant="outline"
@@ -65,15 +63,11 @@ function HeaderRightContent() {
         >
           <ShoppingCart className="w-6 h-6" />
           <span className="absolute top-[-5px] right-[2px] font-bold text-sm">
-            {hardcodedCartItems.items.length}
+            {cartItems?.length}
           </span>
           <span className="sr-only">User cart</span>
         </Button>
-        {/* <UserCartWrapper
-          setOpenCartSheet={setOpenCartSheet}
-          cartItems={hardcodedCartItems.items}
-        /> */}
-      </Sheet>
+        
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

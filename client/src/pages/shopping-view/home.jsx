@@ -33,6 +33,7 @@ const ProductSkeleton = () => (
 const ShoppingHome = () => {
   const dispatch = useDispatch();
   const { list: products = [], status } = useSelector((state) => state.products);
+  const totalProducts = products.length;
   const { id } = useSelector((state) => state.auth);
   const [query, setQuery] = useState('');
   const [loadingProductId, setLoadingProductId] = useState(null); // Track loading state for individual products
@@ -81,7 +82,7 @@ const ShoppingHome = () => {
       {/* Show Skeletons while loading */}
       {status === 'pending' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {[...Array(8)].map((_, index) => (
+          {[...Array(totalProducts)].map((_, index) => (
             <ProductSkeleton key={index} />
           ))}
         </div>
@@ -110,7 +111,7 @@ const ShoppingHome = () => {
               <CardContent className="p-4">
                 <CardTitle className="text-lg font-semibold">{product?.name}</CardTitle>
                 <CardDescription className="text-gray-500 mb-2">{product?.desc}</CardDescription>
-                <p className="text-xl font-bold text-gray-900">${product?.price}</p>
+                <p className="text-xl font-bold text-gray-900">Ksh {product?.price}</p>
               </CardContent>
               <CardFooter className="p-4">
                 <Button
