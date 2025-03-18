@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Card,
@@ -33,7 +33,6 @@ const ProductSkeleton = () => (
 const ShoppingHome = () => {
   const dispatch = useDispatch();
   const { list: products = [], status } = useSelector((state) => state.products);
-  const totalProducts = products.length;
   const { id } = useSelector((state) => state.auth);
   const [query, setQuery] = useState('');
   const [loadingProductId, setLoadingProductId] = useState(null); // Track loading state for individual products
@@ -42,15 +41,22 @@ const ShoppingHome = () => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
-  // Filter products based on the search query
-  const filteredProducts = products?.filter((product) =>
-    product?.name.toLowerCase().includes(query.toLowerCase()) ||
-    product?.desc.toLowerCase().includes(query.toLowerCase())
-  );
+  // Memoized filtered products to avoid unnecessary calculations
+  const filteredProducts = useMemo(() => {
+    return products?.filter((product) =>
+      product?.name.toLowerCase().includes(query.toLowerCase()) ||
+      product?.desc.toLowerCase().includes(query.toLowerCase())
+    );
+  }, [query, products]);
 
   const handleAddProductToCart = async (product) => {
     if (!id) {
       console.error("User ID is missing");
+      return;
+    }
+
+    if (!product?.id) {
+      console.error("Product ID is missing");
       return;
     }
 
@@ -82,7 +88,7 @@ const ShoppingHome = () => {
       {/* Show Skeletons while loading */}
       {status === 'pending' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {[...Array(totalProducts)].map((_, index) => (
+          {[...Array(8)].map((_, index) => (
             <ProductSkeleton key={index} />
           ))}
         </div>

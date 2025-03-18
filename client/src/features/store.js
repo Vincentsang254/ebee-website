@@ -8,7 +8,7 @@ import notificationReducer from "./slices/notificationSlice";
 import orderReducer from "./slices/orderSlice";
 import authReducer from "./slices/authSlice";
 import cartReducer from "./slices/cartSlice";
-
+import ratingReducer from "./slices/ratingSlice";
 const store = configureStore({
 	reducer: {
 		users: usersReducer,
@@ -16,7 +16,7 @@ const store = configureStore({
 		orders: orderReducer,
 		auth: authReducer,
 		cart: cartReducer,
-		
+		rating: ratingReducer,
 	},
 });
 
