@@ -10,9 +10,9 @@ const initialState = {
 
 export const getRating = createAsyncThunk(
   "rating/getRating",
-  async (id, { rejectWithValue }) => {
+  async (ratingId, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${url}/rating/${id}`, setHeaders());
+      const res = await axios.get(`${url}/get/${ratingId}`, setHeaders());
       return res.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -24,7 +24,7 @@ export const addRating = createAsyncThunk(
   "rating/addRating",
   async (data, { rejectWithValue }) => {
     try {
-      const res = await axios.post(`${url}/rating/add`, data, setHeaders());
+      const res = await axios.post(`${url}/create`, data, setHeaders());
       return res.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -36,7 +36,7 @@ export const deleteRating = createAsyncThunk(
     "rating/deleteRating",
     async (id, { rejectWithValue }) => {
         try {
-        const res = await axios.delete(`${url}/rating/delete/${id}`, setHeaders());
+        const res = await axios.delete(`${url}/delete/${ratingId}`, setHeaders());
         return res.data;
         } catch (error) {
         return rejectWithValue(error.response.data);
@@ -46,15 +46,27 @@ export const deleteRating = createAsyncThunk(
 
 export const updateRating = createAsyncThunk(
     "rating/updateRating",
-    async (data, { rejectWithValue }) => {
+    async ({data, ratingId}, { rejectWithValue }) => {
         try {
-        const res = await axios.put(`${url}/rating/update`, data, setHeaders());
+        const res = await axios.put(`${url}/update/${ratingId}`, data, setHeaders());
         return res.data;
         } catch (error) {
         return rejectWithValue(error.response.data);
         }
     }
     );
+
+    export const getRatings = createAsyncThunk(
+        "rating/getRatings",
+        async (_, { rejectWithValue }) => {
+            try {
+            const res = await axios.get(`${url}/get`, setHeaders());
+            return res.data;
+            } catch (error) {
+            return rejectWithValue(error.response.data);
+            }
+
+        })
 
 const ratingSlice = createSlice({
   name: "rating",
@@ -72,6 +84,16 @@ const ratingSlice = createSlice({
       .addCase(getRating.rejected, (state, action) => {
         state.status = "rejected";
        
+      })
+      .addCase(getRatings.pending, (state) => {
+        state.status = "pending";
+      })
+      .addCase(getRatings.fulfilled, (state, action) => {
+        state.status = "success";
+        state.ratings = action.payload;
+      })
+      .addCase(getRatings.rejected, (state, action) => {
+        state.status = "rejected";
       })
       .addCase(addRating.pending, (state) => {
         state.status = "pending";

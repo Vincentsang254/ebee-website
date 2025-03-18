@@ -16,7 +16,7 @@ router.post("/create",createRatings);
 router.get("/get",getRatings);
 router.delete("/delete/:ratingId",deleteRatings);
 router.put("/update/:ratingId",updateRatings);
-router.get("/get-rating/:ratingId",getRatingById);
+router.get("/get/:ratingId",getRatingById);
 
 
 module.exports = router;

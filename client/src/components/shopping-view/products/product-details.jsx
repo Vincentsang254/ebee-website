@@ -7,11 +7,12 @@ import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState, useMemo } from "react";
-import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
-import { setProductDetails } from "@/store/shop/products-slice";
-import { addReview, getRating } from "@/store/shop/review-slice";
+
 import StarRatingComponent from "../../common/star-rating";
 import { toast } from "sonner";
+import { addProductToCart, getCart } from "@/features/slices/cartSlice";
+import { fetchProducts } from "@/features/slices/productSlice";
+import { getRating } from "@/features/slices/ratingSlice";
 
 const ProductDetails = ({ open, setOpen, productDetails }) => {
   const [reviewMsg, setReviewMsg] = useState("");
@@ -43,9 +44,9 @@ const ProductDetails = ({ open, setOpen, productDetails }) => {
       return;
     }
 
-    dispatch(addToCart({ userId: id, productId, quantity: 1 })).then((data) => {
+    dispatch(addProductToCart({ userId: id, productId, quantity: 1 })).then((data) => {
       if (data?.payload?.success) {
-        dispatch(fetchCartItems(id));
+        dispatch(getCart(id));
         toast({ title: "Product is added to cart" });
       }
     });
@@ -53,7 +54,7 @@ const ProductDetails = ({ open, setOpen, productDetails }) => {
 
   function handleDialogClose() {
     setOpen(false);
-    dispatch(setProductDetails());
+    dispatch(fetchProducts());
     setRating(0);
     setReviewMsg("");
   }
