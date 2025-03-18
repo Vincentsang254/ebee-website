@@ -17,6 +17,8 @@ export const addProductToCart = createAsyncThunk(
         { userId, productId , quantity},
         setHeaders()
       );
+      console.log("product added to cart",response.data);
+      toast.success(response.data.message, { position: "top-center" });
       return response.data;
     } catch (error) {
       const errorMessage = error.response?.data?.message || "Failed to add product to cart";
