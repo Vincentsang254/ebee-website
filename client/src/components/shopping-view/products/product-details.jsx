@@ -4,10 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProduct } from "@/features/slices/productSlice";
 import { addProductToCart } from "@/features/slices/cartSlice";
 import { Button } from "@/components/ui/button";
-import { StarRatingComponent } from "@/components/ui/star-rating";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import StarRatingComponent from "../../common/star-rating";
 
 const ProductDetails = () => {
   const { productId } = useParams(); // Get product ID from URL
