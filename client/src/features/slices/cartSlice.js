@@ -10,19 +10,22 @@ const initialState = {
 
 export const addProductToCart = createAsyncThunk(
   "cart/addProductToCart",
-  async ({ userId, productId, quantity }, { rejectWithValue }) => {
+  async ({ userId, productId }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         `${url}/cart/add-product-to-cart`,
-        { userId, productId , quantity},
+        { userId, productId }, // Removed quantity since the backend handles it
         setHeaders()
       );
-      console.log("product added to cart",response.data);
-      toast.success(response.data.message, { position: "top-center" });
-      return response.data;
+
+      console.log("Product added to cart:", response.data);
+      toast.success("Product added to cart", { position: "top-center" });
+
+      return response.data; // Return the updated cart item
     } catch (error) {
       const errorMessage = error.response?.data?.message || "Failed to add product to cart";
       toast.error(errorMessage, { position: "top-center" });
+
       return rejectWithValue(errorMessage);
     }
   }

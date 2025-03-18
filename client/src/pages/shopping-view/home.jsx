@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
 import {
   Card,
   CardContent,
@@ -10,11 +9,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton"; // Import ShadCN Skeleton component
+import { Skeleton } from "@/components/ui/skeleton";
 import { fetchProducts } from '@/features/slices/productSlice';
 import { addProductToCart } from '@/features/slices/cartSlice';
 
-// Skeleton loader for product cards using ShadCN
+// Skeleton loader for product cards
 const ProductSkeleton = () => (
   <Card className="bg-white shadow-lg rounded-lg">
     <CardHeader className="p-0">
@@ -31,39 +30,38 @@ const ProductSkeleton = () => (
   </Card>
 );
 
-
-
-
 const ShoppingHome = () => {
   const dispatch = useDispatch();
-  const { list: products, status } = useSelector((state) => state.products);
-const {id} = useSelector((state) => state.auth);
-  console.table("products", products);
-
-  // State for the search query
+  const { list: products = [], status } = useSelector((state) => state.products);
+  const { id } = useSelector((state) => state.auth);
   const [query, setQuery] = useState('');
-
-  // Filter products based on the query
-  const filteredProducts = products?.filter((product) =>
-    product?.name.toLowerCase().includes(query.toLowerCase()) ||
-    product?.desc.toLowerCase().includes(query.toLowerCase())
-  );
+  const [loadingProductId, setLoadingProductId] = useState(null); // Track loading state for individual products
 
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
+  // Filter products based on the search query
+  const filteredProducts = products?.filter((product) =>
+    product?.name.toLowerCase().includes(query.toLowerCase()) ||
+    product?.desc.toLowerCase().includes(query.toLowerCase())
+  );
 
-  const handleAddProductToCart = (products) => {
+  const handleAddProductToCart = async (product) => {
     if (!id) {
       console.error("User ID is missing");
       return;
     }
-  
-    dispatch(addProductToCart({ userId: id, productId: products.id, quantity: 1 }));
+
+    setLoadingProductId(product.id); // Start loading state
+    try {
+      await dispatch(addProductToCart({ userId: id, productId: product.id })).unwrap();
+    } catch (error) {
+      console.error("Failed to add product:", error);
+    } finally {
+      setLoadingProductId(null); // Reset loading state
+    }
   };
-  
-  
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
@@ -80,7 +78,7 @@ const {id} = useSelector((state) => state.auth);
         />
       </div>
 
-      {/* Display ShadCN skeletons when loading */}
+      {/* Show Skeletons while loading */}
       {status === 'pending' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {[...Array(8)].map((_, index) => (
@@ -89,9 +87,15 @@ const {id} = useSelector((state) => state.auth);
         </div>
       )}
 
-      {status === 'rejected' && <p>Failed to load products.</p>}
-      {status === 'success' && filteredProducts.length === 0 && <p>No products found.</p>}
+      {/* Show error message if failed to load products */}
+      {status === 'rejected' && <p className="text-center text-red-500">Failed to load products.</p>}
 
+      {/* Show message if no products are found */}
+      {status === 'success' && filteredProducts.length === 0 && (
+        <p className="text-center text-gray-500">No products found.</p>
+      )}
+
+      {/* Display products when successfully fetched */}
       {status === 'success' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredProducts.map((product) => (
@@ -109,8 +113,12 @@ const {id} = useSelector((state) => state.auth);
                 <p className="text-xl font-bold text-gray-900">${product?.price}</p>
               </CardContent>
               <CardFooter className="p-4">
-                <Button className="w-full bg-blue-500 text-white hover:bg-blue-600" onClick={() => handleAddProductToCart(product)}>
-                  Add to Cart
+                <Button
+                  className="w-full bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50"
+                  onClick={() => handleAddProductToCart(product)}
+                  disabled={loadingProductId === product.id} // Disable button while loading
+                >
+                  {loadingProductId === product.id ? "Adding..." : "Add to Cart"}
                 </Button>
               </CardFooter>
             </Card>
