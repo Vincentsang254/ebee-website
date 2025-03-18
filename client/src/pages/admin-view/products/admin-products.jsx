@@ -41,7 +41,7 @@ const AdminProducts = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!productName || !productDesc || !productPrice || !productCategory || !productImage) {
+    if (!productName || !productDesc || !productPrice  || !productImage) {
       alert('All fields are required');
       return;
     }
@@ -55,7 +55,7 @@ const AdminProducts = () => {
     formData.append("userId", id);
   
     const action = editingProduct
-      ? dispatch(updateProduct({ id: editingProduct.id, updatedData: formData }))
+      ? dispatch(updateProduct({ productId: editingProduct.id, values: formData }))
       : dispatch(createProduct(formData));
   
     action.then(() => {
@@ -89,7 +89,6 @@ const AdminProducts = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-semibold mb-8 text-center">Our Products</h1>
-        <Button variant="secondary" className="mb-4">Add Product</Button>
         
         {/* Shadcn Skeleton Loader */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -63,7 +63,8 @@ export const removeProduct = createAsyncThunk(
 	"products/removeProduct",
 	async (productId, { rejectWithValue }) => {
 		try {
-			await axios.delete(`${url}/products/delete/${productId}`,  setHeaders());
+			const response = await axios.delete(`${url}/products/delete/${productId}`,  setHeaders());
+			toast.success(response?.data.message, { position: "top-center" });
 			return productId; // Return the deleted product's ID
 		} catch (error) {
 			console.log( "Error deletin product",error.response?.data.message)
@@ -79,6 +80,7 @@ export const updateProduct = createAsyncThunk(
 	async ({ productId, values }, { rejectWithValue }) => {
 		try {
 			const response = await axios.put(`${url}/products/update/${productId}`, values,  setHeaders());
+			toast.success(response?.data.message, { position: "top-center" });
 			return response.data; // Assuming the server returns the updated product
 		} catch (error) {
 			console.log( "Error updating product",error.response?.data.message)
@@ -165,9 +167,9 @@ const productsSlice = createSlice({
 			})
 			.addCase(updateProduct.fulfilled, (state, action) => {
 				const updatedProduct = action.payload;
-				const index = state.list.findIndex(product => product.id === updatedProduct.id);
+				const index = state.list.findIndex(product => product.id === action.payload.id);
 				if (index !== -1) {
-					state.list[index] = updatedProduct;
+					state.list[index] = action.payload;
 				}
 				state.status = "success";
 			})
