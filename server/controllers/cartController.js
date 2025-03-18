@@ -34,26 +34,26 @@ const addProductToCart = async (req, res) => {
 };
 const removeItemFromCart = async (req, res) => {
   try {
-    const cartId = req.params.cartId; // Assuming cartId is passed as a route parameter
+    const { userId, cartId } = req.params; // ✅ Get userId from request params
 
-    const cart = await Carts.findByPk(cartId);
+    // Find the cart item
+    const cart = await Carts.findOne({ where: { id: cartId, userId } });
 
     if (!cart) {
-      return res
-        .status(404)
-        .json({ status: false, message: "Cart item not found" });
+      return res.status(404).json({ status: false, message: "Cart item not found or unauthorized" });
     }
 
     await cart.destroy();
 
     res.json({
       status: true,
-      message: `Cart id ${cartId} removed successfully`,
+      message: `Cart item with id ${cartId} removed successfully`,
     });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
   }
 };
+
 
 const decreaseProductQuantity = async (req, res) => {
   try {

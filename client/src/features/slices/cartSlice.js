@@ -43,23 +43,25 @@ export const getCart = createAsyncThunk("cart/getCart", async (userId, { rejectW
   }
 });
 
-// Remove product from cart
 export const removeProductFromCart = createAsyncThunk(
   "cart/removeProductFromCart",
-  async (cartId) => {
+  async ({ userId, cartId }, { rejectWithValue }) => {
     try {
       const response = await axios.delete(
-        `${url}/cart/delete/${cartId}`,
+        `${url}/cart/delete/${userId}/${cartId}`, // ✅ Correct API URL with userId
         setHeaders()
       );
-      toast.success(response.message, { position: "top-center" });
+      toast.success(response.data.message, { position: "top-center" });
       return response.data;
     } catch (error) {
-      toast.error(error.response?.message, { position: "top-center" });
-      console.log("Failed to remove product from cart:", error.response.message);
+      const errorMessage = error.response?.data?.message || "Failed to remove product.";
+      toast.error(errorMessage, { position: "top-center" });
+      return rejectWithValue(errorMessage);
     }
   }
 );
+
+
 
 // Decrease product quantity
 export const decreaseProductQuantity = createAsyncThunk(

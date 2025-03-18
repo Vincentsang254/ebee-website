@@ -32,15 +32,16 @@ const CartPage = () => {
   }, [dispatch, id]);
 
   const handleRemoveItem = async (cartId) => {
-    setLoadingCartId(cartId); // Start loading state
+    setLoadingCartId(cartId); // ✅ Start loading state
     try {
-      await dispatch(removeProductFromCart({ userId: id, cartId })).unwrap();
+      await dispatch(removeProductFromCart({ userId: id, cartId })).unwrap(); // ✅ Pass userId
     } catch (error) {
       console.error("Failed to remove product:", error);
     } finally {
-      setLoadingCartId(null); // Reset loading state
+      setLoadingCartId(null); // ✅ Reset loading state
     }
   };
+  
 
   const handleUpdateQuantity = (cartId, type) => {
     if (type === "increase") {
@@ -91,84 +92,86 @@ const CartPage = () => {
         <p className="text-center text-gray-600">Your cart is empty.</p>
       )}
 
-      {/* Display cart items */}
-      {status === "success" && cartItems.length > 0 && (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {cartItems.map((item) => (
-              <Card key={item.id} className="bg-white shadow-lg rounded-lg">
-                <CardHeader className="p-0">
-                  <img
-                    src={item.product.imageUrl || "/placeholder.jpg"} // ✅ Correct data mapping
-                    alt={item.product.name}
-                    className="w-full h-48 object-cover rounded-t-lg"
-                  />
-                </CardHeader>
-                <CardContent className="p-4">
-                  <CardTitle className="text-lg font-semibold">
-                    {item.product.name}
-                  </CardTitle>
-                  <CardDescription className="text-gray-500 mb-2">
-                    {item.product.desc}
-                  </CardDescription>
-                  <p className="text-xl font-bold text-gray-900">
-                    ${item.product.price}
-                  </p>
-                  <div className="flex items-center gap-3 mt-4">
-                    <Button
-                      variant="outline"
-                      className="p-2"
-                      onClick={() => handleUpdateQuantity(item.id, "decrease")}
-                      disabled={item.quantity === 1}
-                    >
-                      <Minus size={18} />
-                    </Button>
-                    <span className="text-lg font-semibold">
-                      {item.quantity}
-                    </span>
-                    <Button
-                      variant="outline"
-                      className="p-2"
-                      onClick={() => handleUpdateQuantity(item.id, "increase")}
-                    >
-                      <Plus size={18} />
-                    </Button>
-                  </div>
+      {/* Display cart items in a row */}
+{status === "success" && cartItems.length > 0 && (
+  <>
+    <div className="flex flex-col gap-6">
+      {cartItems.map((item) => (
+        <Card key={item.id} className="bg-white shadow-lg rounded-lg flex flex-row w-full">
+          {/* Product Image */}
+          <CardHeader className="p-0 w-40">
+            <img
+              src={item.product.imageUrl || "/placeholder.jpg"}
+              alt={item.product.name}
+              className="w-full h-full object-cover rounded-l-lg"
+            />
+          </CardHeader>
 
-                  <p className="text-lg font-semibold text-gray-700 mt-2">
-                    Total: ${(item?.quantity * item?.product?.price).toFixed(2)}
-                  </p>
-                </CardContent>
-                <CardFooter className="p-4">
-                  <Button
-                    className="w-full bg-red-500 text-white hover:bg-red-600 disabled:opacity-50 flex items-center justify-center"
-                    onClick={() => handleRemoveItem(item.id)} // ✅ Correct ID
-                    disabled={loadingCartId === item.id}
-                  >
-                    {loadingCartId === item.id ? (
-                      "Removing..."
-                    ) : (
-                      <>
-                        <Trash size={18} className="mr-2" /> Remove
-                      </>
-                    )}
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+          {/* Product Details */}
+          <CardContent className="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <CardTitle className="text-lg font-semibold">{item.product.name}</CardTitle>
+              <CardDescription className="text-gray-500 mb-2">
+                {item.product.desc}
+              </CardDescription>
+              <p className="text-xl font-bold text-gray-900">KSH{item.product.price}</p>
+            </div>
 
-          {/* Grand Total Price and Checkout Button */}
-          <div className="mt-8 p-4 bg-white shadow-md rounded-lg flex flex-col items-center">
-            <h2 className="text-2xl font-bold">
-              Grand Total: ${grandTotal.toFixed(2)}
-            </h2>
-            <Button className="mt-4 w-64 bg-blue-500 text-white hover:bg-blue-600">
-              Proceed to Checkout
+            {/* Quantity Controls */}
+            <div className="flex items-center gap-3 mt-4">
+              <Button
+                variant="outline"
+                className="p-2"
+                onClick={() => handleUpdateQuantity(item.id, "decrease")}
+                disabled={item.quantity === 1}
+              >
+                <Minus size={18} />
+              </Button>
+              <span className="text-lg font-semibold">{item.quantity}</span>
+              <Button
+                variant="outline"
+                className="p-2"
+                onClick={() => handleUpdateQuantity(item.id, "increase")}
+              >
+                <Plus size={18} />
+              </Button>
+            </div>
+
+            <p className="text-lg font-semibold text-gray-700 mt-2">
+              Total: KSH{(item?.quantity * item?.product?.price).toFixed(2)}
+            </p>
+          </CardContent>
+
+          {/* Remove Button */}
+          <CardFooter className="p-4 flex items-center">
+            <Button
+              className="bg-red-500 text-white hover:bg-red-600 disabled:opacity-50 flex items-center justify-center"
+              onClick={() => handleRemoveItem(item.id)}
+              disabled={loadingCartId === item.id}
+            >
+              {loadingCartId === item.id ? (
+                "Removing..."
+              ) : (
+                <>
+                  <Trash size={18} className="mr-2" /> Remove
+                </>
+              )}
             </Button>
-          </div>
-        </>
-      )}
+          </CardFooter>
+        </Card>
+      ))}
+    </div>
+
+    {/* Grand Total & Checkout */}
+    <div className="mt-8 p-4 bg-white shadow-md rounded-lg flex flex-col items-center">
+      <h2 className="text-2xl font-bold">Grand Total: KSH{grandTotal.toFixed(2)}</h2>
+      <Button className="mt-4 w-64 bg-blue-500 text-white hover:bg-blue-600">
+        Proceed to Checkout
+      </Button>
+    </div>
+  </>
+)}
+
     </div>
   );
 };
