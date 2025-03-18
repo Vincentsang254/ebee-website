@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getCart, removeProductFromCart } from "@/features/slices/cartSlice";
 import {
@@ -14,21 +14,30 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const CartPage = () => {
   const dispatch = useDispatch();
-  const cartItems = useSelector((state) => state.carts.list);
-const {status} = useSelector((state) => state.carts);
-const { id } = useSelector((state) => state.auth); // Get userId from Redux
+  const { list: cartItems = [], status } = useSelector((state) => state.carts);
+  const { id } = useSelector((state) => state.auth); // Get userId from Redux
+  const [loadingCartId, setLoadingCartId] = useState(null); // Track which item is being removed
 
-useEffect(() => {
-  if (id) {
-    dispatch(getCart(id)); // ✅ Pass userId directly
-  }
-}, [dispatch, id]);
- 
 
-  const handleRemoveItem = (cartId) => {
-    dispatch(removeProductFromCart({ userId: id, cartId })); // ✅ Include userId if required
+  const cartState = useSelector((state) => state.carts);
+console.log("Cart State:", cartState); 
+
+  useEffect(() => {
+    if (id) {
+      dispatch(getCart(id));
+    }
+  }, [dispatch, id]);
+
+  const handleRemoveItem = async (cartId) => {
+    setLoadingCartId(cartId); // Start loading state
+    try {
+      await dispatch(removeProductFromCart({ userId: id, cartId })).unwrap();
+    } catch (error) {
+      console.error("Failed to remove product:", error);
+    } finally {
+      setLoadingCartId(null); // Reset loading state
+    }
   };
-  
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
@@ -67,7 +76,7 @@ useEffect(() => {
       {status === "success" && cartItems.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {cartItems.map((item) => (
-            <Card key={item.id} className="bg-white shadow-lg rounded-lg">
+            <Card key={item.cartId} className="bg-white shadow-lg rounded-lg">
               <CardHeader className="p-0">
                 <img
                   src={item.imageUrl || "/placeholder.jpg"}
@@ -83,10 +92,11 @@ useEffect(() => {
               </CardContent>
               <CardFooter className="p-4">
                 <Button
-                  className="w-full bg-red-500 text-white hover:bg-red-600"
-                  onClick={() => handleRemoveItem(item.id)}
+                  className="w-full bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
+                  onClick={() => handleRemoveItem(item.cartId)}
+                  disabled={loadingCartId === item.cartId}
                 >
-                  Remove
+                  {loadingCartId === item.cartId ? "Removing..." : "Remove"}
                 </Button>
               </CardFooter>
             </Card>

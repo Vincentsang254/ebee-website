@@ -31,15 +31,21 @@ export const addProductToCart = createAsyncThunk(
   }
 );
 
-export const getCart = createAsyncThunk("cart/getCart", async (userId) => {
-  try {
-    const response = await axios.get(`${url}/cart/get/${userId}`, setHeaders());
-    console.log("car response",response.data.data);
-    return response.data.data;
-  } catch (error) {
-    toast.error(error.response?.data?.message, { position: "top-center" });
+export const getCart = createAsyncThunk(
+  "cart/getCart",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${url}/cart/get/${userId}`, setHeaders());
+      console.log("Cart response:", response.data.data);
+      return response.data.data; // Ensure it always returns data
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "Failed to fetch cart";
+      toast.error(errorMessage, { position: "top-center" });
+      return rejectWithValue(errorMessage); // Properly return error
+    }
   }
-});
+);
+
 
 
 // Remove product from cart
@@ -173,7 +179,7 @@ const cartSlice = createSlice({
       })
       .addCase(getCart.fulfilled, (state, action) => {
         state.status = "success"
-        state.list = action.payload.data;
+        state.list = action.payload;
       
       })
       .addCase(getCart.pending, (state) => {
@@ -181,6 +187,7 @@ const cartSlice = createSlice({
       })
       .addCase(getCart.rejected, (state) => {
         state.status = "rejected";
+        state.list = []
       });
   },
 });
