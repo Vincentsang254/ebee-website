@@ -103,7 +103,6 @@ const getUsers = async (req, res) => {
         exclude: [
           "password",
           "verificationCode",
-          "verified",
           "createdAt",
           "updatedAt",
         ],

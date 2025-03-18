@@ -10,11 +10,11 @@ const initialState = {
 
 export const addProductToCart = createAsyncThunk(
   "cart/addProductToCart",
-  async ({ userId, productId }, { rejectWithValue }) => {
+  async ({ userId, productId, quantity }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         `${url}/cart/add-product-to-cart`,
-        { userId, productId },  // Ensure only the required fields are sent
+        { userId, productId , quantity},
         setHeaders()
       );
       return response.data;
@@ -27,15 +27,14 @@ export const addProductToCart = createAsyncThunk(
 );
 
 
-export const getCart = createAsyncThunk("cart/getCart", async (_, { rejectWithValue }) => {
+export const getCart = createAsyncThunk("cart/getCart", async (userId) => {
   try {
-    const response = await axios.get(`${url}/cart/get`, setHeaders());
-    console.log(response.data);
+    const response = await axios.get(`${url}/cart/get/${userId}`, setHeaders());
+    console.log("Get cart response from slice..", response.data.data);
     return response.data.data;
   } catch (error) {
-    toast.error(error.response?.data?.message || "Failed to fetch cart items", { position: "top-center" });
+    toast.error(error.response?.data?.message, { position: "top-center" });
 
-    return rejectWithValue(error.response?.data || { message: "An error occurred" });
   }
 });
 
@@ -114,7 +113,7 @@ const cartSlice = createSlice({
     builder
       .addCase(addProductToCart.fulfilled, (state, action) => {
         state.status = "success"
-        state.list = action.payload;
+        state.list = action.payload.data;
 
       })
       .addCase(addProductToCart.pending, (state) => {
@@ -122,6 +121,7 @@ const cartSlice = createSlice({
       })
       .addCase(addProductToCart.rejected, (state) => {
         state.status = "rejected";
+        state.list = []
       })
       .addCase(removeProductFromCart.fulfilled, (state, action) => {
         state.status = "success"
@@ -169,7 +169,7 @@ const cartSlice = createSlice({
       })
       .addCase(getCart.fulfilled, (state, action) => {
         state.status = "success"
-        state.list = action.payload.cartItems;
+        state.list = action.payload.data;
       
       })
       .addCase(getCart.pending, (state) => {

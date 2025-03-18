@@ -5,8 +5,7 @@ const { Notifications, Orders } = require("../models");
 const createNotification = require("../utils/createNotifications");
 
 const createOrders = async (req, res) => {
-  const { totalPrice, orderItems, paymentMethod, userAddressId } = req.body;
-  const userId = 1; // Assuming req.user contains an object with an id property
+  const { totalPrice, orderItems, paymentMethod, userAddressId , userId} = req.body;
 
   // Validate required fields
   if (
@@ -95,7 +94,7 @@ const deleteOrders = async (req, res) => {
 
 const updateOrders = async (req, res) => {
   const orderId = req.params.orderId;
-  const userId = req.user.id; // Make sure req.user contains the authenticated user's info
+  const {userId} = req.body; // Make sure req.user contains the authenticated user's info
 
   if (!userId) {
     return res

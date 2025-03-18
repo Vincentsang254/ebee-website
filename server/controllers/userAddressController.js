@@ -5,7 +5,7 @@ const { UserAddress } = require("../models");
 const createAddress = async (req, res) => {
   const { firstName, lastName, addressLine, country, city, phone, postalCode } =
     req.body;
-  const userId = req.user.id;
+  const userId = req.body.userId;
 
   try {
     // Check if the user already has an address
@@ -47,7 +47,7 @@ const createAddress = async (req, res) => {
 };
 
 const updateUserAddress = async (req, res) => {
-  const addressId = req.params.id;
+  const addressId = req.params.addressId;
   const { addressLine, country, city, phone, postalCode, firstName, lastName } =
     req.body;
 
@@ -91,7 +91,7 @@ const updateUserAddress = async (req, res) => {
 };
 
 const getUserAddress = async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.body.userId;
 
   try {
     // Fetch all addresses for the user

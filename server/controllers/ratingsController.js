@@ -4,7 +4,7 @@ const { Ratings } = require("../models");
 
 const createRatings = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.body.userId;
 
     const newRating = {
       productId: req.body.productId,

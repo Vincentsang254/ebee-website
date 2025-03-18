@@ -32,8 +32,6 @@ const addProductToCart = async (req, res) => {
   }
 };
 
-
-
 const removeItemFromCart = async (req, res) => {
   try {
     const cartId = req.params.cartId; // Assuming cartId is passed as a route parameter
@@ -117,8 +115,9 @@ const increaseProductQuantity = async (req, res) => {
 
 const getCart = async (req, res) => {
   try {
+    const {userId} = req.body
     const cartItems = await Carts.findAll({
-      where: { userId: req.user.id },
+      where: { userId },
       include: [
         {
           model: Products,
@@ -161,7 +160,8 @@ const getCart = async (req, res) => {
 
 const clearCart = async (req, res) => {
   try {
-    await Carts.destroy({ where: { userId: req.user.id } });
+    const {userId} = req.body
+    await Carts.destroy({ where: { userId } });
     res.json({ status: true, message: "Cart cleared successfully" });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });

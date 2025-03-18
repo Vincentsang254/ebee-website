@@ -23,11 +23,10 @@ module.exports = (sequelize, DataTypes) => {
 			allowNull: false,
 			defaultValue: 1,
 		},
-		//totalPrice is a new field
 		totalPrice: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
-			defaultValue: 1,
+			defaultValue: 0,
 		},
 	});
 

@@ -54,13 +54,13 @@ const {id} = useSelector((state) => state.auth);
   }, [dispatch]);
 
 
-  const handleAddProductToCart = (product) => {
+  const handleAddProductToCart = (products) => {
     if (!id) {
       console.error("User ID is missing");
       return;
     }
   
-    dispatch(addProductToCart({ userId: id, productId: product.id }));
+    dispatch(addProductToCart({ userId: id, productId: products.id, quantity: 1 }));
   };
   
   
