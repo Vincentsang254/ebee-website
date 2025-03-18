@@ -140,9 +140,7 @@ const cartSlice = createSlice({
         state.status = "rejected";
       })
       .addCase(decreaseProductQuantity.fulfilled, (state, action) => {
-        state.status = "success"
-        state.list = action.payload;
-        
+        state.list = state.list.filter((item) => item.id !== action.payload.cart.id);
       })
       .addCase(decreaseProductQuantity.pending, (state) => {
         state.status = "pending";
@@ -151,10 +149,12 @@ const cartSlice = createSlice({
         state.status = "rejected";
       })
       .addCase(increaseProductQuantity.fulfilled, (state, action) => {
-        state.status = "success"
-        state.list = action.payload;
-      
+        const updatedCart = state.list.map((item) =>
+          item.id === action.payload.cart.id ? action.payload.cart : item
+        );
+        state.list = updatedCart;
       })
+    
       .addCase(increaseProductQuantity.pending, (state) => {
         state.status = "pending";
       })
