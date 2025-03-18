@@ -14,7 +14,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const CartPage = () => {
   const dispatch = useDispatch();
-  const { list: cartItems = [], status } = useSelector((state) => state.carts);
+  const cartItems = useSelector((state) => state.carts.list);
+  const status = useSelector((state) => state.carts.status);
   const { id } = useSelector((state) => state.auth); // Get userId from Redux
   const [loadingCartId, setLoadingCartId] = useState(null); // Track which item is being removed
 

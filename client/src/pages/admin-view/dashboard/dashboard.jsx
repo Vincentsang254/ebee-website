@@ -14,9 +14,9 @@ const AdminDashboard = () => {
   const {list: orders, status: orderStatus} = useSelector((state) => state.orders);
   const {list: users, status: userStatus} = useSelector((state) => state.users);
   const analyticsData = {
-    users: users.length,
-    orders: orders.length,
-    products: products.length,
+    users: users.length || 0,
+    orders: orders.length || 0,
+    products: products.length || 0,
     revenueGrowth: [
       { month: "Jan", revenue: 15000 },
       { month: "Feb", revenue: 20000 },
