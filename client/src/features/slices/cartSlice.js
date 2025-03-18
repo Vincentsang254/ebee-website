@@ -26,17 +26,16 @@ export const addProductToCart = createAsyncThunk(
   }
 );
 
-
 export const getCart = createAsyncThunk("cart/getCart", async (userId) => {
   try {
     const response = await axios.get(`${url}/cart/get/${userId}`, setHeaders());
-    console.log("Get cart response from slice..", response.data.data);
+    console.log("car response",response.data.data);
     return response.data.data;
   } catch (error) {
     toast.error(error.response?.data?.message, { position: "top-center" });
-
   }
 });
+
 
 // Remove product from cart
 export const removeProductFromCart = createAsyncThunk(

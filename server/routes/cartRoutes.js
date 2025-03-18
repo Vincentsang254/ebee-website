@@ -14,7 +14,7 @@ const { verifyToken } = require("../middlewares/AuthMiddleware");
 
 const router = express.Router();
 
-router.get("/clear", clearCart);//done
+router.get("/clear/:userId", clearCart);//done
 router.get("/get/:userId", getCart);//done
 router.post("/add-product-to-cart",addProductToCart);//done
 router.delete("/delete/:cartId",removeItemFromCart);//done

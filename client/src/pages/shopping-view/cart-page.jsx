@@ -16,15 +16,19 @@ const CartPage = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.carts.list);
 const {status} = useSelector((state) => state.carts);
-  // Fetch cart items on page load
-  useEffect(() => {
-    dispatch(getCart());
-  }, [dispatch]);
+const { id } = useSelector((state) => state.auth); // Get userId from Redux
 
-  // Handle remove item from cart
+useEffect(() => {
+  if (id) {
+    dispatch(getCart(id)); // ✅ Pass userId directly
+  }
+}, [dispatch, id]);
+ 
+
   const handleRemoveItem = (cartId) => {
-    dispatch(removeProductFromCart(cartId));
+    dispatch(removeProductFromCart({ userId: id, cartId })); // ✅ Include userId if required
   };
+  
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen">

@@ -113,54 +113,76 @@ const increaseProductQuantity = async (req, res) => {
   }
 };
 
+// const getCart = async (req, res) => {
+//   try {
+
+//     const { userId } = req.params; // ✅ Use req.params instead of req.body
+
+//     const cartItems = await Carts.findAll({
+//       where: { userId },
+//       include: [
+//         {
+//           model: Products,
+//           as: "product",
+//         },
+//       ],
+//     });
+
+//     if (!cartItems.length) {
+//       return res.status(404).json({ status: false, message: "Cart not found" });
+//     }
+
+//     const totalPrice = cartItems.reduce((total, item) => {
+//       return total + item.quantity * parseFloat(item.product.price);
+//     }, 0);
+
+//     const response = {
+//       total: cartItems.length,
+//       totalPrice,
+//       cartItems: cartItems.map((item) => ({
+//         id: item.id,
+//         userId: item.userId,
+//         productId: item.productId,
+//         quantity: item.quantity,
+//         totalPrice: item.quantity * parseFloat(item.product.price),
+//         product: item.product,
+//       })),
+//     };
+
+//     res.json({
+//       status: true,
+//       data: response,
+//     });
+//   } catch (error) {
+//     res.status(500).json({ status: false, message: error.message });
+//   }
+// };
+
 const getCart = async (req, res) => {
   try {
-    const {userId} = req.body
-    const cartItems = await Carts.findAll({
-      where: { userId },
-      include: [
-        {
-          model: Products,
-          as: "product",
-        },
-      ],
-    });
+    const { userId } = req.params; // ✅ Extract userId from URL
+
+    if (!userId) {
+      return res.status(400).json({ status: false, message: "User ID is required" });
+    }
+
+    const cartItems = await Carts.findAll({ where: { userId } });
 
     if (!cartItems.length) {
       return res.status(404).json({ status: false, message: "Cart not found" });
     }
 
-    const totalPrice = cartItems.reduce((total, item) => {
-      return total + item.quantity * parseFloat(item.product.price);
-    }, 0);
-
-    const response = {
-      total: cartItems.length,
-      totalPrice,
-      cartItems: cartItems.map((item) => ({
-        id: item.id,
-        userId: item.userId,
-        productId: item.productId,
-        quantity: item.quantity,
-        totalPrice: item.quantity * parseFloat(item.product.price),
-        product: item.product,
-      })),
-    };
-
-    res.json({
-      status: true,
-      data: response,
-    });
+    res.json({ status: true, data: cartItems });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
   }
 };
 
 
-
 const clearCart = async (req, res) => {
   try {
-    const {userId} = req.body
+    const { userId } = req.params;
+
     await Carts.destroy({ where: { userId } });
     res.json({ status: true, message: "Cart cleared successfully" });
   } catch (error) {
