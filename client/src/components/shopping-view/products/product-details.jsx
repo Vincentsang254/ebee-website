@@ -11,7 +11,7 @@ import { useEffect, useState, useMemo } from "react";
 import StarRatingComponent from "../../common/star-rating";
 import { toast } from "sonner";
 import { addProductToCart, getCart } from "@/features/slices/cartSlice";
-import { fetchProducts } from "@/features/slices/productSlice";
+import { fetchProduct } from "@/features/slices/productSlice";
 import { getRating } from "@/features/slices/ratingSlice";
 
 const ProductDetails = ({ open, setOpen, productDetails }) => {
@@ -22,7 +22,7 @@ const ProductDetails = ({ open, setOpen, productDetails }) => {
   const { id, name } = useSelector((state) => state.auth);
   const ratings = useSelector((state) => state.rating?.list || []);
   const cartItems = useSelector((state) => state.cart?.list || []);
-
+  const products = useSelector((state) => state.products?.list);
   const averageReview = useMemo(() => {
     return ratings.length
       ? ratings.reduce((sum, item) => sum + item.reviewValue, 0) / ratings.length
@@ -32,6 +32,12 @@ const ProductDetails = ({ open, setOpen, productDetails }) => {
   function handleRatingChange(newRating) {
     setRating(newRating);
   }
+
+  // useEffect(() => {
+  //   if (id) {
+  //     dispatch(getRating({ productId: productDetails.id }));
+  //   }
+  // })
 
   function handleAddToCart(productId, totalStock) {
     const cartItem = cartItems.find((item) => item.productId === productId);
@@ -54,7 +60,7 @@ const ProductDetails = ({ open, setOpen, productDetails }) => {
 
   function handleDialogClose() {
     setOpen(false);
-    dispatch(fetchProducts());
+    dispatch(fetchProduct());
     setRating(0);
     setReviewMsg("");
   }

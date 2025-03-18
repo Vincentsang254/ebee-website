@@ -33,7 +33,7 @@ export const fetchProduct
 	"products/fetchProduct",
 	async (productId, { rejectWithValue }) => {
 		try {
-			const response = await axios.get(`${url}/products/get/${productId}`, setHeaders());
+			const response = await axios.get(`${url}/get/${productId}`, setHeaders());
 			return response.data.data;
 		} catch (error) {
 			// Handle any error and log the error response
