@@ -14,7 +14,7 @@ const ProductDetails = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { details: product, status } = useSelector((state) => state.product);
+  const { list: product, status } = useSelector((state) => state.product);
   const { id: userId } = useSelector((state) => state.auth);
   const cartItems = useSelector((state) => state.cart?.list || []);
   const [reviewMsg, setReviewMsg] = useState("");

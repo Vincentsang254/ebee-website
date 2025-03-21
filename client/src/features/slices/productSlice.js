@@ -85,7 +85,7 @@ export const updateProduct = createAsyncThunk(
 		} catch (error) {
 			console.log( "Error updating product",error.response?.data.message)
 			const message = error.response?.data.message || "Error updating product";
-			toast.error(message, { position: "bottom-left" });
+			toast.error(message, { position: "top-center" });
 			return rejectWithValue(message);
 		}
 	}
