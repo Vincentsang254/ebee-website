@@ -28,19 +28,29 @@ export const fetchProducts = createAsyncThunk(
 	}
 );
 
-export const fetchProduct 
-= createAsyncThunk(
+export const fetchProduct = createAsyncThunk(
 	"products/fetchProduct",
 	async (productId, { rejectWithValue }) => {
-		try {
-			const response = await axios.get(`${url}/products/get/${productId}`, setHeaders());
-			return response.data.data;
-		} catch (error) {
-			// Handle any error and log the error response
-			const message = error.response?.data;
-			toast.error(message, { position: "top-center" });
-		}
-	})
+	  try {
+		const response = await axios.get(`${url}/products/get/${productId}`, setHeaders());
+		console.log("Fetch product response:", response.data); // Log entire response for debugging
+		return response.data.data;
+	  } catch (error) {
+		console.error("Error fetching product:", error.response?.data || error.message);
+  
+		// Get error message safely
+		const message =
+		  error.response?.data?.message || "Failed to fetch product";
+  
+		// Show toast notification
+		toast.error(message, { position: "top-center" });
+  
+		// Reject the thunk properly
+		return rejectWithValue(message);
+	  }
+	}
+  );
+  
 
 export const createProduct = createAsyncThunk(
 	"products/createProduct",
@@ -69,7 +79,7 @@ export const removeProduct = createAsyncThunk(
 		} catch (error) {
 			console.log( "Error deletin product",error.response?.data.message)
 			const message = error.response?.data.message || "Error deleting product";
-			toast.error(message, { position: "bottom-left" });
+			toast.error(message, { position: "top-center" });
 			return rejectWithValue(message);
 		}
 	}

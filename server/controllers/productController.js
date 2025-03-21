@@ -179,7 +179,7 @@ const getProductById = async (req, res) => {
           include: {
             model: Users,
             as: "user",
-            attributes: ["name", "desc", "price", "category", "imageUrl"],
+            attributes: ["name"],
           },
         },
       ],
