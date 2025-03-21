@@ -8,13 +8,17 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import StarRatingComponent from "../../common/star-rating";
+import { addRating } from "@/features/slices/ratingSlice";
 
 const ProductDetails = () => {
   const { productId } = useParams(); // Get product ID from URL
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { list: product, status } = useSelector((state) => state.products || []);
+  // const { list: product, status } = useSelector((state) => state.products || []);
+  const { list, status } = useSelector((state) => state.products || {});
+const product = list.find((p) => p.id === productId) || {};
+
   const { id: userId } = useSelector((state) => state.auth);
   const cartItems = useSelector((state) => state.cart?.list || []);
   const [reviewMsg, setReviewMsg] = useState("");
@@ -42,12 +46,20 @@ const ProductDetails = () => {
       setLoading(false);
     }
   };
-
-  const handleAddReview = () => {
-    console.log("Submitting review:", { rating, reviewMsg });
-    setReviewMsg("");
-    setRating(0);
+  const handleAddReview = async () => {
+    if (!userId) {
+      alert("Please login to add a review.");
+      return;
+    }
+    try {
+      await dispatch(addRating({ userId, productId, message: reviewMsg, rating })).unwrap();
+      setReviewMsg("");
+      setRating(0);
+    } catch (error) {
+      console.error("Failed to add review:", error);
+    }
   };
+  
 
   if (status === "pending") return <p className="text-center ">Loading product...</p>;
   if (status === "rejected") return <p className="text-center">Failed to load product.</p>;
@@ -59,7 +71,7 @@ const ProductDetails = () => {
           <img
             src={product?.imageUrl || "/placeholder.jpg"}
             alt={product?.name}
-            className="w-full object-cover rounded-lg"
+            className="w-full object-cover rounded-lg h-6"
           />
         </div>
         <div>
@@ -80,17 +92,18 @@ const ProductDetails = () => {
           <Separator className="my-4" />
           <h2 className="text-xl font-bold mb-3">Ratings</h2>
           <div className="max-h-64 overflow-auto">
-            {product?.reviews?.length ? (
-              product.reviews.map((review, index) => (
-                <div key={index} className="border-b pb-3 mb-3">
-                  <p className="font-semibold">{review.userName}</p>
-                  <StarRatingComponent rating={review.rating} />
-                  <p className="text-gray-600">{review.message}</p>
-                </div>
-              ))
-            ) : (
-              <p>No reviews yet.</p>
-            )}
+            {product?.ratings?.length ? (
+  product.ratings.map((review, index) => (
+    <div key={index} className="border-b pb-3 mb-3">
+      <p className="font-semibold">{review?.user?.name}</p>
+      <StarRatingComponent rating={review.rating} />
+      <p className="text-gray-600">{review.message}</p>
+    </div>
+  ))
+) : (
+  <p>No reviews yet.</p>
+)}
+
           </div>
           <Separator className="my-4" />
           <h3 className="text-lg font-bold">Write a review</h3>
