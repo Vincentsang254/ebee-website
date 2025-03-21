@@ -49,15 +49,15 @@ const ProductDetails = () => {
     setRating(0);
   };
 
-  if (status === "pending") return <p>Loading product...</p>;
-  if (status === "rejected") return <p>Failed to load product.</p>;
+  if (status === "pending") return <p className="text-center ">Loading product...</p>;
+  if (status === "rejected") return <p className="text-center">Failed to load product.</p>;
 
   return (
-    <Dialog open={true} onOpenChange={() => navigate("/shop")}>
+    <Dialog open={true} onOpenChange={() => navigate("/shop/home")}>
       <DialogContent className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
         <div>
           <img
-            src={product?.image || "/placeholder.jpg"}
+            src={product?.imageUrl || "/placeholder.jpg"}
             alt={product?.name}
             className="w-full object-cover rounded-lg"
           />
