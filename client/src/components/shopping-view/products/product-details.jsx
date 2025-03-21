@@ -15,12 +15,10 @@ const ProductDetails = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // const { list: product, status } = useSelector((state) => state.products || []);
-  const { list, status } = useSelector((state) => state.products || {});
-const product = list.find((p) => p.id === productId) || {};
+  const { list: product, status } = useSelector((state) => state.products || []);
+
 
   const { id: userId } = useSelector((state) => state.auth);
-  const cartItems = useSelector((state) => state.cart?.list || []);
   const [reviewMsg, setReviewMsg] = useState("");
   const [rating, setRating] = useState(0);
   const [loading, setLoading] = useState(false);
