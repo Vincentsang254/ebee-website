@@ -12,7 +12,7 @@ export const getRating = createAsyncThunk(
   "rating/getRating",
   async (ratingId, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${url}/get/${ratingId}`, setHeaders());
+      const res = await axios.get(`${url}/ratings/get/${ratingId}`, setHeaders());
       return res.data;
     } catch (error) {
       const message = error.response?.data?.message || "Failed to fetch rating";
@@ -26,7 +26,7 @@ export const addRating = createAsyncThunk(
   "rating/addRating",
   async (data, { rejectWithValue }) => {
     try {
-      const res = await axios.post(`${url}/create`, data, setHeaders());
+      const res = await axios.post(`${url}/ratings/create`, data, setHeaders());
       return res.data;
     } catch (error) {
       const message = error.response?.data?.message || "Failed to add rating";
@@ -40,7 +40,7 @@ export const deleteRating = createAsyncThunk(
   "rating/deleteRating",
   async (id, { rejectWithValue }) => {
     try {
-      const res = await axios.delete(`${url}/delete/${id}`, setHeaders()); // Fixed `id`
+      const res = await axios.delete(`${url}/ratings/delete/${id}`, setHeaders()); // Fixed `id`
       return res.data;
     } catch (error) {
       const message = error.response?.data?.message || "Failed to delete rating";
@@ -54,7 +54,7 @@ export const updateRating = createAsyncThunk(
   "rating/updateRating",
   async ({ data, ratingId }, { rejectWithValue }) => {
     try {
-      const res = await axios.put(`${url}/update/${ratingId}`, data, setHeaders());
+      const res = await axios.put(`${url}/ratings/update/${ratingId}`, data, setHeaders());
       return res.data;
     } catch (error) {
       const message = error.response?.data?.message || "Failed to update rating";
@@ -68,7 +68,7 @@ export const getRatings = createAsyncThunk(
   "rating/getRatings",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${url}/get`, setHeaders());
+      const res = await axios.get(`${url}/ratings/get`, setHeaders());
       return res.data;
     } catch (error) {
       const message = error.response?.data?.message || "Failed to fetch ratings";

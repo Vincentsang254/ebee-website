@@ -26,6 +26,7 @@ import AdminUsers from "./pages/admin-view/users/admin-users";
 import VerifyAccount from "./pages/auth/verify-account";
 import CartPage from "./pages/shopping-view/cart-page";
 import ProductDetails from "./components/shopping-view/products/product-details";
+import PaymentPage from "./components/shopping-view/payments/payment-page";
 
 
 
@@ -94,7 +95,9 @@ const App = ({isAuthenticated, user}) => {
           <Route path="account" element={<Profile />} />
           <Route path="search" element={<SearchProducts />} />
           <Route path="cart" element={<CartPage />} />
+          
           <Route path="product/:productId" element={<ProductDetails />} />
+          <Route path="checkout" element={<PaymentPage />} />
         </Route>
         <Route path="/unauth-page" element={<UnauthPage />} />
         <Route path="*" element={<NotFound />} />

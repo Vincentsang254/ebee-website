@@ -69,7 +69,7 @@ const ProductDetails = () => {
           <img
             src={product?.imageUrl || "/placeholder.jpg"}
             alt={product?.name}
-            className="w-full object-cover rounded-lg h-6"
+            className="w-full object-cover rounded-lg h-48 md:h-96"
           />
         </div>
         <div>

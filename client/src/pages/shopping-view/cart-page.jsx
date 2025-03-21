@@ -17,9 +17,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Minus, Plus, Trash } from "lucide-react"; // ✅ Icons for plus, minus, and remove
+import {  useNavigate } from "react-router-dom";
 
 const CartPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const cartItems = useSelector((state) => state.cart?.list || []); // ✅ Prevents undefined error
   const status = useSelector((state) => state.cart?.status || null);
   const { id } = useSelector((state) => state.auth); // ✅ Get userId from Redux
@@ -165,7 +167,7 @@ const CartPage = () => {
     {/* Grand Total & Checkout */}
     <div className="mt-8 p-4 bg-white shadow-md rounded-lg flex flex-col items-center">
       <h2 className="text-2xl font-bold">Grand Total: KSH{grandTotal.toFixed(2)}</h2>
-      <Button className="mt-4 w-64 bg-blue-500 text-white hover:bg-blue-600">
+      <Button className="mt-4 w-64 bg-blue-500 text-white hover:bg-blue-600" onClick={() => navigate("/shop/checkout")}>
         Proceed to Checkout
       </Button>
     </div>
