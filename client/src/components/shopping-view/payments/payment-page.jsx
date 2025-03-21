@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { useRouter } from "expo-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 
 const PaymentPage = () => {
-  const router = useRouter();
   const cartItems = useSelector((state) => state.cart.list || []);
   const [paymentMethod, setPaymentMethod] = useState("mpesa");
 
@@ -15,7 +13,6 @@ const PaymentPage = () => {
 
   const handlePayment = () => {
     alert(`Payment successful with ${paymentMethod}!`);
-    router.push("/order-success");
   };
 
   return (
