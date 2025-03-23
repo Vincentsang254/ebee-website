@@ -89,7 +89,7 @@ export const updateProduct = createAsyncThunk(
 	async ({ productId, values }, { rejectWithValue }) => {
 		try {
 			const response = await axios.put(`${url}/products/update/${productId}`, values,  setHeaders());
-			console.log(response.data);
+			console.log( "update product response.. ",response.data);
 			toast.success(response?.data.message, { position: "top-center" });
 			return response.data; // Assuming the server returns the updated product
 		} catch (error) {
