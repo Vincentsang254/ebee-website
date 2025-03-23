@@ -3,17 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { MdEdit, MdDelete, MdClose } from "react-icons/md";
+import { MdEdit, MdDelete, MdClose } from "react-icons/md"; 
 import { Skeleton } from "@/components/ui/skeleton";
-
 import { createProduct, fetchProducts, removeProduct, updateProduct } from '@/features/slices/productSlice';
 
 const AdminProducts = () => {
   const dispatch = useDispatch();
   const { list: products, status } = useSelector((state) => state.products);
-  const totalProducts = products.length;
   const { id } = useSelector((state) => state.auth);
-
+  
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [productName, setProductName] = useState('');
@@ -24,8 +22,12 @@ const AdminProducts = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setProductImage(file);
-    setImagePreview(URL.createObjectURL(file));
+    if (file && file.type.startsWith("image/")) {
+      setProductImage(file);
+      setImagePreview(URL.createObjectURL(file));
+    } else {
+      alert("Please upload a valid image file.");
+    }
   };
 
   const resetForm = () => {
@@ -48,7 +50,7 @@ const AdminProducts = () => {
     formData.append('name', productName);
     formData.append('price', productPrice);
     formData.append('desc', productDesc);
-    formData.append('my_file', productImage);
+    formData.append('image', productImage);
     formData.append("userId", id);
   
     const action = editingProduct
@@ -60,7 +62,7 @@ const AdminProducts = () => {
       resetForm();
     });
   };
-
+  
   const handleEditProduct = (product) => {
     setEditingProduct(product);
     setProductName(product.name);
@@ -80,35 +82,11 @@ const AdminProducts = () => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
-  if (status === "pending") {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-semibold mb-8 text-center">Our Products</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {[...Array(totalProducts)].map((_, index) => (
-            <Skeleton key={index} className="w-full h-72 rounded-lg" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (status === "rejected") {
-    return <div className="flex items-center justify-center min-h-screen">Failed to load products</div>;
-  }
-
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-semibold mb-8 text-center">Our Products</h1>
 
-      <Button
-        variant="secondary"
-        className="mb-4"
-        onClick={() => {
-          setDialogOpen(true);
-          resetForm();
-        }}
-      >
+      <Button variant="secondary" className="mb-4" onClick={() => { setDialogOpen(true); resetForm(); }}>
         Add Product
       </Button>
 
@@ -116,53 +94,53 @@ const AdminProducts = () => {
         <DialogContent className="w-96 p-6 overflow-y-auto">
           <DialogHeader className="flex justify-between items-center">
             <DialogTitle>{editingProduct ? 'Edit Product' : 'Add a New Product'}</DialogTitle>
-            <MdClose
-              className="text-gray-600 cursor-pointer"
-              onClick={() => setDialogOpen(false)}
-            />
+            <MdClose className="text-gray-600 cursor-pointer" onClick={() => setDialogOpen(false)} />
           </DialogHeader>
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 gap-4">
               <div>
                 <label className="block text-sm font-medium">Product Name</label>
-                <input
-                  type="text"
-                  className="mt-1 block w-full border rounded-md"
-                  placeholder="Product Name"
-                  value={productName}
-                  onChange={(e) => setProductName(e.target.value)}
-                />
+                <input type="text" className="mt-1 block w-full border rounded-md" placeholder="Product Name" value={productName} onChange={(e) => setProductName(e.target.value)} />
               </div>
-
               <div>
                 <label className="block text-sm font-medium">Price</label>
-                <input
-                  type="number"
-                  className="mt-1 block w-full border rounded-md"
-                  placeholder="Product Price"
-                  value={productPrice}
-                  onChange={(e) => setProductPrice(e.target.value)}
-                />
+                <input type="number" className="mt-1 block w-full border rounded-md" placeholder="Product Price" value={productPrice} onChange={(e) => setProductPrice(e.target.value)} />
               </div>
-
               <div>
                 <label className="block text-sm font-medium">Description</label>
-                <textarea
-                  className="mt-1 block w-full border rounded-md"
-                  placeholder="Product Description"
-                  value={productDesc}
-                  onChange={(e) => setProductDesc(e.target.value)}
-                ></textarea>
+                <textarea className="mt-1 block w-full border rounded-md" placeholder="Product Description" value={productDesc} onChange={(e) => setProductDesc(e.target.value)}></textarea>
+              </div>
+              <div>
+                <label className="block text-sm font-medium">Product Image</label>
+                <input type="file" accept="image/*" className="mt-1 block w-full border rounded-md" onChange={handleImageChange} />
+                {imagePreview && <img src={imagePreview} alt="Preview" className="mt-4 w-32 h-32 object-cover rounded-md mx-auto" />}
               </div>
             </div>
             <DialogFooter className="mt-6 flex justify-end">
-              <Button type="submit" variant="primary">
-                {editingProduct ? 'Update Product' : 'Save Product'}
-              </Button>
+              <Button type="submit" variant="primary">{editingProduct ? 'Update Product' : 'Save Product'}</Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {products?.map((product) => (
+          <Card key={product.id} className="shadow-lg rounded-lg relative">
+            <CardHeader>
+              <CardTitle className="text-lg font-bold">{product.name}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <img src={product.imageUrl} alt={product.name} className="w-full h-40 object-cover rounded-md mb-4" />
+              <p className="text-gray-600">Price: Ksh {product.price}</p>
+              <p className="text-gray-600">Description: {product.desc}</p>
+            </CardContent>
+            <div className="absolute top-2 right-2 flex space-x-2">
+              <MdEdit className="text-blue-600 cursor-pointer" onClick={() => handleEditProduct(product)} />
+              <MdDelete className="text-red-600 cursor-pointer" onClick={() => handleDeleteProduct(product.id)} />
+            </div>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };
