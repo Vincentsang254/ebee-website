@@ -57,7 +57,6 @@ export const createProduct = createAsyncThunk(
 	async (formData, { rejectWithValue }) => {
 	  try {
 		const response = await axios.post(`${url}/products/create`, formData, setHeaders());
-		console.log("Create product response:", response?.data); // Correctly log response after getting it
 		toast.success(response?.data.message, { position: "top-center" });
 		return response.data;
 	  } catch (error) {
@@ -90,6 +89,7 @@ export const updateProduct = createAsyncThunk(
 	async ({ productId, values }, { rejectWithValue }) => {
 		try {
 			const response = await axios.put(`${url}/products/update/${productId}`, values,  setHeaders());
+			console.log(response.data);
 			toast.success(response?.data.message, { position: "top-center" });
 			return response.data; // Assuming the server returns the updated product
 		} catch (error) {
@@ -157,7 +157,6 @@ const productsSlice = createSlice({
 
 				state.list.push(action.payload);
 				state.status = "success";
-				toast.success("Product created successfully", { position: "bottom-left" });
 			})
 			.addCase(createProduct.pending, (state) => {
 				state.status = "pending";
@@ -176,7 +175,6 @@ const productsSlice = createSlice({
 				state.status = "rejected";
 			})
 			.addCase(updateProduct.fulfilled, (state, action) => {
-				const updatedProduct = action.payload;
 				const index = state.list.findIndex(product => product.id === action.payload.id);
 				if (index !== -1) {
 					state.list[index] = action.payload;
