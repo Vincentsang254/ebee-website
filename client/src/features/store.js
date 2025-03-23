@@ -9,6 +9,7 @@ import orderReducer from "./slices/orderSlice";
 import authReducer from "./slices/authSlice";
 import cartReducer from "./slices/cartSlice";
 import ratingReducer from "./slices/ratingSlice";
+import userAddressReducer from "./slices/userAddressSlice";
 const store = configureStore({
 	reducer: {
 		users: usersReducer,
@@ -17,6 +18,7 @@ const store = configureStore({
 		auth: authReducer,
 		cart: cartReducer,
 		rating: ratingReducer,
+		address: userAddressReducer,
 	},
 });
 

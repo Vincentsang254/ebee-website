@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,13 +7,18 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-toastify";
 import { createOrder } from "@/features/slices/orderSlice";
+import { fetchusersAddress } from "@/features/slices/usersAddressSlice"; 
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  
+  // Get data from Redux
   const cartItems = useSelector((state) => state.cart?.list || []);
   const userId = useSelector((state) => state.auth?.id);
-  
+  const userAddresses = useSelector((state) => state.usersAddress?.list || []);
+
+  // Component State
   const [paymentMethod, setPaymentMethod] = useState("mpesa");
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState({
@@ -22,6 +27,18 @@ const CheckoutPage = () => {
     streetAddress: "",
     city: "",
   });
+
+  // Load user addresses on component mount
+  useEffect(() => {
+    dispatch(fetchusersAddress());
+  }, [dispatch]);
+
+  // Auto-fill address if user has a saved address
+  useEffect(() => {
+    if (userAddresses.length > 0) {
+      setAddress(userAddresses[0]); // Pre-fill with the first saved address
+    }
+  }, [userAddresses]);
 
   // Calculate total price
   const totalPrice = cartItems.reduce(
@@ -50,10 +67,10 @@ const CheckoutPage = () => {
     };
 
     try {
-      await dispatch(createOrder(orderData)); // Pass the orderData
+      await dispatch(createOrder(orderData)).unwrap();
       setLoading(false);
-      
-      navigate("/shop/payment"); // Redirect to orders page
+      toast.success("Order placed successfully!");
+      navigate("/shop/payment"); // Redirect to payment page
     } catch (error) {
       setLoading(false);
       toast.error("Order failed. Please try again.");

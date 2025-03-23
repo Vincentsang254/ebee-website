@@ -3,10 +3,7 @@
 const { UserAddress } = require("../models");
 
 const createAddress = async (req, res) => {
-  const { name,email, county, phone, postalCode } =
-    req.body;
-  const userId = req.body.userId;
- 
+  const { name, email, county, phone, postalCode, userId } = req.body;
 
   try {
     // Check if the user already has an address
@@ -14,134 +11,108 @@ const createAddress = async (req, res) => {
 
     if (existingAddress) {
       return res.status(400).json({
-        status: 400,
+        status: false,
         message: "User already has an address",
       });
     }
 
-    // Create a new address for the user
+    // Create a new address
     const newUserAddress = await UserAddress.create({
-      name,email, county, phone, postalCode,
+      name,
+      email,
+      county,
+      phone,
+      postalCode,
       userId,
     });
 
-    // Return success response
-    res.status(200).json({
-      status: 200,
+    res.status(201).json({
+      status: true,
       message: "Address added successfully",
       data: newUserAddress,
     });
   } catch (error) {
-    // Handle any unexpected errors
     console.error("Error creating address:", error);
-    res.status(500).json({
-      status: 500,
-      message: error.message, // Using error.message here
-    });
+    res.status(500).json({ status: false, message: error.message });
   }
 };
 
 const updateUserAddress = async (req, res) => {
-  const addressId = req.params.addressId;
-  const { name,email, county, phone, postalCode } =
-    req.body;
+  const { addressId } = req.params;
+  const { name, email, county, phone, postalCode } = req.body;
 
   try {
-    // Find the address by its ID
     const userAddress = await UserAddress.findByPk(addressId);
 
     if (!userAddress) {
       return res.status(404).json({
-        status: 404,
+        status: false,
         message: "User address not found",
       });
     }
 
-    // Update the address fields
-   
-    userAddress.country = county;
-    userAddress.email = email;
+    // Update the address fields correctly
+    userAddress.county = county;
     userAddress.phone = phone;
     userAddress.postalCode = postalCode;
     userAddress.name = name;
 
-    // Save the updated address
+    if (email) userAddress.email = email; // Update email if provided
+
     await userAddress.save();
 
-    // Return success response
     res.status(200).json({
-      status: 200,
+      status: true,
       message: "Address updated successfully",
       data: userAddress,
     });
   } catch (error) {
-    // Handle any unexpected errors
     console.error("Error updating address:", error);
-    res.status(500).json({
-      status: 500,
-      message: error.message, // Using error.message here
-    });
+    res.status(500).json({ status: false, message: error.message });
   }
 };
 
 const getUserAddress = async (req, res) => {
-  const userId = req.body.userId;
+  const userId = req.user?.id || req.params.userId; // Use authentication or fallback
 
   try {
-    // Fetch all addresses for the user
-    const userAddresses = await UserAddress.findAll({
-      where: { userId },
-    });
+    const userAddresses = await UserAddress.findAll({ where: { userId } });
 
-    // Return the list of addresses
     res.status(200).json({
-      status: 200,
+      status: true,
       data: userAddresses,
     });
   } catch (error) {
-    // Handle any unexpected errors
     console.error("Error fetching user addresses:", error);
-    res.status(500).json({
-      status: 500,
-      message: error.message, // Using error.message here
-    });
+    res.status(500).json({ status: false, message: error.message });
   }
 };
+
 const deleteAddress = async (req, res) => {
-  const userId = req.body.userId;
-  const addressId = req.params.id;
+  const { id } = req.params;
+  const userId = req.user?.id || req.params.userId; // Use authenticated user
 
   try {
-    // Find the address by ID and user ID
-    const userAddress = await UserAddress.findOne({
-      where: { id: addressId, userId },
-    });
+    const userAddress = await UserAddress.findOne({ where: { id, userId } });
 
     if (!userAddress) {
-      // If address not found, return error response
       return res.status(404).json({
-        status: 404,
+        status: false,
         message: "Address not found",
       });
     }
 
-    // Delete the address
     await userAddress.destroy();
 
-    // Return success response  
     res.status(200).json({
-      status: 200,
+      status: true,
       message: "Address deleted successfully",
     });
   } catch (error) {
-    // Handle any unexpected errors
     console.error("Error deleting user address:", error);
-    res.status(500).json({
-      status: 500,
-      message: error.message, // Using error.message here
-    });
+    res.status(500).json({ status: false, message: error.message });
   }
-}
+};
 
 module.exports = {
   createAddress,

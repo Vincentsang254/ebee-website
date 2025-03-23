@@ -38,28 +38,28 @@ export const fetchOrder =
 			});
 		}
 		});
-export const createOrder = createAsyncThunk(
-	"orders/createOrder",
-	async (formData, { rejectWithValue }) => {
-		try {
-			const response = await axios.post(
-				`${url}/orders/create`,
-				formData,
-				setHeaders()
-			);
-			toast.success(response.data.message, {
-				position: "top-center",
-			});
-			return response.data;
-		} catch (error) {
-			console.error("Error creating order:", error.response.message);
-			toast.error(error.response?.data, {
-				position: "bottom-left",
-			});
-			return rejectWithValue(error.response.data);
-		}
-	}
-);
+		export const createOrder = createAsyncThunk(
+			"orders/createOrder",
+			async (formData, { rejectWithValue }) => {
+			  try {
+				const response = await axios.post(`${url}/orders/create`, formData, setHeaders());
+		  
+				toast.success(response.data?.message, {
+				  position: "top-center",
+				});
+		  
+				return response.data;
+			  } catch (error) {
+				console.error("Error creating order:", error.response?.data?.message || error.message);
+		  
+				toast.error(error.response?.data?.message, {
+				  position: "bottom-left",
+				});
+		  
+				return rejectWithValue(error.response?.data);
+			  }
+			}
+		  );
 
 export const deleteOrder = createAsyncThunk(
 	"orders/deleteOrder",

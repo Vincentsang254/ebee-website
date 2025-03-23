@@ -5,9 +5,8 @@ const { Notifications, Orders } = require("../models");
 const createNotification = require("../utils/createNotifications");
 
 const createOrders = async (req, res) => {
-  const { totalPrice, orderItems, paymentMethod, userAddressId , userId} = req.body;
+  const { totalPrice, orderItems, paymentMethod, address, userId } = req.body;
 
-  // Validate required fields
   if (
     !totalPrice ||
     !orderItems ||
@@ -15,7 +14,7 @@ const createOrders = async (req, res) => {
     orderItems.length === 0 ||
     !paymentMethod ||
     !userId ||
-    !userAddressId
+    !address
   ) {
     return res
       .status(400)
@@ -29,7 +28,7 @@ const createOrders = async (req, res) => {
       orderItems,
       paymentMethod,
       userId,
-      userAddressId,
+      userAddress: address, // ✅ Storing the full address object
     });
 
     // Create a notification for the user
@@ -41,14 +40,16 @@ const createOrders = async (req, res) => {
     });
 
     // Send email notification
-    const userName = req.user.name; // Assuming req.user contains an object with a name property
-    const userEmail = req.user.email; // Assuming req.user contains an object with an email property
-    await sendNotificationEmail(
-      userEmail,
-      userName,
-      "Order Confirmation",
-      notificationContent
-    );
+    const userName = req.user?.name || "Customer";
+    const userEmail = req.user?.email;
+    if (userEmail) {
+      await sendNotificationEmail(
+        userEmail,
+        userName,
+        "Order Confirmation",
+        notificationContent
+      );
+    }
 
     res.status(200).json({ status: true, data: order });
   } catch (error) {
@@ -57,7 +58,7 @@ const createOrders = async (req, res) => {
       .status(500)
       .json({
         status: false,
-        message: "Order creation failed, please try again later.",
+        message: error.message,
       });
   }
 };
