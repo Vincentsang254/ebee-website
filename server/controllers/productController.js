@@ -111,12 +111,23 @@ const deleteProducts = async (req, res) => {
 
 // 🟡 Update Product
 const updateProducts = async (req, res) => {
-  const productId = req.params.productId;
-  const { name, desc, price } = req.body;
+  
 
   try {
+    const productId = req.params.productId;
+  const { name, desc, price } = req.body;
     const product = await Products.findByPk(productId);
     if (!product) return res.status(404).json({ status: false, message: "Product not found" });
+
+    if (!name) {
+      return res.status(400).json({ status: false, message: "Name is required" });
+    }
+    if (!desc) {
+      return res.status(400).json({ status: false, message: "Description is required" });
+    }
+    if (!price) {
+      return res.status(400).json({ status: false, message: "Price is required" });
+    }
 
     // if (product.userId !== req.user.id && req.user.role !== "Admin") {
     //   return res.status(403).json({ status: false, message: "You do not have permission to update this product" });

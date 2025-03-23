@@ -39,27 +39,31 @@ const AdminProducts = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!productName || !productDesc || !productPrice  || !productImage) {
-      alert('All fields are required');
-      return;
-    }
   
     const formData = new FormData();
     formData.append('name', productName);
     formData.append('price', productPrice);
     formData.append('desc', productDesc);
-    formData.append('my_file', productImage);
-    formData.append("userId", id);
+    formData.append('userId', id); // Include user ID
   
-    const action = editingProduct
-      ? dispatch(updateProduct({ productId: editingProduct.id, values: formData }))
-      : dispatch(createProduct(formData));
+    if (productImage) {
+      formData.append('my_file', productImage); // Only append if a new image is selected
+    }
   
-    action.then(() => {
-      setDialogOpen(false); // ✅ Close only after the API call completes
+    try {
+      if (editingProduct) {
+        await dispatch(updateProduct({ productId: editingProduct.id, values: formData })).unwrap();
+      } else {
+        await dispatch(createProduct(formData)).unwrap();
+      }
+  
+      setDialogOpen(false); // Close dialog after successful submission
       resetForm();
-    });
+    } catch (error) {
+      console.error("Error saving product:", error);
+    }
   };
+  
   
 
   const handleEditProduct = (product) => {
