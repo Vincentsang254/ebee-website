@@ -29,19 +29,29 @@ const createProducts = async (req, res) => {
     const { name, desc, price, userId } = req.body;
     // const userId = 1;//from frontend
 
-    if (!name || !desc || !price || !category) {
-      return res.status(400).json({ status: false, message: "All fields are required" });
+    if (!userId) {
+      return res.status(400).json({ status: false, message: "Kindly login first" });
     }
+    if (!name) {
+      return res.status(400).json({ status: false, message: "Name is required" });
+    }
+    if (!desc) {
+      return res.status(400).json({ status: false, message: "Description is required" });
+    }
+    if (!price) {
+      return res.status(400).json({ status: false, message: "Price is required" });
+    }
+
 
     if (isNaN(price)) {
       return res.status(400).json({ status: false, message: "Price must be a valid number" });
     }
 
-    
+
     console.log("Uploading image to Cloudinary...");
     const b64 = Buffer.from(req.file.buffer).toString("base64");
     const fileData = `data:${req.file.mimetype};base64,${b64}`;
-    
+
     const result = await imageUploadUtil(fileData);
     console.log("Cloudinary Response:", result);
 
@@ -204,7 +214,7 @@ const searchProducts = async (req, res) => {
 
     if (name) searchConditions.name = { [Op.like]: `%${name}%` };
     if (price) searchConditions.price = { [Op.eq]: price };
-   
+
     if (desc) searchConditions.desc = { [Op.like]: `%${desc}%` };
 
     const products = await Products.findAll({ where: searchConditions });
