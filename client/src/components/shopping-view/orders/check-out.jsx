@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-toastify";
+import { fetchusersAddress } from "@/features/slices/userAddressSlice";
 import { createOrder } from "@/features/slices/orderSlice";
-import { fetchusersAddress } from "@/features/slices/usersAddressSlice"; 
+
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
