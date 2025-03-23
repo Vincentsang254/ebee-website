@@ -12,7 +12,7 @@ const AdminProducts = () => {
   const dispatch = useDispatch();
   const { list: products, status } = useSelector((state) => state.products);
   const totalProducts = products.length;
-  const { id} = useSelector((state) => state.auth);// use this to get the user id so that you can use it to post the products, to avoid using req.user.id in the backend but instead use the id from the redux store
+  const { id} = useSelector((state) => state.auth);// u
 
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null); // Track if editing an existing product
@@ -37,6 +37,11 @@ const AdminProducts = () => {
     setEditingProduct(null);
   };
 
+  const handleCloseDialog = () => {
+    resetForm(); // 🔹 Clear form when closing
+    setDialogOpen(false);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -53,10 +58,12 @@ const AdminProducts = () => {
     try {
       if (editingProduct) {
         await dispatch(updateProduct({ productId: editingProduct.id, values: formData })).unwrap();
+       
       } else {
         await dispatch(createProduct(formData)).unwrap();
+      
       }
-  
+      dispatch(fetchProducts()); // ✅ Always fetch latest products
       setDialogOpen(false); // Close dialog after successful submission
       resetForm();
     } catch (error) {
@@ -80,6 +87,7 @@ const AdminProducts = () => {
       dispatch(removeProduct(id));
     }
   };
+ 
 
   useEffect(() => {
     dispatch(fetchProducts());
@@ -120,7 +128,7 @@ const AdminProducts = () => {
       </Button>
 
       {/* Dialog for Add/Edit Product */}
-      <Dialog open={isDialogOpen} onClose={() => setDialogOpen(false)}>
+      <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
         <DialogContent className="w-96 p-6 overflow-y-auto">
           <DialogHeader className="flex justify-between items-center">
             <DialogTitle>{editingProduct ? 'Edit Product' : 'Add a New Product'}</DialogTitle>
