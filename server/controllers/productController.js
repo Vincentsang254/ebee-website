@@ -26,7 +26,7 @@ const handleImageUpload = async (req, res) => {
 
 const createProducts = async (req, res) => {
   try {
-    const { name, desc, price, category, userId } = req.body;
+    const { name, desc, price, userId } = req.body;
     // const userId = 1;//from frontend
 
     if (!name || !desc || !price || !category) {
@@ -51,7 +51,6 @@ const createProducts = async (req, res) => {
       name,
       desc,
       price,
-      category,
       userId,
       imageUrl,
     });
@@ -103,15 +102,15 @@ const deleteProducts = async (req, res) => {
 // 🟡 Update Product
 const updateProducts = async (req, res) => {
   const productId = req.params.productId;
-  const { name, desc, price, category } = req.body;
+  const { name, desc, price } = req.body;
 
   try {
     const product = await Products.findByPk(productId);
     if (!product) return res.status(404).json({ status: false, message: "Product not found" });
 
-    if (product.userId !== req.user.id && req.user.role !== "Admin") {
-      return res.status(403).json({ status: false, message: "You do not have permission to update this product" });
-    }
+    // if (product.userId !== req.user.id && req.user.role !== "Admin") {
+    //   return res.status(403).json({ status: false, message: "You do not have permission to update this product" });
+    // }
 
     let updatedImageUrl = product.imageUrl;
 
@@ -129,7 +128,7 @@ const updateProducts = async (req, res) => {
     }
 
     await Products.update(
-      { name, desc, price, category, imageUrl: updatedImageUrl },
+      { name, desc, price, imageUrl: updatedImageUrl },
       { where: { id: productId } }
     );
 
@@ -198,14 +197,14 @@ const getProductById = async (req, res) => {
 
 // 🔍 Search Products by Name
 const searchProducts = async (req, res) => {
-  const { name, price, category, desc } = req.body;
+  const { name, price, desc } = req.body;
 
   try {
     const searchConditions = {};
 
     if (name) searchConditions.name = { [Op.like]: `%${name}%` };
     if (price) searchConditions.price = { [Op.eq]: price };
-    if (category) searchConditions.category = { [Op.like]: `%${category}%` };
+   
     if (desc) searchConditions.desc = { [Op.like]: `%${desc}%` };
 
     const products = await Products.findAll({ where: searchConditions });

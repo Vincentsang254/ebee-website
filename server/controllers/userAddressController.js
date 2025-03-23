@@ -3,9 +3,10 @@
 const { UserAddress } = require("../models");
 
 const createAddress = async (req, res) => {
-  const { firstName, lastName, addressLine, country, city, phone, postalCode } =
+  const { name,email, county, phone, postalCode } =
     req.body;
   const userId = req.body.userId;
+ 
 
   try {
     // Check if the user already has an address
@@ -20,13 +21,7 @@ const createAddress = async (req, res) => {
 
     // Create a new address for the user
     const newUserAddress = await UserAddress.create({
-      firstName,
-      lastName,
-      addressLine,
-      country,
-      city,
-      phone,
-      postalCode,
+      name,email, county, phone, postalCode,
       userId,
     });
 
@@ -48,7 +43,7 @@ const createAddress = async (req, res) => {
 
 const updateUserAddress = async (req, res) => {
   const addressId = req.params.addressId;
-  const { addressLine, country, city, phone, postalCode, firstName, lastName } =
+  const { name,email, county, phone, postalCode } =
     req.body;
 
   try {
@@ -63,13 +58,12 @@ const updateUserAddress = async (req, res) => {
     }
 
     // Update the address fields
-    userAddress.addressLine = addressLine;
-    userAddress.country = country;
-    userAddress.city = city;
+   
+    userAddress.country = county;
+    userAddress.email = email;
     userAddress.phone = phone;
     userAddress.postalCode = postalCode;
-    userAddress.firstName = firstName;
-    userAddress.lastName = lastName;
+    userAddress.name = name;
 
     // Save the updated address
     await userAddress.save();
@@ -113,9 +107,45 @@ const getUserAddress = async (req, res) => {
     });
   }
 };
+const deleteAddress = async (req, res) => {
+  const userId = req.body.userId;
+  const addressId = req.params.id;
+
+  try {
+    // Find the address by ID and user ID
+    const userAddress = await UserAddress.findOne({
+      where: { id: addressId, userId },
+    });
+
+    if (!userAddress) {
+      // If address not found, return error response
+      return res.status(404).json({
+        status: 404,
+        message: "Address not found",
+      });
+    }
+
+    // Delete the address
+    await userAddress.destroy();
+
+    // Return success response  
+    res.status(200).json({
+      status: 200,
+      message: "Address deleted successfully",
+    });
+  } catch (error) {
+    // Handle any unexpected errors
+    console.error("Error deleting user address:", error);
+    res.status(500).json({
+      status: 500,
+      message: error.message, // Using error.message here
+    });
+  }
+}
 
 module.exports = {
   createAddress,
   updateUserAddress,
   getUserAddress,
+  deleteAddress,
 };
