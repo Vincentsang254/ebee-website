@@ -109,36 +109,23 @@ const deleteProducts = async (req, res) => {
   }
 };
 
-// 🟡 Update Product
 const updateProducts = async (req, res) => {
-  
-
   try {
     const productId = req.params.productId;
-  const { name, desc, price } = req.body;
+    const { name, desc, price } = req.body;
     const product = await Products.findByPk(productId);
+
     if (!product) return res.status(404).json({ status: false, message: "Product not found" });
-
-    if (!name) {
-      return res.status(400).json({ status: false, message: "Name is required" });
-    }
-    if (!desc) {
-      return res.status(400).json({ status: false, message: "Description is required" });
-    }
-    if (!price) {
-      return res.status(400).json({ status: false, message: "Price is required" });
-    }
-
-    // if (product.userId !== req.user.id && req.user.role !== "Admin") {
-    //   return res.status(403).json({ status: false, message: "You do not have permission to update this product" });
-    // }
+    if (!name || !desc || !price) return res.status(400).json({ status: false, message: "All fields are required" });
 
     let updatedImageUrl = product.imageUrl;
 
     if (req.file) {
       try {
+        console.log("File received:", req.file); // Debugging
+
         const publicId = getPublicIdFromUrl(product.imageUrl);
-        await deleteImageUtil(publicId);
+        if (publicId) await deleteImageUtil(publicId); // Delete old image if exists
 
         const uploadResponse = await imageUploadUtil(req.file);
         updatedImageUrl = uploadResponse.secure_url;
@@ -148,10 +135,7 @@ const updateProducts = async (req, res) => {
       }
     }
 
-    await Products.update(
-      { name, desc, price, imageUrl: updatedImageUrl },
-      { where: { id: productId } }
-    );
+    await product.update({ name, desc, price, imageUrl: updatedImageUrl });
 
     res.status(200).json({ status: true, message: "Product updated successfully" });
   } catch (error) {

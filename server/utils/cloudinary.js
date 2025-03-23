@@ -1,6 +1,8 @@
 const cloudinary = require("cloudinary").v2;
+const streamifier = require("streamifier");
 const multer = require("multer");
 require("dotenv").config(); // Load environment variables
+
 
 // 🔧 Configure Cloudinary
 cloudinary.config({
@@ -12,17 +14,29 @@ cloudinary.config({
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// 📤 Cloudinary Upload Utility
 const imageUploadUtil = async (file) => {
   try {
-    const result = await cloudinary.uploader.upload(file,{
-      upload_preset: "ebee", // 👈 Use your preset name
-      resource_type: "auto",
-    } );
-    return result;
+    return new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          upload_preset: "ebee",
+          resource_type: "auto",
+        },
+        (error, result) => {
+          if (error) {
+            console.error("Cloudinary Upload Error:", error);
+            reject(new Error(error.message));
+          } else {
+            resolve(result);
+          }
+        }
+      );
+
+      streamifier.createReadStream(file.buffer).pipe(stream);
+    });
   } catch (error) {
     console.error("Cloudinary Upload Error:", error);
-    throw new Error(error.message); // ✅ Properly throw error
+    throw new Error(error.message);
   }
 };
 

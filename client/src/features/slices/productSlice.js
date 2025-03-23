@@ -89,12 +89,12 @@ export const updateProduct = createAsyncThunk(
 	async ({ productId, values }, { rejectWithValue }) => {
 		try {
 			const response = await axios.put(`${url}/products/update/${productId}`, values,  setHeaders());
-			console.log( "update product response.. ",response.data);
-			toast.success(response?.data.message, { position: "top-center" });
+			console.log( "update product response.. ",response);
+			toast.success(response?.message, { position: "top-center" });
 			return response.data; // Assuming the server returns the updated product
 		} catch (error) {
-			console.log( "Error updating product",error.response?.data.message)
-			const message = error.response?.data.message || "Error updating product";
+			console.log( "Error updating product",error.response?.message)
+			const message = error.response?.message || "Error updating product";
 			toast.error(message, { position: "top-center" });
 			return rejectWithValue(message);
 		}
