@@ -34,7 +34,7 @@ const initiateSTKPush = async (req, res) => {
         PartyB: shortcode,
         PhoneNumber: `254${phone}`,
         CallBackURL:
-          "https://ebee-app.onrender.com/api/payment/process-callback",
+          "https://https://ebee-website.onrender.com//api/payment/process-callback",
         AccountReference: `254${phone}`,
         TransactionDesc: "Payment for goods/services",
       },

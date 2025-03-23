@@ -27,6 +27,8 @@ import VerifyAccount from "./pages/auth/verify-account";
 import CartPage from "./pages/shopping-view/cart-page";
 import ProductDetails from "./components/shopping-view/products/product-details";
 import PaymentPage from "./components/shopping-view/payments/payment-page";
+import CheckoutPage from "./components/shopping-view/orders/check-out";
+import OrderConfirmationPage from "./components/shopping-view/orders/order-confirmaion";
 
 
 
@@ -97,7 +99,11 @@ const App = ({isAuthenticated, user}) => {
           <Route path="cart" element={<CartPage />} />
           
           <Route path="product/:productId" element={<ProductDetails />} />
-          <Route path="checkout" element={<PaymentPage />} />
+          <Route path="payment" element={<PaymentPage />} />
+          <Route path="checkout" element={<CheckoutPage />} />
+          <Route path="order-success" element={< OrderConfirmationPage />} />
+          <Route path="orders" element={<OrdersPage />} />
+          <Route path="orders/:orderId" element={<OrderDetailsPage />} />
         </Route>
         <Route path="/unauth-page" element={<UnauthPage />} />
         <Route path="*" element={<NotFound />} />

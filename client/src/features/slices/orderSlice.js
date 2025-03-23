@@ -25,6 +25,19 @@ export const fetchOrders = createAsyncThunk("orders/fetchOrders", async () => {
 	}
 });
 
+export const fetchOrder = 
+	createAsyncThunk("orders/fetchOrder", async (orderId) => {
+		try {
+			const response = await axios.get(`${url}/orders/get/${orderId}`, setHeaders());
+			return response.data;
+		}
+		catch (error) {
+			console.error("Error fetching order:", error.response?.message);
+			toast.error(error.response?.data, {
+				position: "bottom-left",
+			});
+		}
+		});
 export const createOrder = createAsyncThunk(
 	"orders/createOrder",
 	async (formData, { rejectWithValue }) => {
