@@ -29,6 +29,8 @@ import ProductDetails from "./components/shopping-view/products/product-details"
 import PaymentPage from "./components/shopping-view/payments/payment-page";
 import CheckoutPage from "./components/shopping-view/orders/check-out";
 import OrderConfirmationPage from "./components/shopping-view/orders/order-confirmaion";
+import OrdersPage from "./components/shopping-view/orders/orders";
+import OrderDetailsPage from "./components/shopping-view/orders/order-details";
 
 
 
