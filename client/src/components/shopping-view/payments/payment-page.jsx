@@ -56,7 +56,7 @@ const PaymentPage = () => {
           </RadioGroup>
 
           <Button className="mt-6 w-full bg-blue-500 text-white" onClick={handlePayment} disabled={loading}>
-            {loading ? "Processing..." : "Pay Now"}
+            {loading ? "Processing..." : "Confirm Order"}
           </Button>
         </CardContent>
       </Card>
