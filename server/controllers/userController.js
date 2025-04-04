@@ -42,23 +42,23 @@ const deleteUser = async (req, res) => {
   const userId = req.params.userId;
 
   try {
-    // Delete the user
+   
     await Users.destroy({
       where: {
         id: userId,
       },
     });
 
-    // Return success message
+ 
     res.status(200).json({
       status: 200,
       message: "User deleted successfully",
     });
   } catch (error) {
-    // Handle any errors
+  
     res.status(500).json({
       status: 500,
-      message: error.message, // Updated message
+      message: error.message,
     });
   }
 };
@@ -68,7 +68,7 @@ const updateUser = async (req, res) => {
   const { email, name, password } = req.body;
 
   try {
-    // Find the user by ID
+  
     const user = await Users.findByPk(userId);
 
     if (!user) {
@@ -78,26 +78,26 @@ const updateUser = async (req, res) => {
       });
     }
 
-    // Update the user's details
+ 
     await Users.update({ email, name, password }, { where: { id: userId } });
 
-    // Return success message
+
     res.status(200).json({
       status: 200,
       message: "User updated successfully",
     });
   } catch (error) {
-    // Handle any errors
+
     res.status(500).json({
       status: 500,
-      message: error.message, // Updated message
+      message: error.message,
     });
   }
 };
 
 const getUsers = async (req, res) => {
   try {
-    // Fetch all users excluding sensitive fields
+
     const users = await Users.findAll({
       attributes: {
         exclude: [
@@ -109,16 +109,15 @@ const getUsers = async (req, res) => {
       },
     });
 
-    // Return list of users
     res.status(200).json({
       status: 200,
       data: users,
     });
   } catch (error) {
-    // Handle any errors
+
     res.status(500).json({
       status: 500,
-      message: error.message, // Updated message
+      message: error.message,
     });
   }
 };
@@ -127,7 +126,7 @@ const getUserById = async (req, res) => {
   const userId = req.params.userId;
 
   try {
-    // Fetch the user by ID excluding password
+
     const user = await Users.findOne(
       { where: { id: userId } },
       {
@@ -142,16 +141,16 @@ const getUserById = async (req, res) => {
       });
     }
 
-    // Return the user data
+
     res.status(200).json({
       status: 200,
       data: user,
     });
   } catch (error) {
-    // Handle any errors
+  
     res.status(500).json({
       status: 500,
-      message: error.message, // Updated message
+      message: error.message,
     });
   }
 };
