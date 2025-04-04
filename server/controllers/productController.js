@@ -157,7 +157,13 @@ const updateProducts = async (req, res) => {
 // 🟢 Get All Products
 const getProducts = async (req, res) => {
   try {
-    const products = await Products.findAll({
+    // Get page and limit from query string, with defaults
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    // Get products with pagination
+    const { count, rows: products } = await Products.findAndCountAll({
       attributes: { exclude: ["userId"] },
       include: [
         {
@@ -170,14 +176,24 @@ const getProducts = async (req, res) => {
           },
         },
       ],
+      offset,
+      limit,
+      order: [["createdAt", "DESC"]],
     });
 
-    res.status(200).json({ status: true, data: products });
+    res.status(200).json({
+      status: true,
+      data: products,
+      currentPage: page,
+      totalPages: Math.ceil(count / limit),
+      hasMore: offset + products.length < count,
+    });
   } catch (error) {
     console.error("Error fetching products:", error);
     res.status(500).json({ status: false, message: error.message });
   }
 };
+
 
 // 🟢 Get Product by ID
 const getProductById = async (req, res) => {

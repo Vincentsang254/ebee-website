@@ -8,25 +8,31 @@ import { setHeaders, url } from "./api";
 const initialState = {
 	list: [],
 	status: null,
+	currentPage: 1,
+  totalPages: 1,
+  hasMore: true,
 };
 
 // Thunks
 export const fetchProducts = createAsyncThunk(
 	"products/fetchProducts",
-	async () => {
-		try {
-			
-			const response = await axios.get(`${url}/products/get`, setHeaders());
-			console.table("Fetch products response from slice..", response);
-			return response.data.data;
-
-		} catch (error) {
-			// Handle any error and log the error response
-			const message = error.response?.data;
-			toast.error(message, { position: "top-center" });
-		}
+	async ({ page = 1, limit = 10 }) => { // Accept page and limit as arguments
+	  try {
+		const response = await axios.get(`${url}/products/get`, {
+		  params: { page, limit }, // Pass page and limit to the API
+		  ...setHeaders(),
+		});
+		console.table("Fetch products response from slice..", response);
+		return response.data;
+	  } catch (error) {
+		// Handle any error and log the error response
+		const message = error.response?.data.message || "Failed to fetch products";
+		toast.error(message, { position: "top-center" });
+		return { data: [] }; // Return empty array in case of an error to handle empty data gracefully
+	  }
 	}
-);
+  );
+  
 
 export const fetchProduct = createAsyncThunk(
 	"products/fetchProduct",
