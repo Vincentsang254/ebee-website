@@ -19,7 +19,7 @@ const router = express.Router();
 router.post("/create", upload.single("my_file"), createProducts);
 router.delete("/delete/:productId", deleteProducts);
 router.put("/update/:productId", upload.single("my_file"), updateProducts);
-router.get("/get?page=1&limit=10", getProducts);
+router.get("/get", getProducts);
 router.get("/get/:productId", getProductById);
 router.post("/search", searchProducts);
 
