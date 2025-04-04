@@ -50,10 +50,20 @@ const createProducts = async (req, res) => {
 
     console.log("Uploading image to Cloudinary...");
     const b64 = Buffer.from(req.file.buffer).toString("base64");
-    const fileData = `data:${req.file.mimetype};base64,${b64}`;
+    if (!b64) {
+      return res.status(400).json({ status: false, message: "No file uploaded b64" });  
+      }
+    const fileData = `data:${req.file.mimetype}:base64,${b64}`;
+
+    if (!fileData) {
+      return res.status(400).json({ status: false, message: "No file uploaded file data" });
+    }
 
     const result = await imageUploadUtil(fileData);
-    console.log("Cloudinary Response:", result);
+    
+    if (!result) {
+      return res.status(400).json({ status: false, message: "No file uploaded result" });
+    }
 
     const imageUrl = result.secure_url; // ✅ Use Cloudinary URL
 
@@ -67,7 +77,7 @@ const createProducts = async (req, res) => {
 
     res.status(200).json({ status: true, message: "Product created successfully", product });
   } catch (error) {
-    console.error("Error creating product:", error);
+    console.error("Error creating product from productController.js:", error?.message);
     res.status(500).json({ status: false, message: error.message });
   }
 };
