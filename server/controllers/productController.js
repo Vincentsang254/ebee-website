@@ -154,15 +154,13 @@ const updateProducts = async (req, res) => {
   }
 };
 
-// 🟢 Get All Products
 const getProducts = async (req, res) => {
   try {
-    // Get page and limit from query string, with defaults
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
 
-    // Get products with pagination
+    // Using findAndCountAll to get both data and total count for pagination
     const { count, rows: products } = await Products.findAndCountAll({
       attributes: { exclude: ["userId"] },
       include: [
