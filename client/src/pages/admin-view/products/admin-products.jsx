@@ -60,14 +60,18 @@ const AdminProducts = () => {
         await dispatch(updateProduct({ productId: editingProduct.id, values: formData })).unwrap();
        
       } else {
-        await dispatch(createProduct(formData)).unwrap();
+        const res = await dispatch(createProduct(formData)).unwrap();
+console.log("Product created:", res);
+        // if (res.status) {
+        //   alert("Product created successfully");
+        // }
       
       }
       dispatch(fetchProducts()); // ✅ Always fetch latest products
       setDialogOpen(false); // Close dialog after successful submission
       resetForm();
     } catch (error) {
-      console.error("Error saving product:", error);
+      console.error("Error saving product:", error.message);
     }
   };
   
@@ -95,13 +99,13 @@ const AdminProducts = () => {
 
   if (status === "pending") {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-semibold mb-8 text-center">Our Products</h1>
+      <div className="container px-4 py-8 mx-auto">
+        <h1 className="mb-8 text-3xl font-semibold text-center">Our Products</h1>
         
         {/* Shadcn Skeleton Loader */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {[...Array(totalProducts)].map((_, index) => (
-            <Skeleton key={index} className="w-full h-72 rounded-lg" />
+            <Skeleton key={index} className="w-full rounded-lg h-72" />
           ))}
         </div>
       </div>
@@ -113,8 +117,8 @@ const AdminProducts = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-semibold mb-8 text-center">Our Products</h1>
+    <div className="container px-4 py-8 mx-auto">
+      <h1 className="mb-8 text-3xl font-semibold text-center">Our Products</h1>
 
       <Button
         variant="secondary"
@@ -129,8 +133,8 @@ const AdminProducts = () => {
 
       {/* Dialog for Add/Edit Product */}
       <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
-        <DialogContent className="w-96 p-6 overflow-y-auto">
-          <DialogHeader className="flex justify-between items-center">
+        <DialogContent className="p-6 overflow-y-auto w-96">
+          <DialogHeader className="flex items-center justify-between">
             <DialogTitle>{editingProduct ? 'Edit Product' : 'Add a New Product'}</DialogTitle>
             <MdClose
               className="text-gray-600 cursor-pointer"
@@ -143,7 +147,7 @@ const AdminProducts = () => {
                 <label className="block text-sm font-medium">Product Name</label>
                 <input
                   type="text"
-                  className="mt-1 block w-full border rounded-md"
+                  className="block w-full mt-1 border rounded-md"
                   placeholder="Product Name"
                   value={productName}
                   onChange={(e) => setProductName(e.target.value)}
@@ -154,7 +158,7 @@ const AdminProducts = () => {
                 <label className="block text-sm font-medium">Price</label>
                 <input
                   type="number"
-                  className="mt-1 block w-full border rounded-md"
+                  className="block w-full mt-1 border rounded-md"
                   placeholder="Product Price"
                   value={productPrice}
                   onChange={(e) => setProductPrice(e.target.value)}
@@ -166,7 +170,7 @@ const AdminProducts = () => {
               <div>
                 <label className="block text-sm font-medium">Description</label>
                 <textarea
-                  className="mt-1 block w-full border rounded-md"
+                  className="block w-full mt-1 border rounded-md"
                   placeholder="Product Description"
                   value={productDesc}
                   onChange={(e) => setProductDesc(e.target.value)}
@@ -177,7 +181,7 @@ const AdminProducts = () => {
                 <label className="block text-sm font-medium">Product Image</label>
                 <input
                   type="file"
-                  className="mt-1 block w-full border rounded-md"
+                  className="block w-full mt-1 border rounded-md"
                   onChange={handleImageChange}
                 />
                 {imagePreview && (
@@ -185,13 +189,13 @@ const AdminProducts = () => {
                     <img
                       src={imagePreview}
                       alt="Image Preview"
-                      className="w-32 h-32 object-cover rounded-md mx-auto"
+                      className="object-cover w-32 h-32 mx-auto rounded-md"
                     />
                   </div>
                 )}
               </div>
             </div>
-            <DialogFooter className="mt-6 flex justify-end">
+            <DialogFooter className="flex justify-end mt-6">
               <Button type="submit" variant="primary">
                 {editingProduct ? 'Update Product' : 'Save Product'}
               </Button>
@@ -200,9 +204,9 @@ const AdminProducts = () => {
         </DialogContent>
       </Dialog>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
   {products?.map((product) => (
-    <Card key={product.id} className="shadow-lg rounded-lg relative">
+    <Card key={product.id} className="relative rounded-lg shadow-lg">
       <CardHeader>
         <CardTitle className="text-lg font-bold">{product.name}</CardTitle>
       </CardHeader>
@@ -210,13 +214,13 @@ const AdminProducts = () => {
         <img
           src={product.imageUrl}
           alt={product.name}
-          className="w-full h-40 object-cover rounded-md mb-4"
+          className="object-cover w-full h-40 mb-4 rounded-md"
         />
         <p className="text-gray-600">Price: Ksh {product.price}</p>
         <p className="text-gray-600">Description: {product.desc}</p>
       </CardContent>
       {/* Edit and Delete Icons */}
-      <div className="absolute top-2 right-2 flex space-x-2">
+      <div className="absolute flex space-x-2 top-2 right-2">
         <MdEdit
           className="text-blue-600 cursor-pointer"
           onClick={() => handleEditProduct(product)}

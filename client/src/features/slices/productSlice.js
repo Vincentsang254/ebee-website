@@ -57,7 +57,7 @@ export const createProduct = createAsyncThunk(
 	async (formData, { rejectWithValue }) => {
 	  try {
 		const response = await axios.post(`${url}/products/create`, formData, setHeaders());
-		console.log("creat response", response.data)
+		console.log("create response from product slice......", response)
 		toast.success(response?.data.message, { position: "top-center" });
 		return response.data;
 	  } catch (error) {

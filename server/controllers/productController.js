@@ -18,7 +18,7 @@ const handleImageUpload = async (req, res) => {
     res.status(200).json({ status: true, message: "Image uploaded successfully", result });
   } catch (error) {
     console.error("Upload Error:", error);
-    return res.status(500).json({ status: false, message: "Error uploading image" });
+    return res.status(500).json({ status: false, message: error.message });
   }
 };
 
